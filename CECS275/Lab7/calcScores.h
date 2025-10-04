@@ -130,6 +130,25 @@ void populateGradeVector(int (&totalAssignmentAmount)[5], vector<vector<vector<d
 }
 
 /*
+ * @author Natasha Kho
+ * overloaded
+*/
+void populateStudentVector(int (&totalAssignmentAmount)[5], vector<vector<double>> &allGrades, int amountOfStudents){
+    for(int i = 0; i < amountOfStudents + 1; i++){ // iterate 40 times because 40 students
+        vector<double> studentScore; // Students' scores
+        //cout << "Woah How many Students?!?!: " << i << "   ";
+        for(int j = 0; j < 5; j++){ // iterate 5 times because 5 categories per student
+            
+            studentScore.push_back(0);
+            cout << studentScore[j] << ' ';
+        }
+        cout << endl;
+        allGrades.push_back(studentScore); // pushing data for one student
+                                            // allGrades[i] = push back needs to contain vector<vector<double>
+    }
+}
+
+/*
  * @author: Natasha Kho
  * @param: total grade after calculations
  * @return letter grade based on score
@@ -167,16 +186,63 @@ void calculatePercentage(double grade, double total, double gradeWeight, vector<
 
 /*
  * @author: Natasha Kho
+ * secret second author
 */
-double calculateClassPercentage(double grade, double total, double gradeWeight, vector<vector<vector<double>>> &calculatedPercentages, int i, int j){
-    return ((grade/total) * gradeWeight);
+void calculateClassPercentage(vector<vector<vector<double>>> grade, vector<double> total, double gradeWeight, vector<vector<double>> &calculatedPercentages, int assignmentType){
+    // we need a temp variable that calculates all the quiz or lab or whatever grade
+    // and then, push that into the calculated percentages double array  
+    double forklift = 0;
+    //cout <<"student amt: "<< grade.size() << " category: "<< grade[0].size() << endl;
+    for (int i = 0; i < grade.size(); i++){ // 40 iterations
+        forklift = 0;
+        for (int j = 0; j < grade[i].size(); j++){ //  5 iterations
+            for (int k = 0; k < grade[i][j].size(); k++){ // amt of assignments
+                //cout << "fork life lift error check :total check: " << grade[i][assignmentType][k] <<  endl;
+                forklift += grade[i][assignmentType][k] / total[assignmentType] * gradeWeight;
+            }
+            calculatedPercentages[i].at(assignmentType) = forklift; //40 x 5
+            
+            //cout << "What's on the lift!! " << forklift <<endl;
+            //cout << "what Gibby thinkin about (calcpercentage[i]): " << calculatedPercentages[i][assignmentType] << endl;
+           
+            break;
+            //cout << "what (i,j) CalcPercent:  (" << i << " " << j << ") " << calculatedPercentages[i][j] << endl; 
+
+        }
+        //calculatedPercentages[studentTrack].at(assignmentType) = forklift;
+        //cout << "TELL ME YOUR SECRETS CALCULATED PERCENT[i][0-4]:  " << calculatedPercentages[studentTrack][0] << " " << calculatedPercentages[studentTrack][1] << " "<< calculatedPercentages[studentTrack][2] << " "<< calculatedPercentages[studentTrack][3] << " "<< calculatedPercentages[studentTrack][4] << " " <<endl;
+    }
+
+    // cout << "CHECKING CALCULATED PERCENTAGES" << endl;
+    // for(int i = 0; i < calculatedPercentages.size(); i++){
+    //     for(double x: calculatedPercentages[i]){
+    //         cout << x << " ";
+    //     }
+    //     cout << endl;
+    // }
+
+    // far far outside, you have the push_back
 }
 
 /*
  * @author: Natasha Kho
+ * for single student usage
 */
 void getAverageOfCategory(double pointsEarned, int amountOfAssignments, vector<double> &averageOfSingleCategory){
     averageOfSingleCategory.push_back(pointsEarned/amountOfAssignments);
+}
+
+/*
+ * @author: Natasha Kho
+ * for class average
+*/
+void getAverageOfCategoryOfClass(vector<vector<double>> calculatedPercentages, int assignmentType, int totalOfOneAssignmentType, vector<double> &averageOfSingleCategory){
+    double pointsEarned = 0; 
+    for (int i = 0; i < calculatedPercentages.size(); i++){
+        pointsEarned += calculatedPercentages[i][assignmentType];
+    }
+    
+    averageOfSingleCategory.push_back(pointsEarned/totalOfOneAssignmentType);
 }
 
 /*
@@ -207,13 +273,14 @@ void getIndividualStudentPointsTotal(vector<vector<vector<double>>> &allGrades, 
     }
 }
 
-void getTotalScoresOfOneCategory(vector<vector<vector<double>>> &allGrades, int (&totalAssignments)[5], int assignmentType, double (&totalCategoryPoints)[40][5][1]){
+void getTotalScoresOfOneCategory(vector<vector<vector<double>>> &allGrades, int (&totalAssignments)[5], int assignmentType, vector<vector<vector<double>>> &totalCategoryPoints){
     vector<double> pointsEarnedForOneCategory;
     double temp = 0;
-
+    //cout << "TEST1" << endl;
     for(int i = 1; i < allGrades.size(); i++){
         for(int j = 0; j < allGrades[assignmentType].size(); j++){
             for(int k = 0; k < allGrades[i][assignmentType].size(); k++){
+                // cout << "TEST " << k << endl;
                 temp += allGrades[i][assignmentType][k]; // adds each score of one category
                 // cout << allGrades[i][assignmentType][k] << " + ";
             }
@@ -225,14 +292,23 @@ void getTotalScoresOfOneCategory(vector<vector<vector<double>>> &allGrades, int 
         }
     }
 
+    // cout << "CHECKING POINTS EARNED FOR ONE CATEGORY VECTOR: " <<endl;
+    // for(double x: pointsEarnedForOneCategory){
+    //     cout << x << " ";
+    // }
+    // cout << endl;
+
     // cout << "Finish first for loop " << endl;
 
     // Sudo code to put into 3d vector of scores
-    for(int i = 0; i < allGrades.size()-1; i++){
+    for(int i = 0; i < allGrades.size()-1; i++){ // this runs 40 times
         // cout << "Enter second for loop " << allGrades.size()-1 << endl;
-        // cout << "Points earned in category vector " << pointsEarnedForOneCategory[i] << endl;
-        totalCategoryPoints[i][assignmentType][0] =  pointsEarnedForOneCategory[i];
-        // cout << "After putting data into Total Earned Points: " << totalCategoryPoints[i][assignmentType][0] <<endl;
+        // cout << "Points earned in category vector: " << pointsEarnedForOneCategory[i] << endl;
+        totalCategoryPoints[i][assignmentType].at(0) = pointsEarnedForOneCategory[i]; // this is not working correctly
+
+        // totalCategoryPoints size is: 40 : 5 : 1
+        // cout << "After putting data into Total Earned Points: " << totalCategoryPoints[i][assignmentType][1] <<endl;
+        // line above states that we're putting in 0s only
 
     }
 }
@@ -242,7 +318,7 @@ void getTotalScoresOfOneCategory(vector<vector<vector<double>>> &allGrades, int 
  * @author: Emily Hsu
 */
 void generateReportClass(fstream &inputFile, vector<vector<vector<double>>> &allGrades, int (&totalAssignmentsDropped)[5], int (&totalAssignments)[5], 
-                         int isGradesDropped, vector<double> &calculatedPercentages, vector<double> &averageScores){
+                         int isGradesDropped, vector<vector<double>> &calculatedPercentages, vector<double> &averageScores){
         
     // First line of file
     getTotalAssignments(inputFile,totalAssignments);
@@ -254,7 +330,7 @@ void generateReportClass(fstream &inputFile, vector<vector<vector<double>>> &all
     getPoints(inputFile, totalAssignments, allGrades);
 
     // used for calculations
-    double totalCategoryPoints[40][5][1];
+    vector<vector<vector <double>>> totalCategoryPoints;
     vector<double> totalPointsPossible;
 
     if(isGradesDropped){
@@ -278,17 +354,18 @@ void generateReportClass(fstream &inputFile, vector<vector<vector<double>>> &all
     // this part requires testing
     for(int i = 0; i < allGrades.size() - 1; i++){ // this needs to iterate 40 times
         for(int j = 0; j < sizeof(totalAssignments)/sizeof(totalAssignments[0]); j++){ // iterates 5 times
-            calculatePercentage(totalCategoryPoints[i][j][0], totalPointsPossible[j], gradeWeights[j], calculatedPercentages);
+            calculateClassPercentage(totalCategoryPoints, totalPointsPossible, gradeWeights[j], calculatedPercentages, j);
             // average scores should be size 5 vector
-            getAverageOfCategory(totalCategoryPoints[i][j][0], totalAssignments[j], averageScores);
+            //getAverageOfCategoryClass(totalCategoryPoints[i][j][0], totalAssignments[j], averageScores);
         }
     }
 
     cout << "PERCENTAGES: " << endl;
-    for(double x : calculatedPercentages){
-        cout << x << " " << endl;
+    for(int i = 0; i < calculatedPercentages.size(); i++){
+        for(double x : calculatedPercentages[i]){
+            cout << x << " " << endl;
+        }
     }
-
 }
 
 void generateReportOneStudent(fstream &inputFile, vector<vector<vector<double>>> &allGrades, int (&totalAssignmentsDropped)[5], int (&totalAssignments)[5], int isGradesDropped, int studentNumber, vector<double> &calculatedPercentages, vector<double> &averageScores){
