@@ -236,13 +236,13 @@ void getAverageOfCategory(double pointsEarned, int amountOfAssignments, vector<d
  * @author: Natasha Kho
  * for class average
 */
-void getAverageOfCategoryOfClass(vector<vector<double>> calculatedPercentages, int assignmentType, int totalOfOneAssignmentType, vector<double> &averageOfSingleCategory){
+void getAverageOfCategoryOfClass(vector<vector<double>> calculatedPercentages, int assignmentType, vector<double> &averageOfSingleCategory){
     double pointsEarned = 0; 
     for (int i = 0; i < calculatedPercentages.size(); i++){
         pointsEarned += calculatedPercentages[i][assignmentType];
     }
     
-    averageOfSingleCategory.push_back(pointsEarned/totalOfOneAssignmentType);
+    averageOfSingleCategory.push_back(pointsEarned/40);
 }
 
 /*

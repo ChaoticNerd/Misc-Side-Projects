@@ -73,10 +73,12 @@ int main(void){
 
             // you pass in calculatedPercentages
             // and inside of get avg, you iterate through assigmnent type again
-            getAverageOfCategoryOfClass(calculatedPercentages, j, totalAssignments[j], averageScores);
-            cout << "AVG SCORES: (" << i << " , " << j << ") "<< averageScores[j] <<endl;
             
         }
+    }
+    for(int i = 0; i < sizeof(totalAssignments)/sizeof(totalAssignments[0]); i++){
+        getAverageOfCategoryOfClass(calculatedPercentages, i, averageScores);
+        // cout << "AVG SCORES: (" << i << " , " << j << ") "<< averageScores[i] <<endl; 
     }
     // cout << "amount of Average Scores: " << averageScores.size()<< endl; 
     // cout << "PERCENTAGES: " << endl;
