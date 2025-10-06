@@ -29,6 +29,7 @@ int main() {
         cin >> userSelect;
 
         switch(userSelect){
+
         //Random Generate Report
         case 1:
             generateReport();
@@ -41,10 +42,7 @@ int main() {
         
         //Solo student Report
         case 3: 
-            if (checkFile(inputFile) != 1){
-                cout << "ERROR: There is no file open please enter the file in option 2...";
-                break;
-            }
+            checkFile(inputFile);
             cout << "With grades dropped? (Y/N)" << endl;
             cin >> dropped;
             cout << "What is your student number?" << endl;
@@ -61,25 +59,20 @@ int main() {
 
         //Class Average report
         case 4:
-            if (checkFile(inputFile) != 1){
-                cout << "ERROR: There is no file open please enter the file in option 2...";
-                break;
-            }
-            
+            checkFile(inputFile);
             cout << "With grades dropped? (Y/N)" << endl;
             cin >> dropped;
             cout << "What is your class size?" << endl;
             cin >> classSize;
             if(dropped == "Y"){
-
-                // this line breaks
                 generateReportClass(inputFile, classSize, allGrades, totalAssignmentsDropped, totalAssignments, 1, calculatedClassPercentages, averageScores); // to do BROKIE: uhhhhhh idk
-            }else if(dropped == "N"){
+            } else if(dropped == "N"){
                 generateReportClass(inputFile, classSize, allGrades, totalAssignmentsDropped, totalAssignments, 0, calculatedClassPercentages, averageScores);
             }
             inputFile.close();
             printClassResults(averageScores);
             break;
+            
         //empty for LAB8
         case 5:
             cout << "for Lab 8 Nothing now." << endl;
@@ -95,6 +88,7 @@ int main() {
             cout << "Logging out..." << endl;
             user_login(0, usernameBank, passwordBank);
             break;
+
         //TRUE exit program
         case 8:
             cout << "Bye for now :D!" << endl;

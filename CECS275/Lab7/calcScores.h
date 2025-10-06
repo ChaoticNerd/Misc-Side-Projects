@@ -194,20 +194,21 @@ void calculateClassPercentage(vector<vector<vector<double>>> grade, vector<doubl
     // we need a temp variable that calculates all the quiz or lab or whatever grade
     // and then, push that into the calculated percentages double array  
     double forklift = 0;
-    cout <<"student amt: "<< grade.size() << " category: "<< grade[0].size() << endl;
+    // cout <<"student amt: "<< grade.size() << " category: "<< grade[0].size() << endl;
     for (int i = 0; i < grade.size(); i++){ // 40 iterations
         forklift = 0;
         for (int j = 0; j < grade[i].size(); j++){ //  5 iterations
             for (int k = 0; k < grade[i][j].size(); k++){ // amt of assignments
-                cout << "fork life lift error check :total check: " << grade[i][assignmentType][k] <<  endl;
+                // cout << "fork life lift error check :total check: " << grade[i][assignmentType][k] <<  endl;
                 forklift += grade[i][assignmentType][k] / total[assignmentType] * gradeWeight;
+                cout << "EYE TRACKER: " << i << endl;
             }
-            cout << " ASS DID I????" << endl;
-            cout << "CHECKING CALC PRECENTG " <<  calculatedPercentages[i][assignmentType] << endl;
+            // cout << " ASS DID I????" << endl;
+            // cout << "CHECKING CALC PRECENTG " <<  calculatedPercentages[i][assignmentType] << endl;
             calculatedPercentages[i].at(assignmentType) = forklift; //40 x 5
             
-            cout << "What's on the lift!! " << forklift <<endl;
-            cout << "what Gibby thinkin about (calcpercentage[i]): " << calculatedPercentages[i][assignmentType] << endl;
+            // cout << "What's on the lift!! " << forklift <<endl;
+            // cout << "what Gibby thinkin about (calcpercentage[i]): " << calculatedPercentages[i][assignmentType] << endl;
            
             break;
             //cout << "what (i,j) CalcPercent:  (" << i << " " << j << ") " << calculatedPercentages[i][j] << endl; 
@@ -364,7 +365,6 @@ void generateReportClass(fstream &inputFile, int classSize, vector<vector<vector
     //     cout << "SEEING INSIDE TOTAL POINTS POSSIBLE: " << x <<endl;
     // }
 
-
     // TODO: THIS PART BREAKS
     // this calculates the percentages for one student
     //  calculatePercentage(double grade, double total, double gradeWeight, vector<double> &calculatedPercentages)
@@ -519,7 +519,7 @@ void printClassResults(vector<double> classAvg){
     << "Quiz: "         << setw(26)                             << classAvg[1] * TO_PERCENT     << "%\n"
     << "Exams: "        << setw(25)                             << classAvg[2] * TO_PERCENT     << "%\n"
     << "Final Exam: "   << setw(20)                             << classAvg[4] * TO_PERCENT     << "%\n"
-    << "Total: "        << setw(20)                             << totalAvg    * TO_PERCENT     << "%\n"
+    << "Total: "        << setw(25)                             << totalAvg    * TO_PERCENT     << "%\n"
     << "===============================================\n" << endl;
 }
 
@@ -569,6 +569,9 @@ void fileImport(fstream &inputFile) {
  * @author: Emily Hsu
 */
 int checkFile(fstream &inputFile){
-    while(!inputFile.is_open());
+    while(!inputFile.is_open()){
+        cout << "Files is not open... Please input a file to use\n";
+        fileImport(inputFile);
+    }
     return 1;
 }
