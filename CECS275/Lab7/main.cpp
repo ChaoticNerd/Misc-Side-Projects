@@ -10,106 +10,96 @@
 #include "calcScores.h"
 #include "login.h"
 
-fstream inFile, userFile, inputFile;
-string fileName, newPassword, viewReport, dropped;
+fstream inFile, inputFile;
+string fileName, dropped;
 vector<string> usernameBank, passwordBank;
 vector<double> calculatedPercentages, averageScores;
+vector<vector<double>> calculatedClassPercentages;
 vector<vector<vector<double>>> allGrades;
-int studentNumber, userSelect, upload = 0, report = 0, isGradesDropped, totalAssignmentsDropped[5], totalAssignments[5];
+int studentNumber, classSize, userSelect, upload = 0, report = 0, isGradesDropped, totalAssignmentsDropped[5], totalAssignments[5];
+bool isFileUploaded = false;
+const int AMOUNT_OF_CATEGORIES[5] = {1, 1, 1, 1, 1};
 
-int main(void){
-    // Prompt initial login
+int main() {
+    //initial log in
     user_login(0, usernameBank, passwordBank);
-    
+
     do{
-        // Prints menu and gets user's input
-        cout << printMenu() << endl;
+        printMenu();
         cin >> userSelect;
 
-        switch (userSelect){
-        // Generate fake data
-        case 1: 
+        switch(userSelect){
+        //Random Generate Report
+        case 1:
             generateReport();
             break;
-        // Which score file to use
+
+        //Import Files
         case 2:
-            fileName = uploadFile();
-            userFile.open(fileName);
-            upload = 1;
+            fileImport(inputFile);
             break;
-        // Generate grade report
-        case 3:
-            if (!upload){
-                fileName = checkFile();
-                userFile.open(fileName);
-            } 
-            report = 1;
-            cout << "Would you like to view your grade report? (Y/N)" << endl;
-            cin >> viewReport;
-            if (viewReport == "Y"){
-                cout << "With grades dropped? (Y/N)" << endl;
-                cin >> dropped;
-                cout << "What is your student number?" << endl;
-                cin >> studentNumber;
-                if(dropped == "Y"){
-                    generateReportOneStudent(userFile, allGrades, totalAssignmentsDropped, totalAssignments, 1, studentNumber, calculatedPercentages, averageScores);
-                }else if(dropped == "N"){
-                    generateReportOneStudent(userFile, allGrades, totalAssignmentsDropped, totalAssignments, 0, studentNumber, calculatedPercentages, averageScores);
-                }
+        
+        //Solo student Report
+        case 3: 
+            if (checkFile(inputFile) != 1){
+                cout << "ERROR: There is no file open please enter the file in option 2...";
+                break;
             }
-            printResults(calculatedPercentages, averageScores);
-            upload = 0;
-            userFile.close();
-            break;
-        // View grade report with and without dropped items
-        case 4:
-            if (report == 1){
-                cout << "View report with grades dropped? (Y/N)" << endl;
-                cin >> dropped;
-                cout << "What is your student number?" << endl;
-                cin >> studentNumber;
-                if(dropped == "Y"){
-                    generateReportOneStudent(userFile, allGrades, totalAssignmentsDropped, totalAssignments, 1, studentNumber, calculatedPercentages, averageScores);
-                }else if(dropped == "N"){
-                    generateReportOneStudent(userFile, allGrades, totalAssignmentsDropped, totalAssignments, 0, studentNumber, calculatedPercentages, averageScores);
-                }
-                printResults(calculatedPercentages, averageScores);
-                upload = 0;
-                userFile.close();
-            } else {
-                cout << "Please generate a grade report first using option 3." << endl;
-            }
-            break;
-        // Show class average percentages for each category and average for total percentage
-        case 5: 
-            if (!upload){
-                fileName = checkFile();
-                userFile.open(fileName);
-            } 
-            cout << "View average percentages with grades dropped? (Y/N)" << endl;
+            cout << "With grades dropped? (Y/N)" << endl;
             cin >> dropped;
+            cout << "What is your student number?" << endl;
+            cin >> studentNumber;
             if(dropped == "Y"){
-                generateReportClass(userFile, allGrades, totalAssignmentsDropped, totalAssignments, 1, calculatedPercentages, averageScores);
-            }else if(dropped == "N"){
-                generateReportClass(userFile, allGrades, totalAssignmentsDropped, totalAssignments, 0, calculatedPercentages, averageScores);
+                generateReportOneStudent(inputFile, allGrades, totalAssignmentsDropped, totalAssignments, 1, studentNumber, calculatedPercentages, averageScores);
+        
+            } else if(dropped == "N"){
+                generateReportOneStudent(inputFile, allGrades, totalAssignmentsDropped, totalAssignments, 0, studentNumber, calculatedPercentages, averageScores);
             }
-            printClassResults(calculatedPercentages);
-            upload = 0;
-            userFile.close();
+            inputFile.close();
+            printResults(calculatedPercentages, averageScores);
             break;
-        // Log out 
+
+        //Class Average report
+        case 4:
+            if (checkFile(inputFile) != 1){
+                cout << "ERROR: There is no file open please enter the file in option 2...";
+                break;
+            }
+            
+            cout << "With grades dropped? (Y/N)" << endl;
+            cin >> dropped;
+            cout << "What is your class size?" << endl;
+            cin >> classSize;
+            if(dropped == "Y"){
+
+                // this line breaks
+                generateReportClass(inputFile, classSize, allGrades, totalAssignmentsDropped, totalAssignments, 1, calculatedClassPercentages, averageScores); // to do BROKIE: uhhhhhh idk
+            }else if(dropped == "N"){
+                generateReportClass(inputFile, classSize, allGrades, totalAssignmentsDropped, totalAssignments, 0, calculatedClassPercentages, averageScores);
+            }
+            inputFile.close();
+            printClassResults(averageScores);
+            break;
+        //empty for LAB8
+        case 5:
+            cout << "for Lab 8 Nothing now." << endl;
+            break;
+        //empty for LAB8
         case 6:
+            cout << "for Lab 8 Nothing now." << endl;
+            break;
+
+        //doesnt break do-while, but logsout and repeats login function
+        case 7:
+            cout << "Bye Bye for now :D!" << endl;
             cout << "Logging out..." << endl;
-            user_login(1, usernameBank, passwordBank);
-        // Exit program
-        case 7: 
+            user_login(0, usernameBank, passwordBank);
             break;
-        default: 
-            cout << "Error occurred. Please try again." << endl;
+        //TRUE exit program
+        case 8:
+            cout << "Bye for now :D!" << endl;
             break;
+
         }
-    }
-    while(userSelect != 7);
-        cout << "Bye bye!" << endl;
-    return 0;
+    }while(userSelect != 8);
 }

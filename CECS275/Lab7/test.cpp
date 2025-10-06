@@ -24,77 +24,65 @@ int main(void){
 
     int fuckMyStupidBakaLife[5] = {1, 1, 1, 1, 1};
     
+    // INDIVIDUAL STUDENT SCORE
     // First line of file
     getTotalAssignments(input,totalAssignments);
+    // for(int val: totalAssignments){
+    //     cout << "Total Assignments: " << val  << endl;
+    // }
 
+    // Have a function to get amount of quiz/labs dropped
     getTotalAssignments(input,totalAssignmentsDropped);
+    // for(int val: totalAssignmentsDropped){
+    //     cout << "Total Assignments Dropped: " << val  << endl;
+    // }
 
+    // cout << "===========================================\nPOPULATING POINTS POSSIBLE VECTOR" << endl;
     populateGradeVector(totalAssignments, allGrades, 40);
+    // testPrintVector(allGrades); // should be a buncha 0s
 
+    // cout << "===========================================\nINPUTTING POINTS" << endl;
     getPoints(input, totalAssignments, allGrades);
+    // testPrintVector(allGrades); // PLEASE PRINT NUMBERS PLEAAAAAAASE
 
-    // used for calculations 
-    vector<vector<vector <double>>> totalCategoryPoints;
+    // used for calculations
+    vector<double> totalEarned;
     vector<double> totalPointsPossible;
+
 
     // Do the stuff to drop the lowest grade as per requested wahoo!
     for(int i = 0; i < sizeof(totalAssignmentsDropped)/sizeof(totalAssignmentsDropped[0]); i++){
-        int amtOfAssignmentsToDrop = totalAssignmentsDropped[i];
+    int amtOfAssignmentsToDrop = totalAssignmentsDropped[i];
         while(amtOfAssignmentsToDrop){
-            dropLowestScore(input, allGrades,i);
-            totalAssignments[i]--;
+            //cout << "AT I: " << i << " ASSIGNMENT TO BE DROPPED DETECTED ::: " << totalAssignmentsDropped[i] << endl;
+            dropLowestScore(input, allGrades,i );
             amtOfAssignmentsToDrop--;
+            totalAssignments[i]--;
         }
     }
-    cout << "TEST0" << endl;
 
-    populateGradeVector(fuckMyStupidBakaLife, totalCategoryPoints, 39);
-    // testPrintVector(totalCategoryPoints);
-    populateStudentVector(fuckMyStupidBakaLife, calculatedPercentages, 39);
-
-    for(int i = 0; i < 5; i++){ // goes for amount of categories there are
-        getTotalScoresOfOneCategory(allGrades, totalAssignments, i, totalCategoryPoints); // student score is totalEarnedPoints
-    }
-    //testPrintVector(totalCategoryPoints);
+    
+    getIndividualStudentPointsTotal(allGrades, 5, totalAssignments, totalEarned); // student score is totalEarnedPoints
     getIndividualStudentPointsTotal(allGrades, 0, totalAssignments, totalPointsPossible);
-
-    // testPrintVector(allGrades);
-    // for(double x: totalPointsPossible){
-    //     cout << "SEEING INSIDE TOTAL POINTS POSSIBLE: " << x <<endl;
-    // }
-    // this calculates the percentages for one student
-    //  calculatePercentage(double grade, double total, double gradeWeight, vector<double> &calculatedPercentages)
-    // this part requires testing
-    for(int i = 0; i < allGrades.size() - 1; i++){ // this needs to iterate 40 times
-        for(int j = 0; j < sizeof(totalAssignments)/sizeof(totalAssignments[0]); j++){ // iterates 5 times
-            calculateClassPercentage(totalCategoryPoints, totalPointsPossible, gradeWeights[j], calculatedPercentages, j);
-            //cout << "COUNT: (" << i << " , " << j << ")  "<<calculatedPercentages[i][j]<< endl;
-            // average scores should be size 5 vector
-
-            // you pass in calculatedPercentages
-            // and inside of get avg, you iterate through assigmnent type again
-            
-        }
+    cout << totalEarned.size() << endl;
+    
+    for(int i = 0; i < totalEarned.size(); i++){
+        //calculatePercentage(totalEarned[i], totalPointsPossible[i], gradeWeights[i], calculatedPercentages);
+        getAverageOfCategory(totalEarned[i], totalAssignments[i], averageScores);
+        cout << "Current grade weight: " << gradeWeights[i] << endl;
     }
-    for(int i = 0; i < sizeof(totalAssignments)/sizeof(totalAssignments[0]); i++){
-        getAverageOfCategoryOfClass(calculatedPercentages, i, averageScores);
-        // cout << "AVG SCORES: (" << i << " , " << j << ") "<< averageScores[i] <<endl; 
+    
+    cout << "CHECKING CALCULATED PERCENTAGES" << endl;
+    for(double x: calculatedPercentages){
+        cout << x << " ";
     }
-    // cout << "amount of Average Scores: " << averageScores.size()<< endl; 
-    // cout << "PERCENTAGES: " << endl;
-    // for(int i = 0; i < calculatedPercentages.size(); i++){
-    //     for(double x : calculatedPercentages[i]){
-    //         cout << x << " ";
-    //     }
-    //     cout << endl;
-    // }
-
-    cout << "AverageScores: " << endl;
-    for(double avgs : averageScores){
-        cout << avgs << " ";
+    cout << endl;
+    
+    cout << "CHECKING AVERAGE SCORES" << endl;
+    for(double x: averageScores){
+        cout << x << " ";
     }
-    cout  << endl;
-    return 1;
+    cout << endl;
 }
 
 void testPrintVector(vector<vector<vector<double>>> &allGrades){

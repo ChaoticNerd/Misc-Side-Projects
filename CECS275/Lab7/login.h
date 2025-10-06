@@ -120,7 +120,10 @@ void setNewPassword(vector<string> usernameBank, vector<string> passwordBank){
 int user_login(int accountMade, vector<string> &usernameBank, vector<string> &passwordBank){
     int userSelect, access, user;
     do{
-        cout << "Choose an option:\n1. Register\n2. Login\n3. Change or forgot password" << endl;
+        cout << "Choose an option:\n"
+        << "1. Register\n"
+        << "2. Login\n"
+        << "3. Change or forgot password\n";
         cin >> userSelect;
 
         switch(userSelect){
