@@ -9,6 +9,7 @@
 */
 #include "calcScores.h"
 #include "login.h"
+#include <vector>
 
 fstream inFile, inputFile;
 string fileName, dropped;
@@ -55,6 +56,7 @@ int main() {
             }
             inputFile.close();
             printResults(calculatedPercentages, averageScores);
+            vector_dumptruck(calculatedPercentages, averageScores, calculatedClassPercentages, allGrades);
             break;
 
         //Class Average report
@@ -71,6 +73,7 @@ int main() {
             }
             inputFile.close();
             printClassResults(averageScores);
+            vector_dumptruck(calculatedPercentages, averageScores, calculatedClassPercentages, allGrades);
             break;
             
         //empty for LAB8

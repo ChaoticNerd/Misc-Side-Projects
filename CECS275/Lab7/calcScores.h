@@ -22,7 +22,8 @@ void printResults(double projectGrade, double labGrade,
                     double totalGrade, char letterGrade);
 void generateReportClass(fstream &inputFile, vector<vector<vector<double>>> &allGrades, int (&totalAssignmentsDropped)[5], int (&totalAssignments)[5], 
         int isGradesDropped, vector<double> &calculatedPercentages, vector<double> &averageScores);
-
+void vector_dumptruck(vector<double> &calculatedPercentages, vector<double> &averageScores,
+                      vector<vector<double>> &calculatedClassPercentages, vector<vector<vector<double>>> &allGrades);
 
 using namespace std;
 
@@ -140,9 +141,9 @@ void populateStudentVector(int (&totalAssignmentAmount)[5], vector<vector<double
         for(int j = 0; j < 5; j++){ // iterate 5 times because 5 categories per student
             
             studentScore.push_back(0);
-            cout << studentScore[j] << ' ';
+            // cout << studentScore[j] << ' ';
         }
-        cout << endl;
+        // cout << endl;
         allGrades.push_back(studentScore); // pushing data for one student
                                             // allGrades[i] = push back needs to contain vector<vector<double>
     }
@@ -181,8 +182,8 @@ std::string getLetterGrade(vector<double> &calculatedPercentages){
  * @return percentage of specific category
 */
 void calculatePercentage(double grade, double total, double gradeWeight, vector<double> &calculatedPercentages){
-    cout << "\nGrade we're inputting: " <<  grade
-         << "\nTotal we're inputting: " << total << endl;
+    // cout << "\nGrade we're inputting: " <<  grade
+    //      << "\nTotal we're inputting: " << total << endl;
     calculatedPercentages.push_back((grade/total)*gradeWeight);
 }
 
@@ -201,7 +202,7 @@ void calculateClassPercentage(vector<vector<vector<double>>> grade, vector<doubl
             for (int k = 0; k < grade[i][j].size(); k++){ // amt of assignments
                 // cout << "fork life lift error check :total check: " << grade[i][assignmentType][k] <<  endl;
                 forklift += grade[i][assignmentType][k] / total[assignmentType] * gradeWeight;
-                cout << "EYE TRACKER: " << i << endl;
+                // cout << "EYE TRACKER: " << i << endl;
             }
             // cout << " ASS DID I????" << endl;
             // cout << "CHECKING CALC PRECENTG " <<  calculatedPercentages[i][assignmentType] << endl;
@@ -371,35 +372,35 @@ void generateReportClass(fstream &inputFile, int classSize, vector<vector<vector
     // this part requires testing
     for(int i = 0; i < allGrades.size() - 1; i++){ // this needs to iterate 40 times
         for(int j = 0; j < sizeof(totalAssignments)/sizeof(totalAssignments[0]); j++){ // iterates 5 times
-            cout << "SOMEONE HELP ME, IM TOO GAY TO DO THIS 0" << endl; // THIS PRINTS
+            // cout << "SOMEONE HELP ME, IM TOO GAY TO DO THIS 0" << endl; // THIS PRINTS
 
             // this breaks on index 0
             calculateClassPercentage(totalCategoryPoints, totalPointsPossible, gradeWeights[j], calculatedPercentages, j);
-            cout << "SOMEONE HELP ME, IM TOO GAY TO DO THIS 1" << endl; // THIS PRINTS
+            // cout << "SOMEONE HELP ME, IM TOO GAY TO DO THIS 1" << endl; // THIS PRINTS
             //cout << "COUNT: (" << i << " , " << j << ")  "<<calculatedPercentages[i][j]<< endl;
             // average scores should be size 5 vector
         }
     }
-    cout << "SOMEONE HELP ME, IM TOO GAY TO DO THIS" << endl; // THIS PRINTS
+    // cout << "SOMEONE HELP ME, IM TOO GAY TO DO THIS" << endl; // THIS PRINTS
 
     for(int i = 0; i < sizeof(totalAssignments)/sizeof(totalAssignments[0]); i++){
         getAverageOfCategoryOfClass(calculatedPercentages, i, averageScores);
         // cout << "AVG SCORES: (" << i << " , " << j << ") "<< averageScores[i] <<endl; 
     }
-    cout << "amount of Average Scores: " << averageScores.size()<< endl; 
-    cout << "PERCENTAGES: " << endl;
-    for(int i = 0; i < calculatedPercentages.size(); i++){
-        for(double x : calculatedPercentages[i]){
-            cout << x << " ";
-        }
-        cout << endl;
-    }
+    // cout << "amount of Average Scores: " << averageScores.size()<< endl; 
+    // cout << "PERCENTAGES: " << endl;
+    // for(int i = 0; i < calculatedPercentages.size(); i++){
+    //     for(double x : calculatedPercentages[i]){
+    //         cout << x << " ";
+    //     }
+    //     cout << endl;
+    // }
 
-    cout << "AverageScores: " << endl;
-    for(double avgs : averageScores){
-        cout << avgs << " ";
-    }
-    cout  << endl;
+    // cout << "AverageScores: " << endl;
+    // for(double avgs : averageScores){
+    //     cout << avgs << " ";
+    // }
+    // cout  << endl;
 }
 
 void generateReportOneStudent(fstream &inputFile, vector<vector<vector<double>>> &allGrades, int (&totalAssignmentsDropped)[5], int (&totalAssignments)[5], int isGradesDropped, int studentNumber, vector<double> &calculatedPercentages, vector<double> &averageScores){
@@ -447,21 +448,31 @@ void generateReportOneStudent(fstream &inputFile, vector<vector<vector<double>>>
         getAverageOfCategory(totalEarned[i], totalAssignments[i], averageScores);
     }
 
-    // debug loop
-            cout << "Viewing Calculated Percentages" << endl;
-            cout << calculatedPercentages.size() << endl;
-            for(double x : calculatedPercentages){
-                cout << x << " ";
-            }
-            cout << endl;
+    // // debug loop
+    //         cout << "Viewing Calculated Percentages" << endl;
+    //         cout << calculatedPercentages.size() << endl;
+    //         for(double x : calculatedPercentages){
+    //             cout << x << " ";
+    //         }
+    //         cout << endl;
 
-            cout << "Viewing Average Scores" << endl;
-            cout << averageScores.size() << endl;
-            for(double x : averageScores){
-                cout << x << " ";
-            }
-            cout << endl;
+    //         cout << "Viewing Average Scores" << endl;
+    //         cout << averageScores.size() << endl;
+    //         for(double x : averageScores){
+    //             cout << x << " ";
+    //         }
+    //         cout << endl;
     // end debug loop
+}
+
+void vector_dumptruck(
+    vector<double> &calculatedPercentages, vector<double> &averageScores,
+    vector<vector<double>> &calculatedClassPercentages,
+    vector<vector<vector<double>>> &allGrades){
+        calculatedPercentages.clear();
+        averageScores.clear();
+        calculatedClassPercentages.clear();
+        allGrades.clear();
 }
 
 /*
