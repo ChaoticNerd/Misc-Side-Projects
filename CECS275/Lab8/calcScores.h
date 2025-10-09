@@ -37,6 +37,43 @@ const double GradeA = 0.90,
              GradeC = 0.70,
              GradeD = 0.60;
 
+
+/*
+ * Sorting algo
+*/
+void bubbleSort(vector<vector<double>> &calculatedClassPercentages){
+    int amtExchanged = 1;       // increment every time we have to swap two vectors
+    int indexer = 1;            // increments before while check
+
+    do{
+        if(indexer >= calculatedClassPercentages.size()){
+            indexer = 1;        // restarts the indexer
+            amtExchanged = 0;   // restarts the amtExchanged
+        }
+        // cout << "COMPARING: " << calculatedClassPercentages[indexer + 1][5] 
+        //      << " WITH: "     << calculatedClassPercentages[indexer][5] << endl;
+
+        // grabbing the 6th element as that's the total percentage for comparison and we can just sort using that
+        if(calculatedClassPercentages[indexer][5] < calculatedClassPercentages[indexer - 1][5] ){
+            calculatedClassPercentages[indexer - 1].swap(calculatedClassPercentages[indexer]);
+            amtExchanged++;
+            cout << amtExchanged << endl;
+        }
+        indexer++;
+
+    }while(amtExchanged);
+}
+
+void getTotalPercentage(vector<vector<double>> &calculatedClassPercentages){
+    for(int i = 0; i < calculatedClassPercentages.size(); i++){
+        double tot = 0;
+        for(double x : calculatedClassPercentages[i]){
+            tot += x;
+        }
+        calculatedClassPercentages[i].push_back(tot);
+    }
+}
+
 /*
  * @author Natasha Kho
 */
@@ -138,7 +175,7 @@ void populateStudentVector(int (&totalAssignmentAmount)[5], vector<vector<double
     for(int i = 0; i < amountOfStudents + 1; i++){ // iterate 40 times because 40 students
         vector<double> studentScore; // Students' scores
         //cout << "Woah How many Students?!?!: " << i << "   ";
-        for(int j = 0; j < 5; j++){ // iterate 5 times because 5 categories per student
+        for(int j = 0; j < sizeof(totalAssignmentAmount)/sizeof(totalAssignmentAmount[0]); j++){ // iterate 5 times because 5 categories per student
             
             studentScore.push_back(0);
             // cout << studentScore[j] << ' ';
@@ -550,8 +587,6 @@ void printMenu(void){
     << "7. Log Out\n"
     << "8. Exit program\n"
     << "=========================================================\n";
-
-
 }
 
 /*
