@@ -20,11 +20,12 @@ void generateReport(string fileName);
 void printResults(double projectGrade, double labGrade, 
                     double quizGrade, double examGrade, double finalGrade, 
                     double totalGrade, char letterGrade);
-void generateReportClass(fstream &inputFile, vector<vector<vector<double>>> &allGrades, int (&totalAssignmentsDropped)[5], int (&totalAssignments)[5], 
+void generateReportClass(fstream &inputFile, int, int, vector<vector<vector<double>>> &allGrades, int (&totalAssignmentsDropped)[5], int (&totalAssignments)[5], 
         int isGradesDropped, vector<double> &calculatedPercentages, vector<double> &averageScores);
 void vector_dumptruck(vector<double> &calculatedPercentages, vector<double> &averageScores,
                       vector<vector<double>> &calculatedClassPercentages, vector<vector<vector<double>>> &allGrades);
 void threshScore(vector<vector<double>> &calculatedClassPercentages, int assSize, int tryThougtButHole, int hilow);
+void bubbleSort(vector<vector<double>> &calculatedClassPercentages);
 using namespace std;
 
 // Grade weights
@@ -250,6 +251,21 @@ std::string getLetterGrade(vector<double> &calculatedPercentages){
         return "F";
     }
 }
+std::string getLetterGradeSorted(vector<double> &calculatedPercentages){
+
+
+    if (calculatedPercentages[5] >= GradeA) {
+        return "A";
+    } else if (calculatedPercentages[5] >= GradeB){
+        return "B";
+    } else if (calculatedPercentages[5] >= GradeC){
+        return "C";
+    } else if (calculatedPercentages[5] >= GradeD){
+        return "D";
+    } else {
+        return "F";
+    }
+}
 
 /*
  * @author: Natasha Kho
@@ -398,7 +414,7 @@ void getTotalScoresOfOneCategory(vector<vector<vector<double>>> &allGrades, int 
 /*
  * @author: Natasha Kho
 */
-void generateReportClass(fstream &inputFile, int classSize, vector<vector<vector<double>>> &allGrades, int (&totalAssignmentsDropped)[5], int (&totalAssignments)[5], 
+void generateReportClass(fstream &inputFile, int classSize, int sortSelect, vector<vector<vector<double>>> &allGrades, int (&totalAssignmentsDropped)[5], int (&totalAssignments)[5], 
                          int isGradesDropped, vector<vector<double>> &calculatedPercentages, vector<double> &averageScores){
     // used for calculations
     vector<vector<vector <double>>> totalCategoryPoints;
@@ -471,7 +487,18 @@ void generateReportClass(fstream &inputFile, int classSize, vector<vector<vector
     //     }
     //     cout << endl;
     // }
-
+    if (sortSelect == 1){
+        getTotalPercentage(calculatedPercentages);
+        bubbleSort(calculatedPercentages);
+        for(int i = 0; i < calculatedPercentages.size(); i++){
+            for(int j = 0; j < calculatedPercentages[i].size(); j++){
+                    cout << calculatedPercentages[i][j] << " ";
+                
+            }
+            cout << endl;
+        }
+        
+    }
     // cout << "AverageScores: " << endl;
     // for(double avgs : averageScores){
     //     cout << avgs << " ";
@@ -611,6 +638,22 @@ void printClassResults(vector<double> classAvg){
 }
 
 /*
+ * @author Natasha Kho
+*/
+void printClassSortedResults(vector<vector<double>> calculatedClassPercentages){
+    //NEEDS TO CALCULATE LETTER GRADE
+    string letterGrade;
+    cout << "===============================================\n" << setw(25) << "SORTED CLASS RESULTS" << "\n";
+    for (int i = 0; i < calculatedClassPercentages.size(); i++){
+        letterGrade = getLetterGradeSorted(calculatedClassPercentages[i]);
+        cout << setw(7) <<  letterGrade << "       " << calculatedClassPercentages[i][5]<< endl;;
+    }
+    
+    cout << "===============================================\n" << endl;
+}
+
+
+/*
  * @author: Natasha Kho
  * @author: Emily Hsu
 */
@@ -621,8 +664,8 @@ void printMenu(void){
     << "2. Select which score file to use\n"
     << "3. Generate grade report\n"
     << "4. Show class average percentages\n"
-    << "5. N/A\n"
-    << "6. N/A \n"
+    << "5. Sort class scores\n"
+    << "6. Show scores above/below a threshold \n"
     << "7. Log Out\n"
     << "8. Exit program\n"
     << "=========================================================\n";
@@ -659,4 +702,15 @@ int checkFile(fstream &inputFile){
         fileImport(inputFile);
     }
     return 1;
+}
+
+
+void testPrintVector(vector<vector<double>> &allGrades){
+    for(int i = 0; i < allGrades.size(); i++){
+        for(int j = 0; j < allGrades[i].size(); j++){
+                cout << allGrades[i][j] << " ";
+            
+        }
+        cout << endl;
+    }
 }
