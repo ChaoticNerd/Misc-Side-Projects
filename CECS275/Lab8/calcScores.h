@@ -24,7 +24,7 @@ void generateReportClass(fstream &inputFile, vector<vector<vector<double>>> &all
         int isGradesDropped, vector<double> &calculatedPercentages, vector<double> &averageScores);
 void vector_dumptruck(vector<double> &calculatedPercentages, vector<double> &averageScores,
                       vector<vector<double>> &calculatedClassPercentages, vector<vector<vector<double>>> &allGrades);
-
+void threshScore(vector<vector<double>> &calculatedClassPercentages, int assSize, int tryThougtButHole, int hilow);
 using namespace std;
 
 // Grade weights
@@ -44,24 +44,63 @@ const double GradeA = 0.90,
 void bubbleSort(vector<vector<double>> &calculatedClassPercentages){
     int amtExchanged = 1;       // increment every time we have to swap two vectors
     int indexer = 1;            // increments before while check
+    bool isSwap = true;
 
     do{
         if(indexer >= calculatedClassPercentages.size()){
             indexer = 1;        // restarts the indexer
+            if(amtExchanged == 0){
+                isSwap = false;
+            }
             amtExchanged = 0;   // restarts the amtExchanged
+            
         }
         // cout << "COMPARING: " << calculatedClassPercentages[indexer + 1][5] 
         //      << " WITH: "     << calculatedClassPercentages[indexer][5] << endl;
 
         // grabbing the 6th element as that's the total percentage for comparison and we can just sort using that
         if(calculatedClassPercentages[indexer][5] < calculatedClassPercentages[indexer - 1][5] ){
-            calculatedClassPercentages[indexer - 1].swap(calculatedClassPercentages[indexer]);
+            // calculatedClassPercentages[indexer - 1].swap(calculatedClassPercentages[indexer]);
+            swap(calculatedClassPercentages[indexer - 1], calculatedClassPercentages[indexer]);
             amtExchanged++;
-            cout << amtExchanged << endl;
+            // cout << amtExchanged << endl;c
         }
         indexer++;
+        //cout << "indexer why "<< indexer<<endl; 
+        //cout << "WAS THERE ANYTHING EXCHANGED IN THIS TERM: " << amtExchanged << endl;
+    }while(isSwap);
+}
 
-    }while(amtExchanged);
+/*
+ * isHigh: 1 = greater than
+ * threshold input is 0.xxxxxx
+*/
+void threshScore(vector<vector<double>> &calculatedClassPercentages, double threshold, int isHigh){
+    int index;
+    
+    // greater than
+    if (isHigh){
+        for(int i = 0; i < calculatedClassPercentages.size(); i++){
+            if(calculatedClassPercentages[i][5] >= threshold){
+                index = i;
+                break;
+            }
+        }
+        calculatedClassPercentages.erase(calculatedClassPercentages.begin(), calculatedClassPercentages.begin() + index);
+
+    // less than    
+    }else if (!isHigh){
+        for(int i = 0; i < calculatedClassPercentages.size(); i++){
+            if(calculatedClassPercentages[i][6] <= threshold){
+                index = i;
+                break;
+            }
+        }
+        calculatedClassPercentages.erase(calculatedClassPercentages.begin() + index, calculatedClassPercentages.end());
+
+    }
+    
+
 }
 
 void getTotalPercentage(vector<vector<double>> &calculatedClassPercentages){

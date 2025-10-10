@@ -40,8 +40,8 @@ int main(void){
 
     getPoints(input, totalAssignments, allGrades);
 
-    populateGradeVector(temp, totalCategoryPoints, 39);
-    populateStudentVector(temp, calculatedPercentages, 39);    
+    populateGradeVector(temp, totalCategoryPoints, classSize-1);
+    populateStudentVector(temp, calculatedPercentages, classSize-1);    
     
     // Do the stuff to drop the lowest grade as per requested wahoo!
     for(int i = 0; i < sizeof(totalAssignmentsDropped)/sizeof(totalAssignmentsDropped[0]); i++){
@@ -96,8 +96,17 @@ int main(void){
          << "TESTING BUBBLE SORT" << endl;
     bubbleSort(calculatedPercentages);
     testPrintVector(calculatedPercentages);
+
+
+    double thoughts = .80;
+    int isHigh = 1;
+
+    cout << "========================================================\n"
+         << "TESTING THRESHOLD DISPLAYED" << endl;
+    threshScore(calculatedPercentages,thoughts,isHigh);
+    testPrintVector(calculatedPercentages);
     // cout << "amount of Average Scores: " << averageScores.size()<< endl; 
-    // cout << "PERCENTAGES: " << endl;
+    // cout << "PERCENTAGES: " << endl;, 
     // for(int i = 0; i < calculatedPercentages.size(); i++){
     //     for(double x : calculatedPercentages[i]){
     //         cout << x << " ";
