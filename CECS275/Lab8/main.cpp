@@ -17,7 +17,8 @@ vector<string> usernameBank, passwordBank;
 vector<double> calculatedPercentages, averageScores;
 vector<vector<double>> calculatedClassPercentages;
 vector<vector<vector<double>>> allGrades;
-int studentNumber, classSize, userSelect, upload = 0, report = 0, isGradesDropped, totalAssignmentsDropped[5], totalAssignments[5];
+double threshold;
+int studentNumber, classSize, userSelect, compareSelect, upload = 0, report = 0, isGradesDropped, totalAssignmentsDropped[5], totalAssignments[5];
 bool isFileUploaded = false;
 const int AMOUNT_OF_CATEGORIES[5] = {1, 1, 1, 1, 1};
 
@@ -67,9 +68,9 @@ int main() {
             cout << "What is your class size?" << endl;
             cin >> classSize;
             if(dropped == "Y"){
-                generateReportClass(inputFile, classSize, allGrades, totalAssignmentsDropped, totalAssignments, 1, calculatedClassPercentages, averageScores); // to do BROKIE: uhhhhhh idk
+                generateReportClass(inputFile, classSize, 0, allGrades, totalAssignmentsDropped, totalAssignments, 1, calculatedClassPercentages, averageScores); // to do BROKIE: uhhhhhh idk
             } else if(dropped == "N"){
-                generateReportClass(inputFile, classSize, allGrades, totalAssignmentsDropped, totalAssignments, 0, calculatedClassPercentages, averageScores);
+                generateReportClass(inputFile, classSize, 0, allGrades, totalAssignmentsDropped, totalAssignments, 0, calculatedClassPercentages, averageScores);
             }
             inputFile.close();
             printClassResults(averageScores);
@@ -78,11 +79,42 @@ int main() {
             
         //empty for LAB8
         case 5:
-            cout << "for Lab 8 Nothing now." << endl;
+            checkFile(inputFile);
+            cout << "With grades dropped? (Y/N)" << endl;
+            cin >> dropped;
+            cout << "What is your class size?" << endl;
+            cin >> classSize;
+            if(dropped == "Y"){
+                generateReportClass(inputFile, classSize, 1, allGrades, totalAssignmentsDropped, totalAssignments, 1, calculatedClassPercentages, averageScores); // to do BROKIE: uhhhhhh idk
+            } else if(dropped == "N"){
+                generateReportClass(inputFile, classSize, 1, allGrades, totalAssignmentsDropped, totalAssignments, 0, calculatedClassPercentages, averageScores);
+            }
+            inputFile.close();
+            printClassSortedResults(calculatedClassPercentages);
+            vector_dumptruck(calculatedPercentages, averageScores, calculatedClassPercentages, allGrades);
             break;
         //empty for LAB8
         case 6:
-            cout << "for Lab 8 Nothing now." << endl;
+            checkFile(inputFile);
+            cout << "With grades dropped? (Y/N)" << endl;
+            cin >> dropped;
+            cout << "What is your class size?" << endl;
+            cin >> classSize;
+            cout << "Would you like to display High or Low Scores?\n"
+                 << "1. High Scores\n"
+                 << "2. Low Scores \n";
+            cin >> compareSelect;
+            cout << "Please enter Threshold (0.xx format)" << endl;
+            cin >> threshold;
+            if(dropped == "Y"){
+                generateReportClass(inputFile, classSize, 1, allGrades, totalAssignmentsDropped, totalAssignments, 1, calculatedClassPercentages, averageScores); // to do BROKIE: uhhhhhh idk
+            } else if(dropped == "N"){
+                generateReportClass(inputFile, classSize, 1, allGrades, totalAssignmentsDropped, totalAssignments, 0, calculatedClassPercentages, averageScores);
+            }
+            inputFile.close();
+            threshScore(calculatedClassPercentages,threshold,compareSelect);
+            printClassSortedResults(calculatedClassPercentages);
+            vector_dumptruck(calculatedPercentages, averageScores, calculatedClassPercentages, allGrades);
             break;
 
         //doesnt break do-while, but logsout and repeats login function

@@ -56,6 +56,7 @@ int main() {
             }
             inputFile.close();
             displaySoloReport( user, calculatedPercentages, averageScores);
+            vecBGone(allGrades, totalAssignmentsDropped, totalAssignments, calculatedPercentages, calculatedClassPercentages, averageScores);
             break;
 
         //Class Average report
@@ -72,6 +73,7 @@ int main() {
             }
             inputFile.close();
             displayClassReport( user, averageScores);
+            vecBGone(allGrades, totalAssignmentsDropped, totalAssignments, calculatedPercentages, calculatedClassPercentages, averageScores);
             break;
             
         //empty for LAB8
