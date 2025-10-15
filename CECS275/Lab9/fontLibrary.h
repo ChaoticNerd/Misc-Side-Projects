@@ -5,7 +5,7 @@
 
 using namespace std;
 
-const unsigned char boldLetterFont[26][9] = 
+const unsigned int boldLetterFont[26][9] = 
 {   
     {'A', 0x7E, 0xC3, 0xFF, 0xFF, 0xC3, 0xC3, 0xC3, 0xC3}, //A
     {'B', 0xFE, 0xC3, 0xFF, 0xFE, 0xC3, 0xC3, 0xC3, 0xFE}, //B
@@ -39,17 +39,55 @@ const unsigned char boldLetterFont[26][9] =
 
 /*
 WHAT THE HELL IM DOING:
-take in a string
+take in a 
 return a 2d string pointer array (so it can expand)
 compare boldLetterLibrary[i][0]
 
 
 
 
-inputs take in the 
+inputs take in the
+wait
+fuck how do i compare?
+
 
 
 
 
 */
 // string
+
+string** hex2bin(char* userInputChar, unsigned int boldLetterFont){
+    int(*font)[9];
+    font = boldLetterFont;
+    int wireInt = 0;            //temporarily hold the value of wireInt, to be operated on for the conversion from Hex to Bin
+    int asciiCheck = 0;   
+    string wireString = "";     //temporarly holds the binary string while calculations are ongoing to tehn give it it binString eventually
+    //unsigned  string** hexString[sizeof(userInputChar)/sizeof(userInputChar[0])][8] ;
+
+    string **binString;             //dynamic 2d pointer array (i hope works) that will contain all the binary strings for every letter in the given string 
+    binString = new int*[10];       //dynamic array of size[10] of pointers to int
+
+    for (int i = 0; i < 8; i++) {   
+        binString[i] = new int[8];  //each of the i-th pointer is now pointing to dynamic array size[10] of actual int values 
+    }
+
+
+    for ( int i = 0; i < sizeof(userInputChar)/sizeof(userInputChar[0]); i++){  //increment based on size of array
+        for (int j = 0; j < 25; j++){                                           //increment based on the the amount of letters or boldFontLetter size of 26
+            if (*userInputChar[i] == *font[j][0]){                              //determine whether or not the char from pointer is == to 
+                for (int k = 1; k < 9; k++ ){
+                    wireInt = font[j][k];                                       //wireInt holds the value of font[j][k]
+                    
+                    for( int l = 0; l < 8; l++){
+                        wireString.insert(0,to_string(wireInt % 2));
+                        wireInt = wireInt / 2;
+                    }
+                    binString[i][k-1] = wireString;
+                    wireString = "";
+                    wireInt = 0;
+                }
+            }
+        }
+    }
+}
