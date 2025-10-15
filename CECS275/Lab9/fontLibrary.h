@@ -1,34 +1,55 @@
 #include <iostream>
 #include <iomanip>
-#include <fstream>
 #include <string>
 #include <array>
 
+using namespace std;
 
-const string letterFont[8][26] = {  {"7E", "C3", "FF", "FF", "C3", "C3", "C3", "C3"}, //A
-                                    {"FE", "C3", "FF", "FE", "C3", "C3", "C3", "FE"}, //B
-                                    {"7E", "C3", "C0", "C0", "C0", "C0", "C3", "7E"}, //C
-                                    {"FE", "C3", "C3", "C3", "C3", "C3", "C3", "FE"}, //D
-                                    {"FF", "FF", "C0", "E0", "E0", "C0", "C0", "FF"}, //E
-                                    {"FF", "C0", "C0", "FC", "F8", "C0", "C0", "C0"}, //F
-                                    {"7E", "C3", "C0", "C0", "C7", "C3", "FF", "7E"}, //G
-                                    {"C3", "C3", "C3", "FF", "FF", "C3", "C3", "C3"}, //H
-                                    {"FF", "7E", "18", "18", "18", "18", "7E", "FF"}, //I
-                                    {"3F", "03", "03", "03", "03", "C3", "FF", "7E"}, //J
-                                    {"C6", "DE", "F8", "F0", "FC", "CE", "C6", "C6"}, //K
-                                    {"C0", "C0", "C0", "C0", "C0", "C0", "FF", "FF"}, //L
-                                    {"C3", "E7", "FF", "DB", "C3", "C3", "C3", "C3"}, //M
-                                    {"E3", "F3", "FB", "DF", "CF", "C7", "C3", "C3"}, //N
-                                    {"7E", "C3", "C3", "C3", "C3", "C3", "C3", "7E"}, //O
-                                    {"FE", "FF", "C3", "FE", "FC", "C0", "C0", "C0"}, //P
-                                    {"7E", "C3", "C3", "C3", "CB", "C7", "FE", "7D"}, //Q
-                                    {"FE", "FF", "C3", "FF", "FE", "C3", "C3", "C3"}, //R
-                                    {"7E", "C3", "C0", "FE", "7F", "03", "C3", "7E"}, //S
-                                    {"FF", "18", "18", "18", "18", "18", "18", "18"}, //T
-                                    {"C3", "C3", "C3", "C3", "C3", "C3", "FF", "7E"}, //U
-                                    {"C3", "C3", "C3", "E7", "66", "7E", "3C", "18"}, //V
-                                    {"C3", "C3", "C3", "DB", "DB", "DB", "FF", "66"}, //W
-                                    {"C3", "E7", "7E", "18", "7E", "E7", "C3", "C3"}, //X
-                                    {"C3", "E7", "7E", "3C", "18", "18", "18", "18"}, //Y
-                                    {"FF", "87", "0E", "1C", "38", "70", "E1", "FF"}, //Z
+const unsigned char boldLetterFont[26][9] = 
+{   
+    {'A', 0x7E, 0xC3, 0xFF, 0xFF, 0xC3, 0xC3, 0xC3, 0xC3}, //A
+    {'B', 0xFE, 0xC3, 0xFF, 0xFE, 0xC3, 0xC3, 0xC3, 0xFE}, //B
+    {'C', 0x7E, 0xC3, 0xC0, 0xC0, 0xC0, 0xC0, 0xC3, 0x7E}, //C
+    {'D', 0xFE, 0xC3, 0xC3, 0xC3, 0xC3, 0xC3, 0xC3, 0xFE}, //D
+    {'E', 0xFF, 0xFF, 0xC0, 0xE0, 0xE0, 0xC0, 0xC0, 0xFF}, //E
+    {'F', 0xFF, 0xC0, 0xC0, 0xFC, 0xF8, 0xC0, 0xC0, 0xC0}, //F
+    {'G', 0x7E, 0xC3, 0xC0, 0xC0, 0xC7, 0xC3, 0xFF, 0x7E}, //G
+    {'H', 0xC3, 0xC3, 0xC3, 0xFF, 0xFF, 0xC3, 0xC3, 0xC3}, //H
+    {'I', 0xFF, 0x7E, 0x18, 0x18, 0x18, 0x18, 0x7E, 0xFF}, //I
+    {'J', 0x3F, 0x03, 0x03, 0x03, 0x03, 0xC3, 0xFF, 0x7E}, //J
+    {'K', 0xC6, 0xDE, 0xF8, 0xF0, 0xFC, 0xCE, 0xC6, 0xC6}, //K
+    {'L', 0xC0, 0xC0, 0xC0, 0xC0, 0xC0, 0xC0, 0xFF, 0xFF}, //L
+    {'M', 0xC3, 0xE7, 0xFF, 0xDB, 0xC3, 0xC3, 0xC3, 0xC3}, //M
+    {'N', 0xE3, 0xF3, 0xFB, 0xDF, 0xCF, 0xC7, 0xC3, 0xC3}, //N
+    {'O', 0x7E, 0xC3, 0xC3, 0xC3, 0xC3, 0xC3, 0xC3, 0x7E}, //O
+    {'P', 0xFE, 0xFF, 0xC3, 0xFE, 0xFC, 0xC0, 0xC0, 0xC0}, //P
+    {'Q', 0x7E, 0xC3, 0xC3, 0xC3, 0xCB, 0xC7, 0xFE, 0x7D}, //Q
+    {'R', 0xFE, 0xFF, 0xC3, 0xFF, 0xFE, 0xC3, 0xC3, 0xC3}, //R
+    {'S', 0x7E, 0xC3, 0xC0, 0xFE, 0x7F, 0x03, 0xC3, 0x7E}, //S
+    {'T', 0xFF, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18}, //T
+    {'U', 0xC3, 0xC3, 0xC3, 0xC3, 0xC3, 0xC3, 0xFF, 0x7E}, //U
+    {'V', 0xC3, 0xC3, 0xC3, 0xE7, 0x66, 0x7E, 0x3C, 0x18}, //V
+    {'W', 0xC3, 0xC3, 0xC3, 0xDB, 0xDB, 0xDB, 0xFF, 0x66}, //W
+    {'X', 0xC3, 0xE7, 0x7E, 0x18, 0x7E, 0xE7, 0xC3, 0xC3}, //X
+    {'Y', 0xC3, 0xE7, 0x7E, 0x3C, 0x18, 0x18, 0x18, 0x18}, //Y
+    {'Z', 0xFF, 0x87, 0x0E, 0x1C, 0x38, 0x70, 0xE1, 0xFF}, //Z
 };
+
+// Converting to binary belongs here
+
+/*
+WHAT THE HELL IM DOING:
+take in a string
+return a 2d string pointer array (so it can expand)
+compare boldLetterLibrary[i][0]
+
+
+
+
+inputs take in the 
+
+
+
+
+*/
+// string

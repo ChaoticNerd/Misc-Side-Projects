@@ -92,7 +92,7 @@ void threshScore(vector<vector<double>> &calculatedClassPercentages, double thre
     // less than    
     }else if (!isHigh){
         for(int i = 0; i < calculatedClassPercentages.size(); i++){
-            if(calculatedClassPercentages[i][6] <= threshold){
+            if(calculatedClassPercentages[i][5] <= threshold){
                 index = i;
                 break;
             }
@@ -490,13 +490,13 @@ void generateReportClass(fstream &inputFile, int classSize, int sortSelect, vect
     if (sortSelect == 1){
         getTotalPercentage(calculatedPercentages);
         bubbleSort(calculatedPercentages);
-        for(int i = 0; i < calculatedPercentages.size(); i++){
-            for(int j = 0; j < calculatedPercentages[i].size(); j++){
-                    cout << calculatedPercentages[i][j] << " ";
+        // for(int i = 0; i < calculatedPercentages.size(); i++){
+        //     for(int j = 0; j < calculatedPercentages[i].size(); j++){
+        //             cout << calculatedPercentages[i][j] << " ";
                 
-            }
-            cout << endl;
-        }
+        //     }
+        //     cout << endl;
+        // }
         
     }
     // cout << "AverageScores: " << endl;
