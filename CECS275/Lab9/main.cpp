@@ -4,9 +4,10 @@
 int main(void){
 
     string userInput = getUserInput();
-
+    
     // holding space for null char
     char* userInputChars = new char[userInput.length() + 1];
+    
 
     processUserInput(userInput, userInputChars); // this function call breaks :: char* is a nullptr
 

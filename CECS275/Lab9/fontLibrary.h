@@ -35,6 +35,37 @@ const unsigned int boldLetterFont[26][9] =
     {'Z', 0xFF, 0x87, 0x0E, 0x1C, 0x38, 0x70, 0xE1, 0xFF}, //Z
 };
 
+const unsigned int normLetterFont[26][9] = 
+{   
+    {'A', 74, 7F, 18, C6, 20}, //A
+    {'B', F4, 7D, 18, C7, C0}, //B
+    {'C', 74610845C0}, //C
+    {'D', F46318C7C0}, //D
+    {'E', FC390843E0}, //E
+    {'F', FC39084200}, //F
+    {'G', 7C2718C5C0}, //G
+    {'H', 8C7F18C520}, //H
+    {'I', 71084211C0}, //I
+    {'J', 784210C5C0}, //J
+    {'K', 8CB928C520}, //K
+    {'L', 84210843E0}, //L
+    {'M', 0xC3, 0xE7, 0xFF, 0xDB, 0xC3, 0xC3, 0xC3, 0xC3}, //M
+    {'N', 0xE3, 0xF3, 0xFB, 0xDF, 0xCF, 0xC7, 0xC3, 0xC3}, //N
+    {'O', 0x7E, 0xC3, 0xC3, 0xC3, 0xC3, 0xC3, 0xC3, 0x7E}, //O
+    {'P', 0xFE, 0xFF, 0xC3, 0xFE, 0xFC, 0xC0, 0xC0, 0xC0}, //P
+    {'Q', 0x7E, 0xC3, 0xC3, 0xC3, 0xCB, 0xC7, 0xFE, 0x7D}, //Q
+    {'R', 0xFE, 0xFF, 0xC3, 0xFF, 0xFE, 0xC3, 0xC3, 0xC3}, //R
+    {'S', 0x7E, 0xC3, 0xC0, 0xFE, 0x7F, 0x03, 0xC3, 0x7E}, //S
+    {'T', 0xFF, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18}, //T
+    {'U', 0xC3, 0xC3, 0xC3, 0xC3, 0xC3, 0xC3, 0xFF, 0x7E}, //U
+    {'V', 0xC3, 0xC3, 0xC3, 0xE7, 0x66, 0x7E, 0x3C, 0x18}, //V
+    {'W', 0xC3, 0xC3, 0xC3, 0xDB, 0xDB, 0xDB, 0xFF, 0x66}, //W
+    {'X', 0xC3, 0xE7, 0x7E, 0x18, 0x7E, 0xE7, 0xC3, 0xC3}, //X
+    {'Y', 0xC3, 0xE7, 0x7E, 0x3C, 0x18, 0x18, 0x18, 0x18}, //Y
+    {'Z', 0xFF, 0x87, 0x0E, 0x1C, 0x38, 0x70, 0xE1, 0xFF}, //Z
+};
+
+
 // Converting to binary belongs here
 
 /*
@@ -48,9 +79,7 @@ compare boldLetterLibrary[i][0]
 
 inputs take in the
 wait
-fuck how do i compare?
-
-
+I need to return a 2d array string with a pointer
 
 
 
@@ -65,29 +94,30 @@ string** hex2bin(char* userInputChar, unsigned int boldLetterFont){
     string wireString = "";     //temporarly holds the binary string while calculations are ongoing to tehn give it it binString eventually
     //unsigned  string** hexString[sizeof(userInputChar)/sizeof(userInputChar[0])][8] ;
 
-    string **binString;             //dynamic 2d pointer array (i hope works) that will contain all the binary strings for every letter in the given string 
-    binString = new int*[10];       //dynamic array of size[10] of pointers to int
+    string** binString;             //dynamic 2d pointer array (i hope works) that will contain all the binary strings for every letter in the given string 
+    binString = new int[(sizeof(userInputChar)/sizeof(userInputChar[0]))];       //dynamic array of sizeOf[userInputChar] of pointers to int
 
     for (int i = 0; i < 8; i++) {   
         binString[i] = new int[8];  //each of the i-th pointer is now pointing to dynamic array size[10] of actual int values 
     }
 
 
-    for ( int i = 0; i < sizeof(userInputChar)/sizeof(userInputChar[0]); i++){  //increment based on size of array
+    for ( int i = 0; i < (sizeof(userInputChar)/sizeof(userInputChar[0])); i++){  //increment based on size of array
         for (int j = 0; j < 25; j++){                                           //increment based on the the amount of letters or boldFontLetter size of 26
             if (*userInputChar[i] == *font[j][0]){                              //determine whether or not the char from pointer is == to 
                 for (int k = 1; k < 9; k++ ){
                     wireInt = font[j][k];                                       //wireInt holds the value of font[j][k]
                     
-                    for( int l = 0; l < 8; l++){
-                        wireString.insert(0,to_string(wireInt % 2));
-                        wireInt = wireInt / 2;
+                    for( int f = 0; f < 8; f++){
+                        wireString.insert(0,to_string(wireInt % 2));            //as increment it finds the least sig bit to most sig bit
+                        wireInt = wireInt / 2;                                  //gets quotient to calculate value
                     }
-                    binString[i][k-1] = wireString;
+                    binString[i][k-1] = wireString;                             //puts into point strin
                     wireString = "";
                     wireInt = 0;
                 }
             }
         }
     }
+    return binString;
 }
