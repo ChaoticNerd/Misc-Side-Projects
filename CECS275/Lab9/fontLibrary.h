@@ -5,6 +5,8 @@
 
 using namespace std;
 
+void hex2Bin(unsigned int hexCode, int, int, string** binString);
+
 const unsigned int boldLetterFont[26][9] = 
 {   
     {'A', 0x7E, 0xC3, 0xFF, 0xFF, 0xC3, 0xC3, 0xC3, 0xC3}, //A
@@ -35,89 +37,94 @@ const unsigned int boldLetterFont[26][9] =
     {'Z', 0xFF, 0x87, 0x0E, 0x1C, 0x38, 0x70, 0xE1, 0xFF}, //Z
 };
 
-const unsigned int normLetterFont[26][9] = 
+const unsigned int normLetterFont[26][6] = 
 {   
-    {'A', 74, 7F, 18, C6, 20}, //A
-    {'B', F4, 7D, 18, C7, C0}, //B
-    {'C', 74610845C0}, //C
-    {'D', F46318C7C0}, //D
-    {'E', FC390843E0}, //E
-    {'F', FC39084200}, //F
-    {'G', 7C2718C5C0}, //G
-    {'H', 8C7F18C520}, //H
-    {'I', 71084211C0}, //I
-    {'J', 784210C5C0}, //J
-    {'K', 8CB928C520}, //K
-    {'L', 84210843E0}, //L
-    {'M', 0xC3, 0xE7, 0xFF, 0xDB, 0xC3, 0xC3, 0xC3, 0xC3}, //M
-    {'N', 0xE3, 0xF3, 0xFB, 0xDF, 0xCF, 0xC7, 0xC3, 0xC3}, //N
-    {'O', 0x7E, 0xC3, 0xC3, 0xC3, 0xC3, 0xC3, 0xC3, 0x7E}, //O
-    {'P', 0xFE, 0xFF, 0xC3, 0xFE, 0xFC, 0xC0, 0xC0, 0xC0}, //P
-    {'Q', 0x7E, 0xC3, 0xC3, 0xC3, 0xCB, 0xC7, 0xFE, 0x7D}, //Q
-    {'R', 0xFE, 0xFF, 0xC3, 0xFF, 0xFE, 0xC3, 0xC3, 0xC3}, //R
-    {'S', 0x7E, 0xC3, 0xC0, 0xFE, 0x7F, 0x03, 0xC3, 0x7E}, //S
-    {'T', 0xFF, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18}, //T
-    {'U', 0xC3, 0xC3, 0xC3, 0xC3, 0xC3, 0xC3, 0xFF, 0x7E}, //U
-    {'V', 0xC3, 0xC3, 0xC3, 0xE7, 0x66, 0x7E, 0x3C, 0x18}, //V
-    {'W', 0xC3, 0xC3, 0xC3, 0xDB, 0xDB, 0xDB, 0xFF, 0x66}, //W
-    {'X', 0xC3, 0xE7, 0x7E, 0x18, 0x7E, 0xE7, 0xC3, 0xC3}, //X
-    {'Y', 0xC3, 0xE7, 0x7E, 0x3C, 0x18, 0x18, 0x18, 0x18}, //Y
-    {'Z', 0xFF, 0x87, 0x0E, 0x1C, 0x38, 0x70, 0xE1, 0xFF}, //Z
+    {'A', 0x74, 0x7F, 0x18, 0xC6, 0x20}, //A
+    {'B', 0xF4, 0x7D, 0x18, 0xC7, 0xC0}, //B
+    {'C', 0x74, 0x61, 0x08, 0x45, 0xC0}, //C
+    {'D', 0xF4, 0x63, 0x18, 0xC7, 0xC0}, //D
+    {'E', 0xFC, 0x39, 0x08, 0x43, 0xE0}, //E
+    {'F', 0xFC, 0x39, 0x08, 0x42, 0x00}, //F
+    {'G', 0x7C, 0x27, 0x18, 0xC5, 0xC0}, //G
+    {'H', 0x8C, 0x7F, 0x18, 0xC5, 0x20}, //H
+    {'I', 0x71, 0x08, 0x42, 0x11, 0xC0}, //I
+    {'J', 0x78, 0x42, 0x10, 0xC5, 0xC0}, //J
+    {'K', 0x8C, 0xB9, 0x28, 0xC5, 0x20}, //K
+    {'L', 0x84, 0x21, 0x08, 0x43, 0xE0}, //L
+    {'M', 0x8E, 0xEB, 0x18, 0xC5, 0x20}, //M
+    {'N', 0x8E, 0x6B, 0x38, 0xC6, 0x20}, //N
+    {'O', 0x74, 0x63, 0x18, 0xC3, 0xC0}, //O
+    {'P', 0xF4, 0x7D, 0x08, 0x42, 0x00}, //P
+    {'Q', 0x74, 0x63, 0x1A, 0xC9, 0xA0}, //Q
+    {'R', 0xF4, 0x7D, 0x18, 0xC6, 0x20}, //R
+    {'S', 0x7C, 0x1C, 0x10, 0xC5, 0xC0}, //S
+    {'T', 0xF9, 0x08, 0x42, 0x10, 0x80}, //T
+    {'U', 0x8C, 0x63, 0x18, 0xC5, 0xC0}, //U
+    {'V', 0x8C, 0x63, 0x15, 0x28, 0x80}, //V
+    {'W', 0x8C, 0x63, 0x1A, 0xEE, 0x20}, //W
+    {'X', 0x8A, 0x88, 0xA8, 0xC6, 0x20}, //X
+    {'Y', 0x8A, 0x88, 0x42, 0x10, 0x80}, //Y
+    {'Z', 0xFC, 0x44, 0x44, 0x47, 0xE0}, //Z
 };
 
-
-// Converting to binary belongs here
-
 /*
-WHAT THE HELL IM DOING:
-take in a 
-return a 2d string pointer array (so it can expand)
-compare boldLetterLibrary[i][0]
-
-
-
-
-inputs take in the
-wait
-I need to return a 2d array string with a pointer
-
-
-
+ * @author: Justine the oracle
+ * @param: char* userInputChars 
+ * @param: size given from main; is size of userInput
+ * @brief: Taking the chars of userInputChars and turn them in to binary values while referencing the FontLibrary
+ * @return: string**  
 */
-// string
+void user2Bin(const unique_ptr<char[]>& userInputChars, int size, string** binString){
+    // asdasd use binstring[i][j]    
+    for(int i = 0; i < size; i++){                                      // runs for as long as user's input
+        // cout << "IM FINE: i" << i << endl;
+        
+        for( int j = 0; j < 25; j++){                                   // checks through font char
+            // cout << "IM Not FINE"<< endl;
+            if(userInputChars[i] == ' '){
+                // if it's a space, break?
+                break;
+            }else if(userInputChars[i] == boldLetterFont[j][0]){              // checks until string char matches font char
+                cout << "userInputChars: " << userInputChars[i] << endl;
+                cout << "Senator: susus amongus: " << boldLetterFont[j][0] << endl;
 
-string** hex2bin(char* userInputChar, unsigned int boldLetterFont){
-    int(*font)[9];
-    font = boldLetterFont;
-    int wireInt = 0;            //temporarily hold the value of wireInt, to be operated on for the conversion from Hex to Bin
-    int asciiCheck = 0;   
-    string wireString = "";     //temporarly holds the binary string while calculations are ongoing to tehn give it it binString eventually
-    //unsigned  string** hexString[sizeof(userInputChar)/sizeof(userInputChar[0])][8] ;
-
-    string** binString;             //dynamic 2d pointer array (i hope works) that will contain all the binary strings for every letter in the given string 
-    binString = new int[(sizeof(userInputChar)/sizeof(userInputChar[0]))];       //dynamic array of sizeOf[userInputChar] of pointers to int
-
-    for (int i = 0; i < 8; i++) {   
-        binString[i] = new int[8];  //each of the i-th pointer is now pointing to dynamic array size[10] of actual int values 
-    }
-
-
-    for ( int i = 0; i < (sizeof(userInputChar)/sizeof(userInputChar[0])); i++){  //increment based on size of array
-        for (int j = 0; j < 25; j++){                                           //increment based on the the amount of letters or boldFontLetter size of 26
-            if (*userInputChar[i] == *font[j][0]){                              //determine whether or not the char from pointer is == to 
-                for (int k = 1; k < 9; k++ ){
-                    wireInt = font[j][k];                                       //wireInt holds the value of font[j][k]
-                    
-                    for( int f = 0; f < 8; f++){
-                        wireString.insert(0,to_string(wireInt % 2));            //as increment it finds the least sig bit to most sig bit
-                        wireInt = wireInt / 2;                                  //gets quotient to calculate value
-                    }
-                    binString[i][k-1] = wireString;                             //puts into point strin
-                    wireString = "";
-                    wireInt = 0;
+                // k goes up to 8 ;;; however, binString only goes up to 7
+                for( int k = 1; k < 9; k++){                            // interates through the font block to get hex values
+                    // cout << "IM FUCKISH FINE"<< endl;
+                    hex2Bin(boldLetterFont[j][k], i, k, binString);
+                    // cout << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA " << boldLetterFont[j][k] << " " << endl;
                 }
             }
         }
     }
-    return binString;
+    
 }
+
+/*
+ * @author: Justin
+ * @param: unsigned int hexCode is a integer from the fontLibrary and is the string we translate into binary for use
+ * @param: string** binString is iterated through to store the translated binary 
+ * @brief: 
+ * @return: 
+*/
+void hex2Bin(unsigned int hexCode, int currentChar, int currentRow, string** binString){
+    int wireInt = hexCode;
+    string wireString;
+    // cout <<"The LOOP Might Exist   "<< wireInt << endl;
+    for( int i = 0; i < 8; i++){
+        // cout <<"The LOOP Might Exist sometimes"<< i <<endl;
+        wireString.insert(0,to_string(wireInt % 2));            //as increment it finds the least sig bit to most sig bit
+        wireInt = wireInt / 2;                                  //gets quotient to calculate value
+        // cout <<"is the wire int changing as it iterates  " << wireInt<<endl;
+        // cout <<"wireString changes as it iterates" << wireString <<endl;
+
+    }
+    // cout <<"The Current Char " << currentChar << "   binstring is my little pogchamp  :)  "<< currentRow<< endl;
+
+    binString[currentChar][currentRow-1] = wireString;    // this breaks on currentChar = 0; currentRow = 8 ie. after filling in last column
+
+    // cout <<"OwO notices yuor binstring there " << binString[currentChar][currentRow] <<endl;
+    wireString = "";
+    wireInt = 0;    
+}
+
