@@ -66,17 +66,20 @@ void processUserInput(string userInput, unique_ptr<char[]>& userInputChars){
  * @brief: iterates through binary string and prints it out accordingly
 */
 void showPixels(string** userInputBin, int column, int row){
-    for(int i = 0; i < row; i++){
-        for(int j = 0; j < column; j++){
+    for(int i = 0; i < column; i++){ // CHARACTER (A,B,C,...)
+        for(int j = 0; j < row; j++){ // WHICH HEX STRING TO ACCESS (A ROW 1, A ROW 2, A ROW 3, ...)
             // cout << ESCAPE_CHARACTER << HIDE << ';' << GREEN_BACKGROUND  << " ASDJKHASKJDAS " << ESCAPE_CHARACTER <<"0m" << endl;
             // cout << userInputBin[i][j] << endl;
-            for(int k = 0; k < userInputBin[i][j].length(); k++){
+            
+            for(int k = 0; k < userInputBin[i][j].length(); k++){ // BINARY STRING ACCESS
                 if(userInputBin[i][j][k] == '1')
                     cout << ESCAPE_CHARACTER << HIDE << ';' << GREEN_BACKGROUND << " " << ESCAPE_CHARACTER << RESET_CHARACTER;
                 else
                     cout << ESCAPE_CHARACTER << HIDE << ';' << WHITE_BACKGROUND << " " << ESCAPE_CHARACTER << RESET_CHARACTER;
             }
-            cout << endl;
+            // each indent is the row of the letter
+            cout << " ";
+            
         }
         cout << endl;
     }
