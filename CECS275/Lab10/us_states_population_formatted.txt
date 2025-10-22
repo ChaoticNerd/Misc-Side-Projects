@@ -1,1 +1,51 @@
-Alabama,AL,4,447,100Alaska,AK,626,932Arizona,AZ,5,130,632Arkansas,AR,2,673,400California,CA,33,871,648Colorado,CO,4,301,261Connecticut,CT,3,405,565Delaware,DE,783,600Florida,FL,15,982,378Georgia,GA,8,186,453Hawaii,HI,1,211,537Idaho,ID,1,293,953Illinois,IL,12,419,293Indiana,IN,6,080,485Iowa,IA,2,926,324Kansas,KS,2,688,418Kentucky,KY,4,041,769Louisiana,LA,4,468,976Maine,ME,1,274,923Maryland,MD,5,296,486Massachusetts,MA,6,349,097Michigan,MI,9,938,444Minnesota,MN,4,919,479Mississippi,MS,2,844,658Missouri,MO,5,595,211Montana,MT,902,195Nebraska,NE,1,711,263Nevada,NV,1,998,257NewHampshire,NH,1,235,786NewJersey,NJ,8,414,350NewMexico,NM,1,819,046NewYork,NY,18,976,457NorthCarolina,NC,8,049,313NorthDakota,ND,642,200Ohio,OH,11,353,140Oklahoma,OK,3,450,654Oregon,OR,3,421,399Pennsylvania,PA,12,281,054RhodeIsland,RI,1,048,319SouthCarolina,SC,4,012,012SouthDakota,SD,754,844Tennessee,TN,5,689,283Texas,TX,20,851,820Utah,UT,2,233,169Vermont,VT,608,827Virginia,VA,7,078,515Washington,WA,5,894,121WashingtonD.C.,DC,572,059WestVirginia,WV,1,808,344Wisconsin,WI,5,363,675Wyoming,WY,493,782
+Alabama AL 4,447,100
+Alaska AK 626,932
+Arizona AZ 5,130,632
+Arkansas AR 2,673,400
+California CA 33,871,648
+Colorado CO 4,301,261
+Connecticut CT 3,405,565
+Delaware DE 783,600
+Florida FL 15,982,378
+Georgia GA 8,186,453
+Hawaii HI 1,211,537
+Idaho ID 1,293,953
+Illinois IL 12,419,293
+Indiana IN 6,080,485
+Iowa IA 2,926,324
+Kansas KS 2,688,418
+Kentucky KY 4,041,769
+Louisiana LA 4,468,976
+Maine ME 1,274,923
+Maryland MD 5,296,486
+Massachusetts MA 6,349,097
+Michigan MI 9,938,444
+Minnesota MN 4,919,479
+Mississippi MS 2,844,658
+Missouri MO 5,595,211
+Montana MT 902,195
+Nebraska NE 1,711,263
+Nevada NV 1,998,257
+New Hampshire NH 1,235,786
+New Jersey NJ 8,414,350
+New Mexico NM 1,819,046
+New York NY 18,976,457
+North Carolina NC 8,049,313
+North Dakota ND 642,200
+Ohio OH 11,353,140
+Oklahoma OK 3,450,654
+Oregon OR 3,421,399
+Pennsylvania PA 12,281,054
+Rhode Island RI 1,048,319
+South Carolina SC 4,012,012
+South Dakota SD 754,844
+Tennessee TN 5,689,283
+Texas TX 20,851,820
+Utah UT 2,233,169
+Vermont VT 608,827
+Virginia VA 7,078,515
+Washington WA 5,894,121
+Washington D C  DC 572,059
+West Virginia WV 1,808,344
+Wisconsin WI 5,363,675
+Wyoming WY 493,782

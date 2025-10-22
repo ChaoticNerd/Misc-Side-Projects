@@ -17,7 +17,7 @@ void getState(const string fileName){
     // int digitCount = 0; // PUNCTUATE NUMBERS
 
     int counter = 0;
-    while(rfile >> line){
+    while(rfile.getline(line, 2000, '\n')){
         // formattedLine = new char[strlen(line)]; 
         // strcpy(formattedLine,line);
         // cout << strlen(line) << endl;
@@ -45,8 +45,17 @@ void getState(const string fileName){
         punctuateNumbers(line);
 
         // time to space out the beginning of the string until it detects a number
+        for(int i = 0; i < strlen(line); i++){
+            if(isdigit(line[i])){
+                break;
+            }else if(ispunct(line[i]) ){
+                line[i] = ' ';
+            }
+        }
+
         counter = 0;
-        wfile << line;
+        wfile << line << endl;
+        cout << line << endl;
         // cout << line;
         // delete [] formattedLine;
     }
