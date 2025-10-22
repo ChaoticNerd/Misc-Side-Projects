@@ -1,0 +1,2 @@
+    C++ is fun. My friends and I are enjoying this assignment.
+       Hello! How are you? Not doing so well because this lab is difficult.

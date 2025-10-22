@@ -55,7 +55,7 @@ void getState(const string fileName){
 
         counter = 0;
         wfile << line << endl;
-        cout << line << endl;
+        // cout << line << endl;
         // cout << line;
         // delete [] formattedLine;
     }
