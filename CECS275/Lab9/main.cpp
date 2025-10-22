@@ -9,8 +9,8 @@ int main(void){
 
     string userInput = getUserWord();
     int userInputSize = userInput.length(); // rows
-    //int isBolded = isBold();
-    int isBolded = 8; // columns
+    int isBolded = isBold();
+    // int isBolded = 8; // columns
     
     string** binString;
     binString = new string*[userInputSize]; // this is the rows
@@ -18,7 +18,7 @@ int main(void){
         binString[i] = new string[isBolded];
         for(int j = 0; j < isBolded; j++){ // this runs 0 to 7
             binString[i][j] = "N";
-        cout << " CHECKING BINSTRING at i: " << i << " and j: " << j << " " << binString[i][j] << endl;
+        // cout << " CHECKING BINSTRING at i: " << i << " and j: " << j << " " << binString[i][j] << endl;
 
         }
         // cout << binString[i] << " CHECKING BINSTRING i" << endl;
