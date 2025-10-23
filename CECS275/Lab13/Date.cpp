@@ -3,28 +3,47 @@
 #include <iomanip>
 #include <string>
 
-class Date{
-    private:
-        int month;
-        int day;
-        int year;
-    
-    public:
-        int getMonth(void) const;               // returns month (ACCESSOR)
-        int getDay(void) const;                 // returns date  (ACCESSOR)
-        int getYear(void) const;                // returns year  (ACCESSOR)
+// setting it to Epoch time
+Date::Date(void){
+    month = 1;
+    year = 1970;
+    day = 1;
+}
 
-        void displayDateNums(void) const;       // format: 08/25/2025
-        void displayMonthDayYear(void) const;   // format: August 25, 2025
-        void displayDayMonthYear(void) const;   // format: 25 August 2025
+// OVERLAODED CONSTRUCTOR
+Date::Date(int month, int day, int year){
+    // Ensure valid month
+    if(month <= 12 && month >= 1)
+        this-> month = month;
+    else
+        this -> month = 0;
 
-        bool isLeapYear(void) const;            
-        int dateDifference(void) const;         // find difference between two dates
+    // Ensure valid day
+    if(month == 2){     // Check Feb 
+        if(day <= 28 && !isLeapYear())
+            this-> day = day;
+        else if(isLeapYear() && day <= 29)
+            this -> day = day;
+        else
+            this -> day = 1;
+    }else if(month == 1 || month == 3 || month == 5 || month == 7       // 31 day months
+                        || month == 8 || month == 10 || month == 12){
+        if(day <= 31)
+            this -> day = day;
+        else
+            this -> day = 1;
+    }else{              // 30 day months
+        if(day <= 30)
+            this -> day = day;
+        else
+            this -> day = 1;
+    }
 
-        void incDateOne();                  // Increase a date by one. (MUTATOR)
-        void decDateOne();                  // Decrease a date by one. (MUTATOR)
-        int dateCompare();                  // Compare two dates (return 1 if date1 > date2, 0 if date1 == date2, and -1 if date1 < date2)
-};
+    // All years are valid
+    this-> year = year;
+}
+
+////////////////////////// GETTERS/SETTERS //////////////////////////
 
 /*
  * Returns month
@@ -46,6 +65,20 @@ int Date::getDay(void) const{
 int Date::getYear(void) const{
     return year;
 }
+
+void Date::setYear(int year){
+    this -> year = year;
+}
+
+void Date::setMonth(int month){
+    this -> month = month;
+}
+
+void Date::setDay(int day){
+    this -> day = day;
+}
+
+////////////////////////////////////////////////////////////////////////
 
 void Date::displayDateNums(void) const{
     std::cout << std::setw(2) << std::setfill('0') << month << '/'
@@ -88,4 +121,16 @@ bool Date::isLeapYear(void) const{
 
 int Date::dateDifference(void) const{
     
+}
+
+void Date::incDateOne(void){
+
+}
+
+void Date::decDateOne(void){
+
+}
+
+int Date::dateCompare(void){
+
 }
