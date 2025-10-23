@@ -8,7 +8,7 @@ const string FILENAME_STATES = "us_states_population.txt";
 using namespace std;
 
 int main(void){
-    char *userChoice = new char[2];
+    char *userChoice = new char[1];
     char *readFromFile = new char[20000];
     // char *userFileName;
     // ifstream rfile;
@@ -32,7 +32,6 @@ int main(void){
              << "===================================================" 
              << endl;
         cin.getline(userChoice, 2);
-
         switch(userChoice[0]){
             case '1':
                 //auto cap in here
@@ -42,13 +41,13 @@ int main(void){
                 cin >> fileNameIn;
                 fileNameIn += ".txt";
                 autoCapFileIn.open(fileNameIn);
-
+                cin.ignore(1);
                 // write to:
                 cout << "Please enter file name to write to: ";
                 cin >> fileNameOut;
                 fileNameOut += ".txt";
                 autoCapFileOut.open(fileNameOut);
-
+                cin.ignore(1);
                 // call autoCap for each line
                 while(autoCapFileIn.getline(readFromFile, 20000, '\n')){
                     autoCap(readFromFile);
@@ -66,6 +65,7 @@ int main(void){
                 cout << "fin." << endl;
                 break;
         }
+    
     } while(userChoice[0] != '3');
 
     return 0;
