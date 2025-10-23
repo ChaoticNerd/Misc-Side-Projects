@@ -1,51 +1,51 @@
-Alabama AL 4,447,100
-Alaska AK 626,932
-Arizona AZ 5,130,632
-Arkansas AR 2,673,400
-California CA 33,871,648
-Colorado CO 4,301,261
-Connecticut CT 3,405,565
-Delaware DE 783,600
-Florida FL 15,982,378
-Georgia GA 8,186,453
-Hawaii HI 1,211,537
-Idaho ID 1,293,953
-Illinois IL 12,419,293
-Indiana IN 6,080,485
-Iowa IA 2,926,324
-Kansas KS 2,688,418
-Kentucky KY 4,041,769
-Louisiana LA 4,468,976
-Maine ME 1,274,923
-Maryland MD 5,296,486
-Massachusetts MA 6,349,097
-Michigan MI 9,938,444
-Minnesota MN 4,919,479
-Mississippi MS 2,844,658
-Missouri MO 5,595,211
-Montana MT 902,195
-Nebraska NE 1,711,263
-Nevada NV 1,998,257
-New Hampshire NH 1,235,786
-New Jersey NJ 8,414,350
-New Mexico NM 1,819,046
-New York NY 18,976,457
-North Carolina NC 8,049,313
-North Dakota ND 642,200
-Ohio OH 11,353,140
-Oklahoma OK 3,450,654
-Oregon OR 3,421,399
-Pennsylvania PA 12,281,054
-Rhode Island RI 1,048,319
-South Carolina SC 4,012,012
-South Dakota SD 754,844
-Tennessee TN 5,689,283
-Texas TX 20,851,820
-Utah UT 2,233,169
-Vermont VT 608,827
-Virginia VA 7,078,515
-Washington WA 5,894,121
-Washington D C  DC 572,059
-West Virginia WV 1,808,344
-Wisconsin WI 5,363,675
-Wyoming WY 493,782
+Alabama                     a               4,447,100
+Alaska                      AK,626,932
+Arizona                     a               5,130,632
+Arkansas                    sa2,673,400
+California                  if33,871,648
+Colorado                    ad4,301,261
+Connecticut                 nn3,405,565
+Delaware                    ar,783,600
+Florida                     a               15,982,378
+Georgia                     a               8,186,453
+Hawaii                      HI1,211,537
+Idaho                                      1,293,953
+Illinois                    oi12,419,293
+Indiana                     a               6,080,485
+Iowa                        2,926,324
+Kansas                      KS2,688,418
+Kentucky                    ck4,041,769
+Louisiana                   si4,468,976
+Maine                                      1,274,923
+Maryland                    an5,296,486
+Massachusetts               Ma6,349,097
+Michigan                    ga9,938,444
+Minnesota                   es4,919,479
+Mississippi                 ss2,844,658
+Missouri                    ur5,595,211
+Montana                     a               ,902,195
+Nebraska                    sk1,711,263
+Nevada                      NV1,998,257
+New Hampshire                ew1,235,786
+New Jersey                   Je8,414,350
+New Mexico                   Me1,819,046
+New York                     rk18,976,457
+North Carolina               No8,049,313
+North Dakota                 rt,642,200
+Ohio                        11,353,140
+Oklahoma                    om3,450,654
+Oregon                      OR3,421,399
+Pennsylvania                en12,281,054
+Rhode Island                 od1,048,319
+South Carolina               So4,012,012
+South Dakota                 ut,754,844
+Tennessee                   es5,689,283
+Texas                                      20,851,820
+Utah                        2,233,169
+Vermont                     t               ,608,827
+Virginia                    ni7,078,515
+Washington                  hi5,894,121
+Washington DC                as,572,059
+West Virginia                es1,808,344
+Wisconsin                   on5,363,675
+Wyoming                     g               ,493,782

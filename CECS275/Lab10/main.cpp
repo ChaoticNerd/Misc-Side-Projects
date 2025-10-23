@@ -58,8 +58,8 @@ int main(void){
                 break;
             case '2':
                 // getState in here
-                cout << "File generated." << endl;
                 getState(FILENAME_STATES); // this is option 2
+                cout << "File generated." << endl;
                 break;
             case '3':
                 cout << "fin." << endl;
