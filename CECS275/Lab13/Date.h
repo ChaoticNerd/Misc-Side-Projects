@@ -23,11 +23,11 @@ class Date{
         void displayDayMonthYear(void) const;   // format: 25 August 2025
 
         bool isLeapYear(void) const;            
-        int dateDifference(void) const;         // find difference between two dates
+        int dateDifference(Date) const;         // find difference between two dates
 
-        void incDateOne();                  // Increase a date by one. (MUTATOR)
-        void decDateOne();                  // Decrease a date by one. (MUTATOR)
-        int dateCompare();                  // Compare two dates (return 1 if date1 > date2, 0 if date1 == date2, and -1 if date1 < date2)
+        void incDateOne(void);                  // Increase a date by one. (MUTATOR)
+        void decDateOne(void);                  // Decrease a date by one. (MUTATOR)
+        int dateCompare(Date) const;                  // Compare two dates (return 1 if date1 > date2, 0 if date1 == date2, and -1 if date1 < date2)
 };
 
 #endif
