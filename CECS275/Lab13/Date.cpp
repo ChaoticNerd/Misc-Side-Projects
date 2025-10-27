@@ -134,16 +134,36 @@ bool Date::isLeapYear(void) const{
 // obj1.dateDifference()
 int Date::dateDifference(Date subtractor) const{
     // solution to compare: SUM UP ALL DAYS IN THAT DATE AND THEN COMPARE PROPERLY
-    unsigned long long int days = 0;
-    
-    // years
-    for (long long int i = 0; i < this -> getYear() - subtractor.getYear(); i++){ // determine the amt years and 
+//    float firstYear = this -> getYear();
+//    float subYear = subtractor.getYear();
+   unsigned long long int differnceDay = 0;
+   long long int baseDay = 0;
+   long long int subDay = 0;
+
+//    sumYear = this -> getDay() / day2Year + ( getMonth() / month2Year);
+//    sumYearSubtractor = (subtractor.getDay() / day2Year) + ( getMonth() / month2Year);
+
+//     differenceYear = abs(sumYear - sumYearSubtractor);
+
+    // YEARS 2 DAYS
+    // BASE DAY
+    for (long long int i = 0; i < getYear() - 1 ; i++){ // determine the amt years and 
         if(isLeapYear())
-            days += 366;
+            baseDay += 366;
         
         else if(!isLeapYear())
-            days += 365;
+            baseDay += 365;
     }
+
+    // SUBTRACTOR
+    for (long long int i = 0; i < subtractor.getYear() - 1; i++){ // determine the amt years and 
+        if(isLeapYear())
+            subDay += 366;
+        
+        else if(!isLeapYear())
+            subDay += 365;
+    }
+    
     //use comparison find the higher value; then calculate the difference
     // int diffday; //temp will fix in abit 
     // if(this -> dateCompare(subtractor) == 1){
@@ -152,7 +172,53 @@ int Date::dateDifference(Date subtractor) const{
 
     //     }
     // }
-    
+
+    //MONTH 2 DAYS + DAYS
+    //BASE DAY
+    for (int i = 1; i <= month; i++){
+        if(i == 2){     // Check Feb 
+            if(!isLeapYear())
+                baseDay += 28;
+            else if(isLeapYear())
+                baseDay += 29;
+            else
+                baseDay = day;
+        }else if(i == 1 || i == 3 || i == 5 || i == 7 || i == 8 || i == 10 || i == 12) //31 days
+            if(day <= 31)
+                baseDay += day;
+            else
+                baseDay += 31;
+        else{              // 30 day months
+            if(day <= 30)
+                baseDay += day;
+            else
+                baseDay += 30;
+        }
+    }
+    //SUBTRACTOR
+    for (int i = 1; i <= subtractor.getMonth(); i++){
+        if(i == 2){     // Check Feb 
+            if(!subtractor.isLeapYear())
+                subDay += 28;
+            else if(subtractor.isLeapYear())
+                subDay += 29;
+            else
+                subDay = subtractor.getDay();
+        }else if(i == 1 || i == 3 || i == 5 || i == 7 || i == 8 || i == 10 || i == 12) //31 days
+            if(subtractor.getDay() <= 31)
+                subDay += subtractor.getDay();
+            else
+                subDay += 31;
+        else{              // 30 day months
+            if(subtractor.getDay() <= 30)
+                subDay += subtractor.getDay();
+            else
+                subDay += 30;
+        }
+    }
+
+    return  baseDay - subDay;
+
 
 }
 
