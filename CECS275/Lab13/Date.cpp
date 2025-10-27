@@ -12,35 +12,41 @@ Date::Date(void){
 
 // OVERLAODED CONSTRUCTOR
 Date::Date(int month, int day, int year){
-    // Ensure valid month
-    if(month <= 12 && month >= 1)
-        this-> month = month;
-    else
-        this -> month = 1;
+    setMonth(month);
+    setDay(day);
+    setYear(year);
+    // // Ensure valid month
+    // if(month <= 12 && month >= 1)
+    //     this-> month = month;
+    // else
+    //     this -> month = 1;
 
-    // Ensure valid day
-    if(month == 2){     // Check Feb 
-        if(day <= 28 && !isLeapYear())
-            this-> day = day;
-        else if(isLeapYear() && day <= 29)
-            this -> day = day;
-        else
-            this -> day = 1;
-    }else if(month == 1 || month == 3 || month == 5 || month == 7       // 31 day months
-                        || month == 8 || month == 10 || month == 12){
-        if(day <= 31)
-            this -> day = day;
-        else
-            this -> day = 1;
-    }else{              // 30 day months
-        if(day <= 30)
-            this -> day = day;
-        else
-            this -> day = 1;
-    }
+    // // Ensure valid day
+    // if(month == 2){     // Check Feb 
+    //     if(day <= 28 && !isLeapYear())
+    //         this-> day = day;
+    //     else if(isLeapYear() && day <= 29)
+    //         this -> day = day;
+    //     else
+    //         this -> day = 1;
+    // }else if(month == 1 || month == 3 || month == 5 || month == 7       // 31 day months
+    //                     || month == 8 || month == 10 || month == 12){
+    //     if(day <= 31)
+    //         this -> day = day;
+    //     else
+    //         this -> day = 1;
+    // }else{              // 30 day months
+    //     if(day <= 30)
+    //         this -> day = day;
+    //     else
+    //         this -> day = 1;
+    // }
 
-    // All years are valid
-    this-> year = year;
+    // // Ensure years are valid
+    // if(year > 0)
+    //     this -> year = year;
+    // else
+    //     this -> year = 1970;
 }
 
 ////////////////////////// GETTERS/SETTERS //////////////////////////
@@ -67,15 +73,43 @@ int Date::getYear(void) const{
 }
 
 void Date::setYear(int year){
-    this -> year = year;
+    // Ensure years are valid
+    if(year > 0)
+        this -> year = year;
+    else
+        this -> year = 1970;
 }
 
 void Date::setMonth(int month){
-    this -> month = month;
+    // Ensure valid month
+    if(month <= 12 && month >= 1)
+        this-> month = month;
+    else
+        this -> month = 1;
 }
 
 void Date::setDay(int day){
-    this -> day = day;
+     // Ensure valid day
+    int month = getMonth();
+    if(month == 2){     // Check Feb 
+        if(day <= 28 && !isLeapYear())
+            this-> day = day;
+        else if(isLeapYear() && day <= 29)
+            this -> day = day;
+        else
+            this -> day = 1;
+    }else if(month == 1 || month == 3 || month == 5 || month == 7       // 31 day months
+                        || month == 8 || month == 10 || month == 12){
+        if(day <= 31)
+            this -> day = day;
+        else
+            this -> day = 1;
+    }else{              // 30 day months
+        if(day <= 30)
+            this -> day = day;
+        else
+            this -> day = 1;
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -110,11 +144,12 @@ void Date::displayDayMonthYear(void) const{
 bool Date::isLeapYear(void) const{
     // divisible by 4
     // not divisible by 100 UNLESS also divisible by 400
-    if( (year % 4 == 0) ){
-        if(year % 400 == 0)
+    if( (getYear() % 4 == 0) ){
+        if(getYear() % 400 == 0)
             return true;
-        else if(year % 100 == 0)
+        else if(getYear() % 100 == 0) // bc it's already not divisible by 400
             return false;
+        return true;
     }
     return false;
 }
@@ -126,9 +161,15 @@ bool Date::isLeapYear(void) const{
 
 // constant x non-const yuri, a forbidden romance:
 // where one must forgo their identity to be truly 
-// in love, a true romeo and juliet story
+// be in love, a true romeo and juliet story
 // dont miss out on this chapter releasing on uhhhh 6,7 
 
+// constant-san its too dangerous we cant be together...
+// nonconst-chan, i would do anything to be by your side
+// no matter the functions that stop us, no matter if its const or not 
+// but your father Global-sama, he would never approve
+// Static-kun has been eyeing the thrown and seeks to take your reign
+// Your legitimacy to throne-
 
 // date obj1
 // obj1.dateDifference()
@@ -136,9 +177,10 @@ int Date::dateDifference(Date subtractor) const{
     // solution to compare: SUM UP ALL DAYS IN THAT DATE AND THEN COMPARE PROPERLY
 //    float firstYear = this -> getYear();
 //    float subYear = subtractor.getYear();
+   //int submonth = subtractor.getMonth();
    unsigned long long int differnceDay = 0;
-   long long int baseDay = 0;
-   long long int subDay = 0;
+   long long int baseDay = this -> day;
+   long long int subDay = subtractor.getDay();
 
 //    sumYear = this -> getDay() / day2Year + ( getMonth() / month2Year);
 //    sumYearSubtractor = (subtractor.getDay() / day2Year) + ( getMonth() / month2Year);
@@ -147,22 +189,31 @@ int Date::dateDifference(Date subtractor) const{
 
     // YEARS 2 DAYS
     // BASE DAY
-    for (long long int i = 0; i < getYear() - 1 ; i++){ // determine the amt years and 
-        if(isLeapYear())
-            baseDay += 366;
-        
-        else if(!isLeapYear())
-            baseDay += 365;
+    for (long long int i = 0; i < year ; i++){ // determine the amt years and 
+        if( (i% 4 == 0) ){
+            if( i % 400 == 0)
+                baseDay += 366;
+            else if(i % 100 == 0) // bc it's already not divisible by 400
+                baseDay += 365;
+            else baseDay += 366;
+        }
+        else baseDay += 365;
+        std::cout << "BASEdAY YR"  << baseDay << std::endl;
     }
 
     // SUBTRACTOR
-    for (long long int i = 0; i < subtractor.getYear() - 1; i++){ // determine the amt years and 
-        if(isLeapYear())
-            subDay += 366;
-        
-        else if(!isLeapYear())
-            subDay += 365;
+    for (long long int i = 0; i < subtractor.getYear(); i++){ // determine the amt years and 
+        if( (i% 4 == 0) ){
+            if( i % 400 == 0)
+                subDay += 366;
+            else if(i % 100 == 0) // bc it's already not divisible by 400
+                subDay += 365;
+            else subDay += 366;
+        }
+        else subDay += 365;
+        std::cout << "SUBdAY YR" << subDay << std::endl;
     }
+    std::cout << subDay << std::endl;
     
     //use comparison find the higher value; then calculate the difference
     // int diffday; //temp will fix in abit 
@@ -173,51 +224,79 @@ int Date::dateDifference(Date subtractor) const{
     //     }
     // }
 
-    //MONTH 2 DAYS + DAYS
+    //MONTH 2 DAYS
     //BASE DAY
-    for (int i = 1; i <= month; i++){
+    for (int i = 1; i <= month-1; i++){
         if(i == 2){     // Check Feb 
             if(!isLeapYear())
                 baseDay += 28;
-            else if(isLeapYear())
+            else 
                 baseDay += 29;
-            else
-                baseDay = day;
         }else if(i == 1 || i == 3 || i == 5 || i == 7 || i == 8 || i == 10 || i == 12) //31 days
-            if(day <= 31)
-                baseDay += day;
-            else
-                baseDay += 31;
-        else{              // 30 day months
-            if(day <= 30)
-                baseDay += day;
-            else
-                baseDay += 30;
-        }
+            baseDay += 31;
+        else              // 30 day months
+            baseDay += 30;
+        //std::cout <<"baseDAY IN MOTH LOOP: " << baseDay << std::endl;
     }
     //SUBTRACTOR
-    for (int i = 1; i <= subtractor.getMonth(); i++){
+    for (int i = 1; i <= subtractor.getMonth()-1; i++){
         if(i == 2){     // Check Feb 
             if(!subtractor.isLeapYear())
                 subDay += 28;
-            else if(subtractor.isLeapYear())
+            else 
                 subDay += 29;
-            else
-                subDay = subtractor.getDay();
         }else if(i == 1 || i == 3 || i == 5 || i == 7 || i == 8 || i == 10 || i == 12) //31 days
-            if(subtractor.getDay() <= 31)
-                subDay += subtractor.getDay();
-            else
-                subDay += 31;
+            subDay += 31;
         else{              // 30 day months
-            if(subtractor.getDay() <= 30)
-                subDay += subtractor.getDay();
-            else
-                subDay += 30;
+            subDay += 30;
         }
+        //std::cout <<"subDAY IN MOTH LOOP: " << subDay << std::endl;
     }
 
-    return  baseDay - subDay;
+    // if(month == 2){     // Check Feb 
+    //     if(day <= 28 && !isLeapYear())
+    //         baseDay += day;
+    //     else if(isLeapYear() && day <= 29)
+    //         baseDay += day;
+    //     else
+    //         baseDay += 0;
+    // }else if(month == 1 || month == 3 || month == 5 || month == 7       // 31 day months
+    //                     || month == 8 || month == 10 || month == 12){
+    //     if(day <= 31)
+    //         baseDay += day;
+    //     else
+    //         baseDay += 0;
+    // }else{              // 30 day months
+    //     if(day <= 30)
+    //         baseDay += day;
+    //     else
+    //         baseDay += 0;
+    // }
+
+    // if(submon == 2){     // Check Feb 
+    //     if(subtractor.getDay() <= 28 && !isLeapYear())
+    //         subDay += subtractor.getDay();
+    //     else if(isLeapYear() && subtractor.getDay() <= 29)
+    //         subDay += subtractor.getDay();
+    //     else
+    //         subDay += 0;
+    // }else if(submon == 1 || submon == 3 || submon == 5 || submon == 7       // 31 day months
+    //                      || submon == 8 || submon == 10 || submon == 12){
+    //     if(subtractor.getDay() <= 31)
+    //         subDay += subtractor.getDay();
+    //     else
+    //         subDay += 0;
+    // }else{              // 30 day months
+    //     if(subtractor.getDay() <= 30)
+    //         subDay += subtractor.getDay();
+    //     else
+    //         subDay += 0;
+    // }
+
+    if (baseDay - subDay >= 0)
+        return  baseDay - subDay;
+    else
+        return  subDay - baseDay;
 
 
 }
