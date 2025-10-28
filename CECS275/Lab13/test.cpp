@@ -5,7 +5,6 @@ using namespace std;
 int main(void){
     Date May29_1928(05,29,1928);
     Date March18_2075(03, 18, 2075);
-    Date failedDate(0, 100, -23);
 
     cout << "/////////////////////////////////////////////////////////////////////////////////////////////////" << endl;
     cout << "////////////////////////////////// May 29, 1928  ////////////////////////////////////////////////" << endl;
@@ -38,6 +37,7 @@ int main(void){
     cout << "/////////////////////////////////////////////////////////////////////////////////////////////////" << endl;
     cout << "/////////////////////////////////// FAILED DATE /////////////////////////////////////////////////" << endl;
     cout << "/////////////////////////////////////////////////////////////////////////////////////////////////" << endl;
+    Date failedDate(0, 100, -23);
 
     cout << "100 day: " << failedDate.getDay() << endl;
     cout << "0 month: " << failedDate.getMonth() << endl;
@@ -79,10 +79,14 @@ int main(void){
     cout << "//////////////////////////////////// DATE DIFF //////////////////////////////////////////////////" << endl;
     cout << "/////////////////////////////////////////////////////////////////////////////////////////////////" << endl;
 
-    cout << "Date Difference: " << failedDate.dateDifference(May29_1928) << endl;
+    cout << "Date Difference in days: " << failedDate.dateDifference(May29_1928) << endl;
 
     cout << "-------------------------------------------------------------------------------------------------" << endl;
 
-    cout << "Date Comparison: " << failedDate.dateCompare(May29_1928) << endl;
-
+    if (failedDate.dateCompare(May29_1928) == 1) 
+        cout << "Date Comparison: The First Date is Larger." << endl;
+    else if(failedDate.dateCompare(May29_1928) == -1)
+        cout << "Date Comparison: The second Date is Larger." << endl;
+    else
+        cout << "Date Comparison: The Dates are the same." << endl;
 }

@@ -8,7 +8,7 @@ class Date{
     
     public:
         Date(void);                             // Constructor (default)
-        Date(int month, int day, int year);     // Overloaded Constructor
+        explicit Date(int month, int day, int year);     // Overloaded Constructor
 
         int getMonth(void) const;               // returns month (ACCESSOR)
         int getDay(void) const;                 // returns date  (ACCESSOR)

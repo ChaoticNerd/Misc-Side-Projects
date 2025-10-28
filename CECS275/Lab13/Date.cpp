@@ -15,38 +15,6 @@ Date::Date(int month, int day, int year){
     setMonth(month);
     setDay(day);
     setYear(year);
-    // // Ensure valid month
-    // if(month <= 12 && month >= 1)
-    //     this-> month = month;
-    // else
-    //     this -> month = 1;
-
-    // // Ensure valid day
-    // if(month == 2){     // Check Feb 
-    //     if(day <= 28 && !isLeapYear())
-    //         this-> day = day;
-    //     else if(isLeapYear() && day <= 29)
-    //         this -> day = day;
-    //     else
-    //         this -> day = 1;
-    // }else if(month == 1 || month == 3 || month == 5 || month == 7       // 31 day months
-    //                     || month == 8 || month == 10 || month == 12){
-    //     if(day <= 31)
-    //         this -> day = day;
-    //     else
-    //         this -> day = 1;
-    // }else{              // 30 day months
-    //     if(day <= 30)
-    //         this -> day = day;
-    //     else
-    //         this -> day = 1;
-    // }
-
-    // // Ensure years are valid
-    // if(year > 0)
-    //     this -> year = year;
-    // else
-    //     this -> year = 1970;
 }
 
 ////////////////////////// GETTERS/SETTERS //////////////////////////
@@ -76,16 +44,20 @@ void Date::setYear(int year){
     // Ensure years are valid
     if(year > 0)
         this -> year = year;
-    else
+    else{
         this -> year = 1970;
+        std::cout << year << " is an invalid year! Setting year to 1970." << std::endl;
+    }
 }
 
 void Date::setMonth(int month){
     // Ensure valid month
     if(month <= 12 && month >= 1)
         this-> month = month;
-    else
+    else{
         this -> month = 1;
+        std::cout << month << " is an invalid month! Setting month to 1." << std::endl;
+    }
 }
 
 void Date::setDay(int day){
@@ -96,19 +68,25 @@ void Date::setDay(int day){
             this-> day = day;
         else if(isLeapYear() && day <= 29)
             this -> day = day;
-        else
+        else{
             this -> day = 1;
+            std::cout << day << " is an invalid day! Setting day to 1." << std::endl;
+        }
     }else if(month == 1 || month == 3 || month == 5 || month == 7       // 31 day months
                         || month == 8 || month == 10 || month == 12){
         if(day <= 31)
             this -> day = day;
-        else
+        else{
             this -> day = 1;
+            std::cout << day << " is an invalid day! Setting day to 1." << std::endl;
+        }
     }else{              // 30 day months
         if(day <= 30)
             this -> day = day;
-        else
+        else{
             this -> day = 1;
+            std::cout << day << " is an invalid day! Setting day to 1." << std::endl;
+        }
     }
 }
 
@@ -168,12 +146,13 @@ bool Date::isLeapYear(void) const{
 // nonconst-chan, i would do anything to be by your side
 // no matter the functions that stop us, no matter if its const or not 
 // but your father Global-sama, he would never approve
-// Static-kun has been eyeing the thrown and seeks to take your reign
+// Static-kun has been eyeing the throne and seeks to take your reign
 // Your legitimacy to throne-
+// I need no crown without you by my side nonconst-chan
 
 // date obj1
 // obj1.dateDifference()
-int Date::dateDifference(Date subtractor) const{
+int Date::dateDifference(Date subtractor) const{ // I am built evil
     // solution to compare: SUM UP ALL DAYS IN THAT DATE AND THEN COMPARE PROPERLY
 //    float firstYear = this -> getYear();
 //    float subYear = subtractor.getYear();
@@ -198,7 +177,7 @@ int Date::dateDifference(Date subtractor) const{
             else baseDay += 366;
         }
         else baseDay += 365;
-        std::cout << "BASEdAY YR"  << baseDay << std::endl;
+        //std::cout << "BASEdAY YR"  << baseDay << std::endl;
     }
 
     // SUBTRACTOR
@@ -211,9 +190,9 @@ int Date::dateDifference(Date subtractor) const{
             else subDay += 366;
         }
         else subDay += 365;
-        std::cout << "SUBdAY YR" << subDay << std::endl;
+        //std::cout << "SUBdAY YR" << subDay << std::endl;
     }
-    std::cout << subDay << std::endl;
+    //std::cout << subDay << std::endl;
     
     //use comparison find the higher value; then calculate the difference
     // int diffday; //temp will fix in abit 
@@ -252,46 +231,6 @@ int Date::dateDifference(Date subtractor) const{
         }
         //std::cout <<"subDAY IN MOTH LOOP: " << subDay << std::endl;
     }
-
-    // if(month == 2){     // Check Feb 
-    //     if(day <= 28 && !isLeapYear())
-    //         baseDay += day;
-    //     else if(isLeapYear() && day <= 29)
-    //         baseDay += day;
-    //     else
-    //         baseDay += 0;
-    // }else if(month == 1 || month == 3 || month == 5 || month == 7       // 31 day months
-    //                     || month == 8 || month == 10 || month == 12){
-    //     if(day <= 31)
-    //         baseDay += day;
-    //     else
-    //         baseDay += 0;
-    // }else{              // 30 day months
-    //     if(day <= 30)
-    //         baseDay += day;
-    //     else
-    //         baseDay += 0;
-    // }
-
-    // if(submon == 2){     // Check Feb 
-    //     if(subtractor.getDay() <= 28 && !isLeapYear())
-    //         subDay += subtractor.getDay();
-    //     else if(isLeapYear() && subtractor.getDay() <= 29)
-    //         subDay += subtractor.getDay();
-    //     else
-    //         subDay += 0;
-    // }else if(submon == 1 || submon == 3 || submon == 5 || submon == 7       // 31 day months
-    //                      || submon == 8 || submon == 10 || submon == 12){
-    //     if(subtractor.getDay() <= 31)
-    //         subDay += subtractor.getDay();
-    //     else
-    //         subDay += 0;
-    // }else{              // 30 day months
-    //     if(subtractor.getDay() <= 30)
-    //         subDay += subtractor.getDay();
-    //     else
-    //         subDay += 0;
-    // }
 
     if (baseDay - subDay >= 0)
         return  baseDay - subDay;
