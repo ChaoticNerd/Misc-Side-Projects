@@ -1,5 +1,6 @@
 #ifndef DATE_H
 #define DATE_H
+#include <ostream>
 class Date{
     private:
         int month;
@@ -19,9 +20,9 @@ class Date{
         void setDay(int day);                   // Change day val
         void setYear(int year);                 // change year val
         
-        void displayDateNums(void) const;       // format: 08/25/2025
-        void displayMonthDayYear(void) const;   // format: August 25, 2025
-        void displayDayMonthYear(void) const;   // format: 25 August 2025
+        std::string displayDateNums(void) const;       // format: 08/25/2025
+        std::string displayMonthDayYear(void) const;   // format: August 25, 2025
+        std::string displayDayMonthYear(void) const;   // format: 25 August 2025
 
         bool isLeapYear(void) const;            
         int dateDifference(Date) const;         // find difference between two dates
@@ -46,7 +47,8 @@ class Date{
 
         int operator+(Date &right);       // Overload + to calculate the date in the future after advancing a number of days from a current date
         int operator-(Date &right);       // Overload - to calculate the date in the past after receding a number of days from a current date
-
+        
+        std::ostream operator<<(const Date &right);
 };
 
 #endif

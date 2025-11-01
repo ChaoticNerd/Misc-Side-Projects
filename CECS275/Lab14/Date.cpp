@@ -99,13 +99,16 @@ void Date::setDay(int day){
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void Date::displayDateNums(void) const{
+std::string Date::displayDateNums(void) const{
     std::cout << std::setw(2) << std::setfill('0') << month << '/'
               << std::setw(2) << std::setfill('0') << day   << '/'
               << year << std::endl;
+
+    return std::to_string(std::cout.width(2) + std::cout.fill('0') + getMonth() + '/' +
+    std::cout.width(2) + std::cout.fill('0') + getDay() + '/' + getYear());
 }
 
-void Date::displayMonthDayYear(void) const{
+std::string Date::displayMonthDayYear(void) const{
     std::string monthInYear[] = {
                        "January", "February", "March", 
                        "April", "May", "June", "July", 
@@ -114,9 +117,20 @@ void Date::displayMonthDayYear(void) const{
                     };
     std::cout << monthInYear[getMonth() - 1] 
               << ' ' << getDay() << ", " << getYear() << std::endl;
-}
 
-void Date::displayDayMonthYear(void) const{
+    return monthInYear[getMonth()-1] + " " + std::to_string(getDay()) + ", " + std::to_string(getYear());
+}
+//more eeeeeeeeeeeevil
+// It feels so good when morals are praised, 
+// so Listen to the voices the voice you hearing deep inside,
+// when times are tough and lost your way...
+// Be sure to consider asdjczjslfnasdaaascdwvrj
+// It feels so good when youre morally gray, 
+// So listen to the voices the voice you hearing deep inside,
+// when times are tough and lost your way...
+// remember the wisdom i taught you today, be sure to keep your morals high
+// - "Morality Lesson" By Will Stetson
+std::string Date::displayDayMonthYear(void) const{
     std::string monthInYear[] = {
                        "January", "February", "March", 
                        "April", "May", "June", "July", 
@@ -124,6 +138,8 @@ void Date::displayDayMonthYear(void) const{
                        "November", "December"
                     };
     std::cout << getDay() << ' ' << monthInYear[getMonth() - 1] << ' ' << getYear() << std::endl;
+
+    return std::to_string(getDay()) + " " + monthInYear[getMonth()-1] + " " + std::to_string(getYear());
 }
 
 bool Date::isLeapYear(void) const{
@@ -207,7 +223,15 @@ int Date::dateDifference(Date subtractor) const{ // I am built evil
 
 
 }
-
+/*
+    Im a Rebel (Rebel!), You gotta clean away, (vroom, vroom,  make the red light green!)
+    A Hundred Decibels (Decibels!), You gotta cover your ears, ah ye (zoom, zoom, make the passenger scream!)
+    Were going super far, were zooming through the stars,
+    And I wont come down, 'Cause my mind and heart on a...
+    Sugar, Sugar Rush, Sugar Rush, Sugar, Sugar Rush...
+    Sugar, Sugar Rush, Sugar Rush, Sugar, Sugar Rush
+     - "Sugar Rush" by Asian Hideout
+*/
 void Date::incDateOne(void){
     //determine max days based on leap year, and month
     int monthLastDay = 0;
@@ -283,7 +307,17 @@ void Date::decDateOne(void){
         }
     }
 }
-
+/*
+You wont understand, I like you (I, Dont, Like, You!)
+Stuck in a paradise
+Took me long enough to realize, I Like You (I, Dont , Like, You!)
+Caught in a paradigm, look at how time flies...
+Refresh, Reload, Error 4-0-3
+Stuck in a paradies
+Refresh, Reload, Error 4-0-3
+Caught in a paradigm, Take a Breath and Rewind...
+- "Error 403" by Asian Hideout
+*/
 int Date::dateCompare(Date first) const{
     // check if a year is less or more
     if(this -> getYear() > first.getYear())
@@ -322,6 +356,11 @@ Date Date::operator=(const Date &right){
     setYear(right.getYear());
 
     return *this;
+}
+
+std::ostream& operator<<(const Date &right){
+    // os << right.displayMonthDayYear();
+    return std::cout << right.displayDayMonthYear();
 }
 
 // Overload operator - to find the number of dates between two dates.
@@ -372,10 +411,12 @@ bool Date::operator==(const Date &right) const{
     return false;
 }
 
+// Overload + to calculate the date in the future after advancing a number of days from a current date
 int Date::operator-(Date &right){
 
 }
 
+// Overload - to calculate the date in the past after receding a number of days from a current date
 int Date::operator+(Date &right){
     
 }
