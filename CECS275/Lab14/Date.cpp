@@ -259,7 +259,7 @@ void Date::incDateOne(void){
     } else{ //it is the current day is the last day of the month
         if(month < 12){ //determines if the current month is not the last month in a year
             this -> month++;
-            this -> day++;
+            this -> day = 1;
 
         } else{ // current month is the last month in a year
             this -> year++;
