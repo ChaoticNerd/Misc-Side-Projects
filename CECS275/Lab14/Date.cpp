@@ -18,11 +18,11 @@ Date::Date(int month, int day, int year){
 }
 
 // OVERLOADED CONSTRUCTOR: COPY
-// Date::Date(const Date &classToCopy){
-//     setMonth(classToCopy.getMonth());
-//     setDay(classToCopy.getDay());
-//     setYear(classToCopy.getYear());
-// }
+Date::Date(const Date &classToCopy){
+    this -> setMonth(classToCopy.getMonth());
+    this -> setDay(classToCopy.getDay());
+    this -> setYear(classToCopy.getYear());
+}
 
 ////////////////////////// GETTERS/SETTERS //////////////////////////
 
@@ -100,9 +100,9 @@ void Date::setDay(int day){
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 std::string Date::displayDateNums(void) const{
-    std::cout << std::setw(2) << std::setfill('0') << month << '/'
-              << std::setw(2) << std::setfill('0') << day   << '/'
-              << year << std::endl;
+    // std::cout << std::setw(2) << std::setfill('0') << month << '/'
+    //           << std::setw(2) << std::setfill('0') << day   << '/'
+    //           << year << std::endl;
 
     return std::to_string(std::cout.width(2) + std::cout.fill('0') + getMonth() + '/' +
     std::cout.width(2) + std::cout.fill('0') + getDay() + '/' + getYear());
@@ -115,8 +115,8 @@ std::string Date::displayMonthDayYear(void) const{
                        "August", "September", "October", 
                        "November", "December"
                     };
-    std::cout << monthInYear[getMonth() - 1] 
-              << ' ' << getDay() << ", " << getYear() << std::endl;
+    // std::cout << monthInYear[getMonth() - 1] 
+    //           << ' ' << getDay() << ", " << getYear() << std::endl;
 
     return monthInYear[getMonth()-1] + " " + std::to_string(getDay()) + ", " + std::to_string(getYear());
 }
@@ -137,7 +137,7 @@ std::string Date::displayDayMonthYear(void) const{
                        "August", "September", "October", 
                        "November", "December"
                     };
-    std::cout << getDay() << ' ' << monthInYear[getMonth() - 1] << ' ' << getYear() << std::endl;
+    // std::cout << getDay() << ' ' << monthInYear[getMonth() - 1] << ' ' << getYear() << std::endl;
 
     return std::to_string(getDay()) + " " + monthInYear[getMonth()-1] + " " + std::to_string(getYear());
 }
@@ -346,7 +346,7 @@ int Date::dateCompare(Date first) const{
 
 /////////////////////////////////////////////////////////////// OVERLOADING OPERATORS /////////////////////////////////////////////////////////
 
-Date Date::operator=(const Date &right){
+Date& Date::operator=(const Date &right){
     if(this == &right)
         return *this;
 
@@ -358,34 +358,39 @@ Date Date::operator=(const Date &right){
     return *this;
 }
 
-std::ostream& operator<<(const Date &right){
-    // os << right.displayMonthDayYear();
-    return std::cout << right.displayDayMonthYear();
+std::ostream& operator<<(std::ostream &os, Date const &right){
+    os << right.displayMonthDayYear();
+    return os;
 }
 
 // Overload operator - to find the number of dates between two dates.
+// DOES THIS NEED TO BE FRIENDSHIP TOO?
 int Date::operator-(const Date &rightDate) const {
-    return this->dateDifference(rightDate);
+    return (this -> dateDifference(rightDate));
 }
 
 // Overload prefix ++ to increase a date by one.
-void Date::operator++(){
+Date& Date::operator++(){
     incDateOne();
+    return *this;
 }
 
 // Overload postfix ++ to increase a date by one.
-void Date::operator++(int x){
+Date& Date::operator++(int x){
     incDateOne();
+    return *this;
 }
 
 // Overload prefix -- to decrease date by one
-void Date::operator--(){
+Date& Date::operator--(){
     decDateOne();
+    return *this;
 }
 
 // Overload postfix ++ to decrease date by one
-void Date::operator--(int x){
+Date& Date::operator--(int x){
     decDateOne();
+    return *this;
 }
 
 // Compare left and right side; if left is less than:
@@ -412,11 +417,38 @@ bool Date::operator==(const Date &right) const{
 }
 
 // Overload + to calculate the date in the future after advancing a number of days from a current date
-int Date::operator-(Date &right){
+// Date Date::operator-(Date &right){
+//     int daysDiff = this -> dateDifference(right);
+//     while(daysDiff){
+//         this -> incDateOne();
+//         daysDiff--;
+//     }
+// }
 
+Date operator-(const Date &left, int right){
+    Date tempCopy = left;
+    while(right){
+        tempCopy.decDateOne();
+        right--;
+    }
+    return tempCopy;
 }
 
 // Overload - to calculate the date in the past after receding a number of days from a current date
-int Date::operator+(Date &right){
-    
+// Date Date::operator+(const Date &right){
+//         int daysDiff = this -> dateDifference(right);
+//     while(daysDiff){
+//         this -> decDateOne();
+//         daysDiff--;
+//     }
+//     return right;
+// }
+
+Date operator+(const Date &left, int right){
+    Date tempCopy = left;
+    while(right){
+        tempCopy.incDateOne();
+        right--;
+    }
+    return tempCopy;
 }

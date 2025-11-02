@@ -10,7 +10,7 @@ int main(void){
 
     cout << "/////////////////////////////////////////////////////////////////////////////////////////////////" << endl;
     cout << "////////////////////////////////// May 29, 1928  ////////////////////////////////////////////////" << endl;
-    cout << "/////////////////////////////////////////////////////////////////////////////////////////////////" << endl << endl << endl;
+    cout << "/////////////////////////////////////////////////////////////////////////////////////////////////" << endl;
 
     cout << "May 29, 1928 day: " << May29_1928.getDay() << endl;
     cout << "May 29, 1928 month: " << May29_1928.getMonth() << endl;
@@ -18,18 +18,15 @@ int main(void){
     
     cout << "-------------------------------------------------------------------------------------------------" << endl << endl;
     
-    cout << "May 29 1928 MM/DD/YYYY Format: ";
-    May29_1928.displayDateNums();
+    cout << "May 29 1928 MM/DD/YYYY Format: " << May29_1928.displayDateNums() << endl;
 
     cout << "-------------------------------------------------------------------------------------------------" << endl << endl;
     
-    cout << "\nMay 29 1928 Month Day  Year Format: ";
-    May29_1928.displayMonthDayYear();
+    cout << "\nMay 29 1928 Month Day  Year Format: " << May29_1928.displayMonthDayYear() << endl;
 
     cout << "-------------------------------------------------------------------------------------------------" << endl << endl;
     
-    cout << "\nMay 29 1928 Day Month Year Format: ";
-    May29_1928.displayDayMonthYear();
+    cout << "\nMay 29 1928 Day Month Year Format: " << May29_1928.displayDayMonthYear() << endl;
     cout << endl;
 
     cout << "-------------------------------------------------------------------------------------------------" << endl << endl;
@@ -38,7 +35,7 @@ int main(void){
 
     cout << "/////////////////////////////////////////////////////////////////////////////////////////////////" << endl;
     cout << "/////////////////////////////////// FAILED DATE /////////////////////////////////////////////////" << endl;
-    cout << "/////////////////////////////////////////////////////////////////////////////////////////////////" << endl << endl << endl;
+    cout << "/////////////////////////////////////////////////////////////////////////////////////////////////" << endl;
     Date failedDate(0, 100, -23);
 
     cout << "100 day: " << failedDate.getDay() << endl;
@@ -77,7 +74,7 @@ int main(void){
     cout << "Month: " << failedDate.getMonth() << endl;
     cout << "Year: " << failedDate.getYear() << endl;
 
-    cout << "/////////////////////////////////////////////////////////////////////////////////////////////////" << endl;
+    cout << "\n/////////////////////////////////////////////////////////////////////////////////////////////////" << endl;
     cout << "//////////////////////////////////// DATE DIFF //////////////////////////////////////////////////" << endl;
     cout << "/////////////////////////////////////////////////////////////////////////////////////////////////" << endl << endl << endl;
 
@@ -93,11 +90,11 @@ int main(void){
         cout << "Date Comparison: The Dates are the same." << endl;
 
 
-    cout << "/////////////////////////////////////////////////////////////////////////////////////////////////" << endl;
+    cout << "\n/////////////////////////////////////////////////////////////////////////////////////////////////" << endl;
     cout << "////////////////////////////////// Date Operators ///////////////////////////////////////////////" << endl;
     cout << "/////////////////////////////////////////////////////////////////////////////////////////////////" << endl << endl << endl;
 
-    cout << "Print Checks: " << May29_1928 << endl;
+    cout << "Print Checks: " << May29_1928 << endl; // wdym by print checks
 
     cout << "Regular Print: " << May29_1928.displayMonthDayYear() << endl; 
  
@@ -107,13 +104,13 @@ int main(void){
 
     cout << "Increments and Decrements:" << endl;
 
-    cout << May29_1928++ << endl;
+    cout << "May 29, 1928 post-fix increment: " << May29_1928++ << endl;
 
-    cout << May29_1928--;
+    cout << "May 30, 1928 post-fix decrement: " << May29_1928-- << endl;;
 
-    cout << ++May29_1928;
+    cout << "May 29, 1928 pre-fix increment: " << ++May29_1928 << endl;;
     
-    cout << --May29_1928;
+    cout << "May 30, 1928 pre-fix decrement: " << --May29_1928 << endl;;
 
     cout << "-------------------------------------------------------------------------------------------------" << endl << endl;
 
@@ -158,34 +155,40 @@ int main(void){
         cout << May29_1928 << " is not equal than " << May29_1928 << endl;  
     
     cout << "-------------------------------------------------------------------------------------------------" << endl << endl;
+    
+    // TODO: FIX THIS SECTION I THINK
+    
     Date copyingDate(06, 07, 2023);
-    Date copiedDate(void);
+    Date copiedDate;
 
     cout << "Copy and Difference: "<< endl;
 
-    cout << "Copied date: " << copiedDate << endl;
+    cout << "Default date to overwrite: " << copiedDate << endl;
     
-    cout << "Copying date original: " << copyingDate << endl;
+    cout << "Date to copy: " << copyingDate << endl;
 
-    cout << "Date Difference before: " << copyingDate - copyingDate << endl;
+    cout << "Date Difference before: " << (copyingDate - copyingDate) << endl; // this dont work :pensive:
+    cout << "Real date difference before: " << copyingDate.dateDifference(copiedDate) << endl;
+    cout << "Overwritten date afterwards: " << (copiedDate = copyingDate) << endl;
 
-    cout << "Copied date after: " << copyingDate = copiedDate << endl;
-
-    cout << "Date Difference after: " << copyingDate-copyingDate << endl;
+    cout << "Date Difference after: " << (copyingDate-copyingDate) << endl;
 
     cout << "-------------------------------------------------------------------------------------------------" << endl << endl;
+
+
+    // TODO: CHECK IF THIS IS RIGHT
 
     Date October31_2025(10, 31, 2025); //a halloween i was robbed >:(
     copiedDate = October31_2025;
     cout << "Date before Advance and Recede: " << October31_2025 << endl;
 
-    cout << "Date Advance by 80085: " << October31_2025 + 80085;
+    cout << "Date Advance by 80085: " << (October31_2025 + 80085) << endl;
 
-    cout << "Date Difference after Advance: " << October31_2025-copiedDate << endl;
+    cout << "Date Difference after Advance: " << (October31_2025-copiedDate) << endl;
 
-    cout << "Date Recede by 80085: " << October31_2025 - 80085;
+    cout << "Date Recede by 80085: " << (October31_2025 - 80085) << endl;
 
-    cout << "Date Difference after Recede: " << October31_2025-copiedDate << endl;
+    cout << "Date Difference after Recede: " << (October31_2025-copiedDate) << endl;
 
 
     cout << "-------------------------------------------------------------------------------------------------" << endl << endl;

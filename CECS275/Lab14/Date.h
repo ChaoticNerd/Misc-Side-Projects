@@ -10,7 +10,7 @@ class Date{
     public:
         Date(void);                                      // Constructor (default)
         explicit Date(int month, int day, int year);     // Overloaded Constructor
-        //Date(const Date &classToCopy);                   // Overloaded Constructor: Copy ????
+        Date(const Date &classToCopy);                   // Overloaded Constructor: Copy ????
 
         int getMonth(void) const;               // returns month (ACCESSOR)
         int getDay(void) const;                 // returns date  (ACCESSOR)
@@ -31,24 +31,27 @@ class Date{
         void decDateOne(void);                  // Decrease a date by one. (MUTATOR)
         int dateCompare(Date) const;            // Compare two dates (return 1 if date1 > date2, 0 if date1 == date2, and -1 if date1 < date2)
 
-        Date operator=(const Date &right); // Is this the copy constructor?
+        Date& operator=(const Date &right); // Is this the copy constructor?
 
         int operator-(const Date &rightSide) const;   // Overload operator - to find the number of dates between two dates.
         
-        void operator++();                      // Overload prefix ++ to increase a date by one.
-        void operator++(int);                   // Overload postfix ++ to increase a date by one.
+        Date& operator++();                      // Overload prefix ++ to increase a date by one.
+        Date& operator++(int);                   // Overload postfix ++ to increase a date by one.
 
-        void operator--();                      // Overload prefix -- to decrease a date by one.
-        void operator--(int);                   // Overload postfix -- to decrease a date by one.
+        Date& operator--();                      // Overload prefix -- to decrease a date by one.
+        Date& operator--(int);                   // Overload postfix -- to decrease a date by one.
 
         bool operator<(const Date &right) const;    // Compare left and right side; if left is less than:
         bool operator>(const Date &right) const;    // Compare left and right side; if left is greater than:
         bool operator==(const Date &right) const;   // Compare left and right side; if left is same as right:
 
-        int operator+(Date &right);       // Overload + to calculate the date in the future after advancing a number of days from a current date
-        int operator-(Date &right);       // Overload - to calculate the date in the past after receding a number of days from a current date
-        
-        std::ostream operator<<(const Date &right);
+        // Date operator+(const Date &right) const;       // Overload + to calculate the date in the future after advancing a number of days from a current date
+        friend Date operator+(const Date &left, int right);
+
+        // Date operator-(const Date &right) const;       // Overload - to calculate the date in the past after receding a number of days from a current date
+        friend Date operator-(const Date &left, int right);
+
+        friend std::ostream& operator<<(std::ostream &os, Date const &right);
 };
 
 #endif
