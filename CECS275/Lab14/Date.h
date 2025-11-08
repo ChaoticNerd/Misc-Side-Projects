@@ -11,6 +11,7 @@ class Date{
         Date(void);                                      // Constructor (default)
         explicit Date(int month, int day, int year);     // Overloaded Constructor
         Date(const Date &classToCopy);                   // Overloaded Constructor: Copy ????
+        ~Date();
 
         int getMonth(void) const;               // returns month (ACCESSOR)
         int getDay(void) const;                 // returns date  (ACCESSOR)

@@ -24,6 +24,10 @@ Date::Date(const Date &classToCopy){
     this -> setYear(classToCopy.getYear());
 }
 
+Date::~Date(){
+    std:: cout << "OBJECT MURDERED" << std::endl;
+}
+
 ////////////////////////// GETTERS/SETTERS //////////////////////////
 
 /*
