@@ -51,23 +51,23 @@ double Rectangle::calcArea(void) const{
 }
 
 // Not sure this is right? Does he want us to place an R or something in a 2D array or to draw it?
-std::string Rectangle::draw(void) const{
-    std::string rectFat(getWidth() - 2, ' ');
-    std::string rect = "";
-    
-    for(int i = 0; i < static_cast<int>(getWidth()); i++)
-        rect += "-";
-    
-    rect += "\n";
+void Rectangle::draw(char (&board)[100][100]){
+    int topLeftX = getCenterX() - (getWidth() / 2);
+    int topLeftY = getCenterY() - (getHeight() / 2);
 
-    for(int i = 0; i < static_cast<int>(getHeight()); i++){
-        rect += "|";
-        rect += rectFat;
-        rect += "|\n";
+    // print first row, forward
+    for(int i = topLeftX; i < (topLeftX + getWidth()); i++){
+        board[topLeftX][i] = '*';
+    }
+    
+    // print columns
+    for(int i = topLeftX; i < getHeight() + topLeftX; i++){
+        board[i][topLeftY-1] = '*';
+        board[i][topLeftY + static_cast<int>(getWidth())-1] = '*';
     }
 
-    for(int i = 0; i < static_cast<int>(getWidth()); i++)
-        rect += "-";
-
-    return rect;
+    // paint last row horizontal
+    for(int i = topLeftX; i < (topLeftX + getWidth()); i++){
+        board[topLeftX + static_cast<int>(getHeight()) - 1][i] = '*';
+    }
 }

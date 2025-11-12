@@ -1,0 +1,14 @@
+{
+  // Show the little popup with function parameters as you type
+  "editor.parameterHints.enabled": true,
+
+  // C/C++ extension inlay hints (names/types inline at call sites)
+  "C_Cpp.inlayHints.parameterNames.enabled": "All",
+  "C_Cpp.inlayHints.parameterTypes.enabled": true,
+  "C_Cpp.inlayHints.variableTypes.enabled": true,
+  "C_Cpp.inlayHints.enumMemberValues.enabled": true,
+
+  // Make sure the real IntelliSense engine is active
+  "C_Cpp.intelliSenseEngine": "Default",
+  "C_Cpp.intelliSenseEngineFallback": "Disabled"
+}

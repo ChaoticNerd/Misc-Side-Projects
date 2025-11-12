@@ -1,0 +1,52 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build (Windows MSYS2, C++)",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-lc",
+        "g++ main.cpp $(pkg-config --cflags --libs gtk4) -o main.exe"
+      ],
+      "group": "build",
+      "problemMatcher": "$gcc"
+    },
+    {
+      "label": "run (Windows MSYS2, C++)",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-lc",
+        "./main.exe"
+      ],
+      "dependsOn": "build (Windows MSYS2, C++)",
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "build (Linux/macOS, C++)",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-lc",
+        "g++ main.cpp $(pkg-config --cflags --libs gtk4) -o main"
+      ],
+      "problemMatcher": "$gcc"
+    },
+    {
+      "label": "run (Linux/macOS, C++)",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-lc",
+        "./main"
+      ],
+      "dependsOn": "build (Linux/macOS, C++)"
+    },
+    
+  ]
+}

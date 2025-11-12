@@ -2,9 +2,6 @@
 #define CIRCLE_H
 
 #include "Shape.h"
-
-
-
 /*
 private members: centerX, centerY, radius
 public member functions: constructor takes centerX, centerY, radius 
@@ -34,9 +31,7 @@ class Circle : public Shape {
     void setRadius(int radius);
 
     double calcArea(void) const override;
-    std::string draw(void) const override; //not entirely sure how to set up lol 
-
-
+    void draw(char (&Board)[100][100]) override; //not entirely sure how to set up lol 
 
 };
 #endif

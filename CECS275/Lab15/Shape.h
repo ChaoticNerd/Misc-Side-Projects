@@ -11,6 +11,6 @@ class Shape{
     public:
         //virtual ~Shape() = default;                    
         virtual double calcArea(void) const = 0;       // Returns calculated area
-        virtual std::string draw() const = 0;          // Use a 2D array to act as a coordinate system. Do not use any graphics library.
+        virtual void draw(char (&board)[100][100]) = 0;          // Use a 2D array to act as a coordinate system. Do not use any graphics library.
 };
 #endif

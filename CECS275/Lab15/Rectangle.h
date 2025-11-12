@@ -6,10 +6,8 @@
 /*
 Derived class from Shape called Rectangle:
 private members: width, height, centerX, centerY
-public member functions: constructor takes width, height, centerX, and centerY as parameters, 
-getter/setter for private members, override calcArea and draw function
+public member functions: constructor takes width, height, centerX, and centerY as parameters, getter/setter for private members, override calcArea and draw function
 */
-
 class Rectangle : public Shape{
     private:
         double width;
@@ -33,7 +31,7 @@ class Rectangle : public Shape{
         void    setCenterY(int);
 
         double calcArea(void) const override;
-        std::string draw(void) const override;
+        void draw(char (&board)[100][100])override;
 
 };
 #endif
