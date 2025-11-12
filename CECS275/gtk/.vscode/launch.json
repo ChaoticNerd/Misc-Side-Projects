@@ -2,31 +2,18 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Launch C++ App (gdb)",
+      "name": "Debug (CLANG64, C++)",
       "type": "cppdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/main",
+      "program": "${workspaceFolder}/build/app_clang64.exe",
       "args": [],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
       "environment": [],
       "externalConsole": true,
       "MIMode": "gdb",
-      "miDebuggerPath": "gdb",
-      "preLaunchTask": "build (Linux/macOS, C++)",
-      "linux": {
-        "program": "${workspaceFolder}/main",
-        "miDebuggerPath": "gdb"
-      },
-      "osx": {
-        "program": "${workspaceFolder}/main",
-        "miDebuggerPath": "gdb"
-      },
-      "windows": {
-        "program": "${workspaceFolder}/main.exe",
-        "miDebuggerPath": "gdb.exe",
-        "preLaunchTask": "build (Windows MSYS2, C++)"
-      }
+      "miDebuggerPath": "gdb.exe",
+      "preLaunchTask": "build (CLANG64, C++)"
     }
   ]
 }

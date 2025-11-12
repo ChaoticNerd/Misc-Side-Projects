@@ -1,14 +1,37 @@
 {
-  // Show the little popup with function parameters as you type
+  "terminal.integrated.profiles.windows": {
+    "MSYS2 CLANG64": {
+      "path": "C:\\msys64\\usr\\bin\\bash.exe",
+      "args": [
+        "--login",
+        "-i"
+      ],
+      "icon": "terminal-bash"
+    }
+  },
+  "terminal.integrated.defaultProfile.windows": "MSYS2 CLANG64",
+  "terminal.integrated.env.windows": {
+    "CHERE_INVOKING": "1",
+    "MSYSTEM": "CLANG64",
+    "PATH": "C:\\msys64\\clang64\\bin;C:\\msys64\\usr\\bin;${env:PATH}"
+  },
+  "tasks.shell.windows": "C:\\msys64\\usr\\bin\\bash.exe",
+  "tasks.shellArgs.windows": [
+    "--login",
+    "-i"
+  ],
   "editor.parameterHints.enabled": true,
-
-  // C/C++ extension inlay hints (names/types inline at call sites)
+  "C_Cpp.intelliSenseEngine": "Default",
+  "C_Cpp.intelliSenseEngineFallback": "Disabled",
   "C_Cpp.inlayHints.parameterNames.enabled": "All",
   "C_Cpp.inlayHints.parameterTypes.enabled": true,
   "C_Cpp.inlayHints.variableTypes.enabled": true,
   "C_Cpp.inlayHints.enumMemberValues.enabled": true,
-
-  // Make sure the real IntelliSense engine is active
-  "C_Cpp.intelliSenseEngine": "Default",
-  "C_Cpp.intelliSenseEngineFallback": "Disabled"
+  "files.associations": {
+    "*.cpp": "cpp",
+    "*.hpp": "cpp",
+    "*.cc": "cpp",
+    "*.hh": "cpp",
+    "*.h": "cpp"
+  }
 }

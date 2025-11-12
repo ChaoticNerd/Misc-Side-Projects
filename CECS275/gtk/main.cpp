@@ -5,11 +5,12 @@ void init(void);
 // void init(void){}
 static void activate(GtkApplication *app, gpointer user_data) {
     GtkWidget *window = gtk_application_window_new(app);
-    gtk_window_set_title(GTK_WINDOW(window), "THIS IS THE WINDOW NAME");
+    gtk_window_set_title(GTK_WINDOW(window), "THIS IS THE WINDOW NAME 27");
     gtk_window_set_default_size(GTK_WINDOW(window), 1000, 1000);
 
     GtkWidget *label = gtk_label_new("HELLO WORLD");
     // GtkWidget *button = g
+    
     gtk_window_set_child(GTK_WINDOW(window), label);
 
     gtk_window_present(GTK_WINDOW(window));

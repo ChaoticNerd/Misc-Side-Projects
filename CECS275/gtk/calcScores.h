@@ -1,9 +1,18 @@
+/*
+ * Header files where calculations are done
+ * @author: Natasha Kho
+ * @author: Emily Hsu
+ * Created on: 2025-09-11
+ * Last Modified: 2025-09-15
+ * Reference: 
+*/
 #include <iostream>
 #include <iomanip>
 #include <fstream>
 #include <string>
 #include <cmath>
 #include <vector>
+#include "randGen.h"
 
 // Function prototypes
 void printMenu(int userSelect);
@@ -11,10 +20,8 @@ void generateReport(string fileName);
 void printResults(double projectGrade, double labGrade, 
                     double quizGrade, double examGrade, double finalGrade, 
                     double totalGrade, char letterGrade);
-
-void generateReportClass(fstream &inputFile, int classSize, int sortSelect, vector<vector<vector<double>>> &allGrades, int (&totalAssignmentsDropped)[5], int (&totalAssignments)[5], 
-                         int isGradesDropped, vector<vector<double>> &calculatedPercentages, vector<double> &averageScores);
-
+void generateReportClass(fstream &inputFile, int, int, vector<vector<vector<double>>> &allGrades, int (&totalAssignmentsDropped)[5], int (&totalAssignments)[5], 
+        int isGradesDropped, vector<double> &calculatedPercentages, vector<double> &averageScores);
 void vector_dumptruck(vector<double> &calculatedPercentages, vector<double> &averageScores,
                       vector<vector<double>> &calculatedClassPercentages, vector<vector<vector<double>>> &allGrades);
 void threshScore(vector<vector<double>> &calculatedClassPercentages, int assSize, int tryThougtButHole, int hilow);
@@ -274,7 +281,7 @@ void calculatePercentage(double grade, double total, double gradeWeight, vector<
 
 /*
  * @author: Natasha Kho
- * @author: Justin Narciso
+ * secret second author
 */
 void calculateClassPercentage(vector<vector<vector<double>>> grade, vector<double> total, double gradeWeight, vector<vector<double>> &calculatedPercentages, int assignmentType){
     // we need a temp variable that calculates all the quiz or lab or whatever grade
