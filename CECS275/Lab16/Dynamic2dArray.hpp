@@ -14,22 +14,54 @@ Handle memory safely by properly releasing allocated memory in the destructor.
 Implement the class as a template so it works with different data types (int, double, string, etc.).
 */
 
-#include "Dynamic2dArray.h"
+//#include "Dynamic2dArray.h"
 #include <iostream>
 #include <iomanip>
 #include <vector>
 using namespace std;
 
 template<class T>
+class Dynamic2dArray{
+    private:
+        int rowSize;    
+        int colSize;
+        T** array;
+
+    public:    
+    //constructor
+        Dynamic2dArray(int rowSize, int colSize);
+
+    //Decstructor
+        ~Dynamic2dArray();
+
+    //getters
+        int getRowSize(void) const;
+        int getColSize(void) const;
+        T getElement(int, int)const; 
+
+
+    //setters
+        void setRowSize(int);
+        void setColSize(int);
+        void insertElement(int, int, T);
+    
+    //Resize
+        void resize(int, int);
+
+        void draw(void);
+
+};
+
+template<class T>
 Dynamic2dArray<T>::Dynamic2dArray(int rowSize, int colSize):rowSize(rowSize), colSize(colSize){
     array = new T* [rowSize];
     for (int i = 0; i < rowSize; i++)
-        array[i] = new T[colSize];
+        array[i] = new T[colSize]();
 
-    for(int i = 0; i < rowSize; i++)
+    for(int i = 0; i < rowSize; i++){
         for (int j = 0; j < colSize; j++)
-            array[i][j] = 0;
-
+            array[i][j] = T();
+    }
 
 }
 
@@ -82,7 +114,12 @@ void Dynamic2dArray<T>::setColSize(int newColSize){
 
 template<class T>
 void Dynamic2dArray<T>::insertElement(int x, int y, T value){
-    this -> array[x][y] = value;
+    // Ensure proper input validation (e.g., no out-of-bound access)
+    try{
+        array[x][y] = value;
+    } catch(const out_of_range& e){
+        cerr << "Value out of range!" << endl;
+    }
 }
 
 template<class T>

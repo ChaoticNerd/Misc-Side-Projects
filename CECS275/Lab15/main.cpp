@@ -66,7 +66,9 @@ int main(void){
     round.setCenterX(20);;
     round.setCenterY(20);
 
-    
+    cout << "MOVING " << endl;
+    round.setCenterX(50);
+    round.setCenterY(80);
     for (int i = 0; i < 100; ++i) {
         for (int j = 0; j < 100; ++j) {
             board[i][j] = '.';
