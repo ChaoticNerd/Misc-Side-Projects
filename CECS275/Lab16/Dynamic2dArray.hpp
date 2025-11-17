@@ -114,12 +114,7 @@ void Dynamic2dArray<T>::setColSize(int newColSize){
 
 template<class T>
 void Dynamic2dArray<T>::insertElement(int x, int y, T value){
-    // Ensure proper input validation (e.g., no out-of-bound access)
-    try{
-        array[x][y] = value;
-    } catch(const out_of_range& e){
-        cerr << "Value out of range!" << endl;
-    }
+    this -> array[x][y] = value;
 }
 
 template<class T>
