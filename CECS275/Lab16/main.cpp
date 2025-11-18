@@ -1,6 +1,5 @@
 #include "Dynamic2dArray.hpp"
 #include <iostream>
-#include <iomanip>
 #include <string>
 using namespace std;
 
@@ -32,7 +31,7 @@ int main(void){
         }
     }
     cout << "Both boards populated" << endl << endl;
-    cout << "====================================================" << endl;
+    cout << "====================================================" << endl << endl;
     cout << "Drawing out string board" << endl;
     stringBoard.draw();
     cout << endl;
@@ -41,13 +40,88 @@ int main(void){
     intBoard.draw();
     cout << endl;
 
+    cout << "Over Indexing String Board  with getElement()" << endl;
+
+    cout << stringBoard.getElement(6,0) << endl;
+    cout << "I dont crash yet1" << endl;
+    cout << stringBoard.getElement(1,-2) << endl;
+    cout << "I dont crash yet2" << endl;
+    
+    cout << "Over Indexing String Board with insertElement()" << endl;
+    intBoard.draw();
+    intBoard.insertElement(3,12,1);
+    cout << "I dont crash yet1" << endl;
+    intBoard.insertElement(-2,1,1);
+    cout << "I dont crash yet2" << endl;
+    intBoard.draw();
+
+
     /*
         Left to demonstrate:
         int getRowSize(void) const;
         int getColSize(void) const;
-        T getElement(int, int)const; 
         void setRowSize(int);
         void setColSize(int);
         void resize(int, int);
     */
+    cout << "====================================================" << endl << endl;
+
+    cout << "Current stringBoard row size: " << stringBoard.getRowSize() << endl; 
+    cout << "Current stringBoard col size: " << stringBoard.getColSize() << endl << endl; 
+
+    cout << "Change stringBoard row size to 200." << endl;
+    stringBoard.setRowSize(200);
+    cout << "Change stringBoard col size to 8." << endl << endl;
+    stringBoard.setColSize(8);
+
+    cout << "Changed stringBoard row size: " << stringBoard.getRowSize() << endl; 
+    cout << "Changed stringBoard col size: " << stringBoard.getColSize() << endl << endl; 
+
+    cout << "Populating stringBoard using insert Element" << endl;
+    for(int i = 0; i < stringBoard.getRowSize(); i++){
+        for(int j = 0; j < stringBoard.getColSize(); j++){
+            stringBoard.insertElement(i, j, to_string(i+1));
+        }
+    }
+    cout << "Draw the changed size: " << endl;
+    stringBoard.draw();
+
+    cout << "====================================================" << endl;
+
+    cout << "Resizing stringBaord to x = 5 and y = 5." << endl;
+    stringBoard.resize(5, 5);
+
+    cout << "Changed stringBoard row size: " << stringBoard.getRowSize() << endl; 
+    cout << "Changed stringBoard col size: " << stringBoard.getColSize() << endl << endl; 
+
+    cout << "====================================================" << endl << endl;
+
+    cout << "Current intBoard row size: " << intBoard.getRowSize() << endl; 
+    cout << "Current intBoard col size: " << intBoard.getColSize() << endl << endl; 
+
+    cout << "Change intBoard row size to 200." << endl;
+    intBoard.setRowSize(200);
+    cout << "Change intBoard col size to 8." << endl << endl;
+    intBoard.setRowSize(8);
+
+    cout << "Changed intBoard row size: " << intBoard.getRowSize() << endl; 
+    cout << "Changed intBoard col size: " << intBoard.getColSize() << endl << endl; 
+
+    cout << "Populating intBoard using insert Element" << endl;
+    for(int i = 0; i < intBoard.getRowSize(); i++){
+        for(int j = 0; j < intBoard.getColSize(); j++){
+            intBoard.insertElement(i, j, i+1);
+        }
+    }
+
+    cout << "Draw the changed size: " << endl;
+    intBoard.draw();
+
+    cout << "====================================================" << endl;
+
+    cout << "Resizing intBoard to x = 5 and y = 5." << endl;
+    intBoard.resize(5, 5);
+
+    cout << "Changed intBoard row size: " << intBoard.getRowSize() << endl; 
+    cout << "Changed intBoard col size: " << intBoard.getColSize() << endl << endl; 
 }

@@ -13,13 +13,9 @@ Handle memory safely by properly releasing allocated memory in the destructor.
 
 Implement the class as a template so it works with different data types (int, double, string, etc.).
 */
-
-//#include "Dynamic2dArray.h"
 #include <iostream>
-#include <iomanip>
-#include <vector>
+#include <stdexcept>
 using namespace std;
-
 template<class T>
 class Dynamic2dArray{
     private:
@@ -74,14 +70,8 @@ Dynamic2dArray<T>::~Dynamic2dArray(void){
 
 template<class T>
 void Dynamic2dArray<T>:: resize(int newX, int newY){
-    for (int i = 0; i < rowSize; i++)
-        delete[] array[i];
-    delete[] array;
-    
-    array = new T * [rowSize];
-    for (int i = 0; i < rowSize; i++)
-        array[i] = new T[colSize];
-
+    this -> setColSize(newY);
+    this -> setRowSize(newX);
 }
 
 template<class T>
@@ -96,25 +86,90 @@ int Dynamic2dArray<T>::getColSize(void) const{
 
 template<class T>
 T Dynamic2dArray<T>::getElement(int x, int y) const{
-    if (x > rowSize || x < 0 || y > colSize || y < 0)
-        throw "Given integers x or y is beyond range\n";
-    else
-        return array[x][y];
+    // if (x > this -> rowSize || x < 0 || y > this -> colSize || y < 0){
+    //     throw std::out_of_range("Given integers x or y is beyond range\n");
+    //     return array[0][0];
+    // } else
+    //     return array[x][y];
+    try{
+        if ( x < 0 || x > rowSize)
+            throw out_of_range("X is out of bounds");
+        if ( y < 0 || y > rowSize)
+            throw out_of_range("Y is out of bounds");
+        else 
+            return array[x][y];
+        //checking X or Y
+    }catch (out_of_range &ex){
+        cerr << "Caught Out of Bounds: " << ex.what() << endl;
+        return array[0][0];
+    }catch(...){
+        cout << "catching something else(lochness)" <<endl;
+        return array[0][0];
+    }
+    
 }
 
 template<class T>
 void Dynamic2dArray<T>::setRowSize(int newRowSize){
+    for(int i = 0; i < rowSize; i++){
+        delete[] array[i];
+    }
+    delete[] array;
+
     this -> rowSize = newRowSize;
+
+    array = new T* [rowSize];
+    for (int i = 0; i < rowSize; i++)
+        array[i] = new T[colSize]();
+
+    for(int i = 0; i < rowSize; i++){
+        for (int j = 0; j < colSize; j++)
+            array[i][j] = T();
+    }
+
 }
 
 template<class T>
 void Dynamic2dArray<T>::setColSize(int newColSize){
+    for(int i = 0; i < rowSize; i++){
+        delete[] array[i];
+    }
+    delete[] array;
+
     this -> colSize = newColSize;
+
+    array = new T* [rowSize];
+    for (int i = 0; i < rowSize; i++)
+        array[i] = new T[colSize]();
+
+    for(int i = 0; i < rowSize; i++){
+        for (int j = 0; j < colSize; j++)
+            array[i][j] = T();
+    }
 }
 
 template<class T>
 void Dynamic2dArray<T>::insertElement(int x, int y, T value){
-    this -> array[x][y] = value;
+    // try{
+    //     this -> array[x][y] = value;
+    // }
+    // catch(out_of_range e){
+    //     cout << "Caught: " << e.what();
+    // }
+    try{
+        if ( x < 0 || x > rowSize)
+            throw out_of_range("X is out of bounds");
+        if ( y < 0 || y > rowSize)
+            throw out_of_range("Y is out of bounds");
+        else 
+            this -> array[x][y] = value;
+        //checking X or Y
+    }catch (out_of_range &ex){
+        cerr << "Caught Out of Bounds: " << ex.what() << endl;
+    }catch(...){
+        cout << "catching something else(lochness)" <<endl;
+    }
+   
 }
 
 template<class T>
