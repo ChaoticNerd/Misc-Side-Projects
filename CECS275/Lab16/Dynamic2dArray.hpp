@@ -86,15 +86,10 @@ int Dynamic2dArray<T>::getColSize(void) const{
 
 template<class T>
 T Dynamic2dArray<T>::getElement(int x, int y) const{
-    // if (x > this -> rowSize || x < 0 || y > this -> colSize || y < 0){
-    //     throw std::out_of_range("Given integers x or y is beyond range\n");
-    //     return array[0][0];
-    // } else
-    //     return array[x][y];
     try{
-        if ( x < 0 || x > rowSize)
+        if ( x < 0 || x >= rowSize)
             throw out_of_range("X is out of bounds");
-        if ( y < 0 || y > rowSize)
+        else if ( y < 0 || y >= colSize)
             throw out_of_range("Y is out of bounds");
         else 
             return array[x][y];
@@ -150,16 +145,10 @@ void Dynamic2dArray<T>::setColSize(int newColSize){
 
 template<class T>
 void Dynamic2dArray<T>::insertElement(int x, int y, T value){
-    // try{
-    //     this -> array[x][y] = value;
-    // }
-    // catch(out_of_range e){
-    //     cout << "Caught: " << e.what();
-    // }
     try{
-        if ( x < 0 || x > rowSize)
+        if ( x < 0 || x >= rowSize)
             throw out_of_range("X is out of bounds");
-        if ( y < 0 || y > rowSize)
+        if ( y < 0 || y >= rowSize)
             throw out_of_range("Y is out of bounds");
         else 
             this -> array[x][y] = value;
@@ -169,7 +158,6 @@ void Dynamic2dArray<T>::insertElement(int x, int y, T value){
     }catch(...){
         cout << "catching something else(lochness)" <<endl;
     }
-   
 }
 
 template<class T>

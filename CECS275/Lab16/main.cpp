@@ -94,6 +94,18 @@ int main(void){
     cout << "Changed stringBoard row size: " << stringBoard.getRowSize() << endl; 
     cout << "Changed stringBoard col size: " << stringBoard.getColSize() << endl << endl; 
 
+    cout << "Populating stringBoard using insert Element" << endl;
+    for(int i = 0; i < stringBoard.getRowSize(); i++){
+        for(int j = 0; j < stringBoard.getColSize(); j++){
+            stringBoard.insertElement(i, j, to_string(i+1));
+        }
+    }
+
+    cout << "Draw the changed size: " << endl;
+    stringBoard.draw();
+
+    cout << "Getting whatever is in stringBoard[0,4]: " << stringBoard.getElement(0, 4) << endl << endl;
+
     cout << "====================================================" << endl << endl;
 
     cout << "Current intBoard row size: " << intBoard.getRowSize() << endl; 
@@ -124,4 +136,25 @@ int main(void){
 
     cout << "Changed intBoard row size: " << intBoard.getRowSize() << endl; 
     cout << "Changed intBoard col size: " << intBoard.getColSize() << endl << endl; 
+
+    cout << "Populating intBoard using insert Element" << endl;
+    for(int i = 0; i < intBoard.getRowSize(); i++){
+        for(int j = 0; j < intBoard.getColSize(); j++){
+            intBoard.insertElement(i, j, i+1);
+        }
+    }
+    
+    cout << "Draw the changed size: " << endl;
+    intBoard.draw();
+
+    cout << "Getting whatever is in intBoard[3,2]: " << intBoard.getElement(3, 2) << endl;
+
+    Dynamic2dArray<double> doubleBoard(5,5);
+    for(int i = 0; i < doubleBoard.getRowSize(); i++){
+        for(int j = 0; j < doubleBoard.getColSize(); j++){
+            doubleBoard.insertElement(i, j, i+1);
+        }
+    }
+    doubleBoard.insertElement(3,3,200.6);
+    doubleBoard.draw();
 }
