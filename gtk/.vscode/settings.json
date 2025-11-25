@@ -1,37 +1,40 @@
 {
   "terminal.integrated.profiles.windows": {
-    "MSYS2 CLANG64": {
-      "path": "C:\\msys64\\usr\\bin\\bash.exe",
-      "args": [
-        "--login",
-        "-i"
-      ],
+    "MSYS2 MINGW64": {
+      "path": "C:/msys64/usr/bin/bash.exe",
+      "args": ["--login", "-i"],
       "icon": "terminal-bash"
     }
   },
-  "terminal.integrated.defaultProfile.windows": "MSYS2 CLANG64",
+  "terminal.integrated.defaultProfile.windows": "MSYS2 MINGW64",
   "terminal.integrated.env.windows": {
     "CHERE_INVOKING": "1",
-    "MSYSTEM": "CLANG64",
-    "PATH": "C:\\msys64\\clang64\\bin;C:\\msys64\\usr\\bin;${env:PATH}"
+    "MSYSTEM": "MINGW64",
+    "PATH": "C:/msys64/mingw64/bin;C:/msys64/usr/bin;${env:PATH}",
+    "LANG": "C.UTF-8",
+    "LC_ALL": "C.UTF-8"
   },
-  "tasks.shell.windows": "C:\\msys64\\usr\\bin\\bash.exe",
+  
+  "tasks.shell.windows": "C:/msys64/usr/bin/bash.exe",
   "tasks.shellArgs.windows": [
     "--login",
     "-i"
   ],
-  "editor.parameterHints.enabled": true,
-  "C_Cpp.intelliSenseEngine": "Default",
-  "C_Cpp.intelliSenseEngineFallback": "Disabled",
-  "C_Cpp.inlayHints.parameterNames.enabled": "All",
-  "C_Cpp.inlayHints.parameterTypes.enabled": true,
-  "C_Cpp.inlayHints.variableTypes.enabled": true,
-  "C_Cpp.inlayHints.enumMemberValues.enabled": true,
   "files.associations": {
     "*.cpp": "cpp",
-    "*.hpp": "cpp",
-    "*.cc": "cpp",
-    "*.hh": "cpp",
-    "*.h": "cpp"
+    "vector": "cpp",
+    "array": "cpp",
+    "bitset": "cpp",
+    "string_view": "cpp",
+    "flat_map": "cpp",
+    "flat_set": "cpp",
+    "initializer_list": "cpp",
+    "ranges": "cpp",
+    "span": "cpp",
+    "stacktrace": "cpp",
+    "regex": "cpp",
+    "valarray": "cpp",
+    "deque": "cpp",
+    "string": "cpp"
   }
 }

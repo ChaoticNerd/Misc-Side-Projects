@@ -14,7 +14,7 @@ class Date{
         ~Date();
 
         int getMonth(void) const;               // returns month (ACCESSOR)
-        int getDay(void) const;                 // returns date  (ACCESSOR)
+        int getDay const(void) ;                 // returns date  (ACCESSOR)
         int getYear(void) const;                // returns year  (ACCESSOR)
 
         void setMonth(int month);               // Change month val

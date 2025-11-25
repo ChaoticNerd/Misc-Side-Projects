@@ -2,18 +2,26 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Debug (CLANG64, C++)",
+      "name": "Debug (gtkmm, gdb)",
       "type": "cppdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/build/app_clang64.exe",
-      "args": [],
-      "stopAtEntry": false,
+      "program": "${workspaceFolder}/build/app_gtkmm.exe",
       "cwd": "${workspaceFolder}",
-      "environment": [],
       "externalConsole": true,
       "MIMode": "gdb",
       "miDebuggerPath": "gdb.exe",
-      "preLaunchTask": "build (CLANG64, C++)"
+      "preLaunchTask": "build (g++, gtkmm-4.0)"
+    },
+    {
+      "name": "Debug (gtk C API, gdb)",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/app_gtk.exe",
+      "cwd": "${workspaceFolder}",
+      "externalConsole": true,
+      "MIMode": "gdb",
+      "miDebuggerPath": "gdb.exe",
+      "preLaunchTask": "build (g++, gtk4 C API)"
     }
   ]
 }

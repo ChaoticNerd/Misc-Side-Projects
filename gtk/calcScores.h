@@ -1,18 +1,9 @@
-/*
- * Header files where calculations are done
- * @author: Natasha Kho
- * @author: Emily Hsu
- * Created on: 2025-09-11
- * Last Modified: 2025-09-15
- * Reference: 
-*/
 #include <iostream>
 #include <iomanip>
 #include <fstream>
 #include <string>
 #include <cmath>
 #include <vector>
-#include "randGen.h"
 
 // Function prototypes
 void printMenu(int userSelect);
@@ -43,8 +34,8 @@ const double GradeA = 0.90,
  * Sorting algo
 */
 void bubbleSort(vector<vector<double>> &calculatedClassPercentages){
-    int amtExchanged = 1;       // increment every time we have to swap two vectors
-    int indexer = 1;            // increments before while check
+    size_t amtExchanged = 1;       // increment every time we have to swap two vectors
+    size_t indexer = 1;            // increments before while check
     bool isSwap = true;
 
     do{
@@ -77,27 +68,29 @@ void bubbleSort(vector<vector<double>> &calculatedClassPercentages){
  * threshold input is 0.xxxxxx
 */
 void threshScore(vector<vector<double>> &calculatedClassPercentages, double threshold, int isHigh){
-    int index;
+    size_t index = calculatedClassPercentages.size();
     
     // greater than
     if (isHigh){
-        for(int i = 0; i < calculatedClassPercentages.size(); i++){
+        for(size_t i = 0; i < calculatedClassPercentages.size(); ++i){
             if(calculatedClassPercentages[i][5] >= threshold){
                 index = i;
                 break;
             }
         }
-        calculatedClassPercentages.erase(calculatedClassPercentages.begin(), calculatedClassPercentages.begin() + index);
+        if(index != calculatedClassPercentages.size())
+            calculatedClassPercentages.erase(calculatedClassPercentages.begin(), calculatedClassPercentages.begin() + index);
 
     // less than    
-    }else if (!isHigh){
-        for(int i = 0; i < calculatedClassPercentages.size(); i++){
+    } else {
+        for(size_t i = 0; i < calculatedClassPercentages.size(); ++i){
             if(calculatedClassPercentages[i][5] <= threshold){
                 index = i;
                 break;
             }
         }
-        calculatedClassPercentages.erase(calculatedClassPercentages.begin() + index, calculatedClassPercentages.end());
+        if(index != calculatedClassPercentages.size())
+            calculatedClassPercentages.erase(calculatedClassPercentages.begin() + index, calculatedClassPercentages.end());
 
     }
     
@@ -105,7 +98,7 @@ void threshScore(vector<vector<double>> &calculatedClassPercentages, double thre
 }
 
 void getTotalPercentage(vector<vector<double>> &calculatedClassPercentages){
-    for(int i = 0; i < calculatedClassPercentages.size(); i++){
+    for(size_t i = 0; i < calculatedClassPercentages.size(); i++){
         double tot = 0;
         for(double x : calculatedClassPercentages[i]){
             tot += x;
@@ -117,22 +110,22 @@ void getTotalPercentage(vector<vector<double>> &calculatedClassPercentages){
 /*
  * @author Natasha Kho
 */
-void dropLowestScore(fstream& file,vector<vector<vector<double>>> (&allGrades), int typeOfAssignment){
+void dropLowestScore(vector<vector<vector<double>>> (&allGrades), int typeOfAssignment){
     //int lowestScore = 0x7FFFFFFF; // this is the maximum int in hex
 
     // this iterates through all the students (41 total)
-    for(int i = 0; i < allGrades.size(); i++ ){
+    for(size_t i = 0; i < allGrades.size(); i++ ){
 
         // this iterates through a student's assignment categories (5 total)
-        for(int j = typeOfAssignment; j < allGrades[i].size(); j++){
+        for(size_t j = typeOfAssignment; j < allGrades[i].size(); j++){
             // cout << "function called" << endl;
-            int indexToDrop = 0;     
+            size_t indexToDrop = 0;     
 
             // cout << "STARTING NEW ITERATION: " << j << endl;
 
             // this iterates through a student's assignment's grades 
             // (ie. lab grades, then quiz grades, then exam grades, etc.)
-            for(int k = 0; k < allGrades[i][j].size(); k++){
+            for(size_t k = 0; k < allGrades[i][j].size(); k++){
                 // cout << "Where is K going: " << k << endl;
                 // cout << allGrades[i][j].size() << " is the size of this shit." << endl;
                 // if all of the current values of indexesToDrop are lower than the current value of allGrades, 
@@ -160,11 +153,10 @@ void dropLowestScore(fstream& file,vector<vector<vector<double>>> (&allGrades), 
  * @param: amount of assignments to iterate through
  * @return total score of one category of assignment
 */
-void getPoints(fstream& file, int (&totalAssignmentAmount)[5], vector<vector<vector<double>>> &allGrades){
-    double temp;
-    for(int i = 0; i < allGrades.size(); i++){
-        for(int j = 0; j < allGrades[i].size(); j++){
-            for(int k = 0; k < allGrades[i][j].size(); k++){
+void getPoints(fstream& file, vector<vector<vector<double>>> &allGrades){
+    for(size_t i = 0; i < allGrades.size(); i++){
+        for(size_t j = 0; j < allGrades[i].size(); j++){
+            for(size_t k = 0; k < allGrades[i][j].size(); k++){
                 file >> allGrades[i][j][k];
             }
         }
@@ -181,7 +173,7 @@ void getPoints(fstream& file, int (&totalAssignmentAmount)[5], vector<vector<vec
 */
 void getTotalAssignments(fstream& file, int (&totalAssignmentsArray)[5]){
     // First line of file
-    for(int i = 0; i < 5; i++ ){
+    for(size_t i = 0; i < 5; i++ ){
         file >> totalAssignmentsArray[i];
     }
     
@@ -233,7 +225,7 @@ void populateStudentVector(int (&totalAssignmentAmount)[5], vector<vector<double
 */
 std::string getLetterGrade(vector<double> &calculatedPercentages){
     double totalGrade;
-    for(int i = 0; i < calculatedPercentages.size(); i++){
+    for(size_t i = 0; i < calculatedPercentages.size(); i++){
         totalGrade += calculatedPercentages[i];
     }
     // cout << "Total Grade: " << totalGrade <<endl;
@@ -288,10 +280,10 @@ void calculateClassPercentage(vector<vector<vector<double>>> grade, vector<doubl
     // and then, push that into the calculated percentages double array  
     double forklift = 0;
     // cout <<"student amt: "<< grade.size() << " category: "<< grade[0].size() << endl;
-    for (int i = 0; i < grade.size(); i++){ // 40 iterations
+    for (size_t i = 0; i < grade.size(); i++){ // 40 iterations
         forklift = 0;
-        for (int j = 0; j < grade[i].size(); j++){ //  5 iterations
-            for (int k = 0; k < grade[i][j].size(); k++){ // amt of assignments
+        for (size_t j = 0; j < grade[i].size(); j++){ //  5 iterations
+            for (size_t k = 0; k < grade[i][j].size(); k++){ // amt of assignments
                 // cout << "fork life lift error check :total check: " << grade[i][assignmentType][k] <<  endl;
                 forklift += grade[i][assignmentType][k] / total[assignmentType] * gradeWeight;
                 // cout << "EYE TRACKER: " << i << endl;
@@ -336,7 +328,7 @@ void getAverageOfCategory(double pointsEarned, int amountOfAssignments, vector<d
 */
 void getAverageOfCategoryOfClass(vector<vector<double>> calculatedPercentages, int assignmentType, vector<double> &averageOfSingleCategory){
     double pointsEarned = 0; 
-    for (int i = 0; i < calculatedPercentages.size(); i++){
+    for (size_t i = 0; i < calculatedPercentages.size(); i++){
         pointsEarned += calculatedPercentages[i][assignmentType];
     }
     
@@ -349,9 +341,9 @@ void getAverageOfCategoryOfClass(vector<vector<double>> calculatedPercentages, i
 */
 void getIndividualStudentPointsTotal(vector<vector<vector<double>>> &allGrades, int studentNumber, int (&totalAssignments)[5], vector<double> &totalEarnedPoints){
     vector<double> oneStudentScore;
-    for(int i = studentNumber; i < allGrades.size(); i++){
-        for(int j = 0; j < allGrades[studentNumber].size(); j++){
-            for(int k = 0; k < allGrades[i][j].size(); k++){
+    for(size_t i = studentNumber; i < allGrades.size(); i++){
+        for(size_t j = 0; j < allGrades[studentNumber].size(); j++){
+            for(size_t k = 0; k < allGrades[i][j].size(); k++){
                 oneStudentScore.push_back(allGrades[studentNumber][j][k]);
             }
         }
@@ -359,11 +351,11 @@ void getIndividualStudentPointsTotal(vector<vector<vector<double>>> &allGrades, 
     }
 
     // this totals the points earned in each category by the student 
-    int cursor = 0;
-    for(int assignmentInCategory: totalAssignments){
+    size_t cursor = 0;
+    for(size_t assignmentInCategory: totalAssignments){
         double temp = 0;;
         //cout << "\nAssignment amount in Category: " << assignmentInCategory << endl;
-        for(int i = 0; i < assignmentInCategory; i++){
+        for(size_t i = 0; i < assignmentInCategory; i++){
             temp += oneStudentScore[cursor];
             cursor++;
         }
@@ -371,13 +363,13 @@ void getIndividualStudentPointsTotal(vector<vector<vector<double>>> &allGrades, 
     }
 }
 
-void getTotalScoresOfOneCategory(vector<vector<vector<double>>> &allGrades, int (&totalAssignments)[5], int assignmentType, vector<vector<vector<double>>> &totalCategoryPoints){
+void getTotalScoresOfOneCategory(vector<vector<vector<double>>> &allGrades, int assignmentType, vector<vector<vector<double>>> &totalCategoryPoints){
     vector<double> pointsEarnedForOneCategory;
     double temp = 0;
     //cout << "TEST1" << endl;
-    for(int i = 1; i < allGrades.size(); i++){
-        for(int j = 0; j < allGrades[assignmentType].size(); j++){
-            for(int k = 0; k < allGrades[i][assignmentType].size(); k++){
+    for(size_t i = 1; i < allGrades.size(); i++){
+        for(size_t j = 0; j < allGrades[assignmentType].size(); j++){
+            for(size_t k = 0; k < allGrades[i][assignmentType].size(); k++){
                 // cout << "TEST " << k << endl;
                 temp += allGrades[i][assignmentType][k]; // adds each score of one category
                 // cout << allGrades[i][assignmentType][k] << " + ";
@@ -399,7 +391,7 @@ void getTotalScoresOfOneCategory(vector<vector<vector<double>>> &allGrades, int 
     // cout << "Finish first for loop " << endl;
 
     // Sudo code to put into 3d vector of scores
-    for(int i = 0; i < allGrades.size()-1; i++){ // this runs 40 times
+    for(size_t i = 0; i < allGrades.size()-1; i++){ // this runs 40 times
         // cout << "Enter second for loop " << allGrades.size()-1 << endl;
         // cout << "Points earned in category vector: " << pointsEarnedForOneCategory[i] << endl;
         totalCategoryPoints[i][assignmentType].at(0) = pointsEarnedForOneCategory[i]; // this is not working correctly
@@ -428,16 +420,16 @@ void generateReportClass(fstream &inputFile, int classSize, int sortSelect, vect
 
     populateGradeVector(totalAssignments, allGrades, classSize);
 
-    getPoints(inputFile, totalAssignments, allGrades);
+    getPoints(inputFile, allGrades);
 
     populateGradeVector(temp, totalCategoryPoints, 39);
     populateStudentVector(temp, calculatedPercentages, 39);    
     if(isGradesDropped){
         // Do the stuff to drop the lowest grade as per requested wahoo!
-        for(int i = 0; i < sizeof(totalAssignmentsDropped)/sizeof(totalAssignmentsDropped[0]); i++){
+        for(size_t i = 0; i < sizeof(totalAssignmentsDropped)/sizeof(totalAssignmentsDropped[0]); i++){
             int amtOfAssignmentsToDrop = totalAssignmentsDropped[i];
             while(amtOfAssignmentsToDrop){
-                dropLowestScore(inputFile, allGrades,i);
+                dropLowestScore( allGrades,i);
                 amtOfAssignmentsToDrop--;
                 totalAssignments[i]--;
             }
@@ -447,7 +439,7 @@ void generateReportClass(fstream &inputFile, int classSize, int sortSelect, vect
     // cout << "SOMEONE HELP ME, IM TOO GAY TO DO THIS" << endl; THIS PRINTS
     
     for(int i = 0; i < sizeof(totalAssignmentsDropped)/sizeof(totalAssignmentsDropped[0]); i++){ // goes for amount of categories there are
-        getTotalScoresOfOneCategory(allGrades, totalAssignments, i, totalCategoryPoints); // student score is totalEarnedPoints
+        getTotalScoresOfOneCategory(allGrades, i, totalCategoryPoints); // student score is totalEarnedPoints
     }
 
 
@@ -462,8 +454,8 @@ void generateReportClass(fstream &inputFile, int classSize, int sortSelect, vect
     // this calculates the percentages for one student
     //  calculatePercentage(double grade, double total, double gradeWeight, vector<double> &calculatedPercentages)
     // this part requires testing
-    for(int i = 0; i < allGrades.size() - 1; i++){ // this needs to iterate 40 times
-        for(int j = 0; j < sizeof(totalAssignments)/sizeof(totalAssignments[0]); j++){ // iterates 5 times
+    for(size_t i = 0; i < allGrades.size() - 1; i++){ // this needs to iterate 40 times
+        for(size_t j = 0; j < sizeof(totalAssignments)/sizeof(totalAssignments[0]); j++){ // iterates 5 times
             // cout << "SOMEONE HELP ME, IM TOO GAY TO DO THIS 0" << endl; // THIS PRINTS
 
             // this breaks on index 0
@@ -475,7 +467,7 @@ void generateReportClass(fstream &inputFile, int classSize, int sortSelect, vect
     }
     // cout << "SOMEONE HELP ME, IM TOO GAY TO DO THIS" << endl; // THIS PRINTS
 
-    for(int i = 0; i < sizeof(totalAssignments)/sizeof(totalAssignments[0]); i++){
+    for(size_t i = 0; i < sizeof(totalAssignments)/sizeof(totalAssignments[0]); i++){
         getAverageOfCategoryOfClass(calculatedPercentages, i, averageScores);
         // cout << "AVG SCORES: (" << i << " , " << j << ") "<< averageScores[i] <<endl; 
     }
@@ -524,7 +516,7 @@ void generateReportOneStudent(fstream &inputFile, vector<vector<vector<double>>>
     // testPrintVector(allGrades); // should be a buncha 0s
 
     // cout << "===========================================\nINPUTTING POINTS" << endl;
-    getPoints(inputFile, totalAssignments, allGrades);
+    getPoints(inputFile, allGrades);
     // testPrintVector(allGrades); // PLEASE PRINT NUMBERS PLEAAAAAAASE
 
     // used for calculations
@@ -533,11 +525,11 @@ void generateReportOneStudent(fstream &inputFile, vector<vector<vector<double>>>
 
     if(isGradesDropped){
         // Do the stuff to drop the lowest grade as per requested wahoo!
-        for(int i = 0; i < sizeof(totalAssignmentsDropped)/sizeof(totalAssignmentsDropped[0]); i++){
+        for(size_t i = 0; i < sizeof(totalAssignmentsDropped)/sizeof(totalAssignmentsDropped[0]); i++){
         int amtOfAssignmentsToDrop = totalAssignmentsDropped[i];
             while(amtOfAssignmentsToDrop){
                 //cout << "AT I: " << i << " ASSIGNMENT TO BE DROPPED DETECTED ::: " << totalAssignmentsDropped[i] << endl;
-                dropLowestScore(inputFile, allGrades,i );
+                dropLowestScore(allGrades, i);
                 amtOfAssignmentsToDrop--;
                 totalAssignments[i]--;
             }
@@ -546,26 +538,10 @@ void generateReportOneStudent(fstream &inputFile, vector<vector<vector<double>>>
     getIndividualStudentPointsTotal(allGrades, studentNumber, totalAssignments, totalEarned); // student score is totalEarnedPoints
     getIndividualStudentPointsTotal(allGrades, 0, totalAssignments, totalPointsPossible);
 
-    for(int i = 0; i < totalEarned.size(); i++){
+    for(size_t i = 0; i < totalEarned.size(); i++){
         calculatePercentage(totalEarned[i], totalPointsPossible[i], gradeWeights[i], calculatedPercentages);
         getAverageOfCategory(totalEarned[i], totalAssignments[i], averageScores);
     }
-
-    // // debug loop
-    //         cout << "Viewing Calculated Percentages" << endl;
-    //         cout << calculatedPercentages.size() << endl;
-    //         for(double x : calculatedPercentages){
-    //             cout << x << " ";
-    //         }
-    //         cout << endl;
-
-    //         cout << "Viewing Average Scores" << endl;
-    //         cout << averageScores.size() << endl;
-    //         for(double x : averageScores){
-    //             cout << x << " ";
-    //         }
-    //         cout << endl;
-    // end debug loop
 }
 
 void vector_dumptruck(
@@ -644,7 +620,7 @@ void printClassSortedResults(vector<vector<double>> calculatedClassPercentages){
     //NEEDS TO CALCULATE LETTER GRADE
     string letterGrade;
     cout << "===============================================\n" << setw(25) << "SORTED CLASS RESULTS" << "\n";
-    for (int i = 0; i < calculatedClassPercentages.size(); i++){
+    for (size_t i = 0; i < calculatedClassPercentages.size(); i++){
         letterGrade = getLetterGradeSorted(calculatedClassPercentages[i]);
         cout << setw(7) <<  letterGrade << "       " << calculatedClassPercentages[i][5]<< endl;;
     }
@@ -706,8 +682,8 @@ int checkFile(fstream &inputFile){
 
 
 void testPrintVector(vector<vector<double>> &allGrades){
-    for(int i = 0; i < allGrades.size(); i++){
-        for(int j = 0; j < allGrades[i].size(); j++){
+    for(size_t i = 0; i < allGrades.size(); i++){
+        for(size_t j = 0; j < allGrades[i].size(); j++){
                 cout << allGrades[i][j] << " ";
             
         }
