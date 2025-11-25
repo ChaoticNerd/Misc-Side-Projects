@@ -1,5 +1,6 @@
 #include <gtkmm.h>
 #include <gdk/gdkkeysyms.h> // for GDK_KEY_F11, GDK_KEY_Escape
+#include "calcScores.h"
 
 class mainScreen : public Gtk::Window {
 public:
