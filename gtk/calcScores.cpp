@@ -656,3 +656,55 @@ void calcScore::testPrintVector(vector<vector<double>> &allGrades){
         cout << endl;
     }
 }
+
+/*
+ * @author: Justin Narciso
+ * 
+*/
+void calcScore::setThreshold(int newThreshold){
+    this -> threshold = newThreshold;
+}
+
+
+/*
+ * @author: Justin Narciso
+ * 
+*/
+void calcScore::setStudentID(int newStudentID){
+    this -> studentID = newStudentID;
+}
+/*
+ * @author: Justin Narciso
+ * 
+*/
+void calcScore::setClassSize(int newClassSize){
+    this -> classSize = newClassSize;
+}
+
+/*
+ * @author: Justin Narciso
+ * 
+*/
+void calcScore::setTotalAssignmentsDropped(int (&newTotalAssignmentsDropped)[5]){
+    this -> totalAssignmentsDropped[0] = newTotalAssignmentsDropped[0];
+    this -> totalAssignmentsDropped[1] = newTotalAssignmentsDropped[1];
+    this -> totalAssignmentsDropped[2] = newTotalAssignmentsDropped[2];
+    this -> totalAssignmentsDropped[3] = newTotalAssignmentsDropped[3];
+    this -> totalAssignmentsDropped[4] = newTotalAssignmentsDropped[4];
+}
+
+/*
+ * @author: Justin Narciso
+ * 
+*/
+void calcScore::setTotalAssignments(int (&newTotalAssignments)[5]){
+    this -> totalAssignments[0] = newTotalAssignments[0];
+    this -> totalAssignments[1] = newTotalAssignments[1];
+    this -> totalAssignments[2] = newTotalAssignments[2];
+    this -> totalAssignments[3] = newTotalAssignments[3];
+    this -> totalAssignments[4] = newTotalAssignments[4];
+}
+
+void calcScore::setIsFileUploaded(bool FileUploaded){
+    this -> isFileUploaded = FileUploaded;
+}

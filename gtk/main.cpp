@@ -65,7 +65,7 @@ class app : public Gtk::Application{
 };
 
 int main()
-{
+{   
     auto launchApp = Glib::make_refptr_for_instance<app>(new app());
 
     // mainScreen window;

@@ -98,6 +98,22 @@ class calcScore{
 
         // FOR DEBUGGING
         void testPrintVector(vector<vector<double>> &allGrades);
+
+        //setters
+        // default set to 100
+        // TODO: requires setter to change threshold
+        void setThreshold(int newThreshold);
+        
+        //   default 0, default 40,       default 0s,                 default 10, 5, etc.
+        // TODO: all these require setters
+        void setStudentID(int studentID);
+        void setClassSize(int classSize);
+        void setTotalAssignmentsDropped(int (&totalAssignmentsDropped)[5]);
+        void setTotalAssignments(int (&totalAssignments)[5]);
+
+        // default false
+        // TODO: requires setter for filestream upload
+        void setIsFileUploaded(bool);
 };
 
 
