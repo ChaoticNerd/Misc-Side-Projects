@@ -50,7 +50,7 @@ loginWindow::loginWindow(){
     textBox.append(usernameEntry);
     textBox.append(passwordEntry);
     textBox.append(loginButton);
-
+    
     screenGrid.attach(textBox, 0, 300);
 
     set_child(screenGrid);
@@ -65,8 +65,30 @@ loginWindow::loginWindow(){
 }
 
 void loginWindow::on_login_button_clicked(){
-    std::string username = usernameEntry.get_text();
-    std::string password = passwordEntry.get_text();
-    std::cout << "Username: " << username << ", Password: " << password << std::endl;
+    std::string file_username, file_password,line;
+    std::ifstream outfile("user.txt");
+    std::string username = usernameEntry.get_text(); //get username from entry
+    std::string password = passwordEntry.get_text(); //get password from entry
+
+    std::cout << "Username: " << username << ", Password: " << password << std::endl; // debug to check input values
+
+    while (getline(outfile,line)) { // get username and password from file
+        size_t delimiter_pos = line.find(' ');          // assuming username and password are separated by space
+        file_username = line.substr(0, delimiter_pos);  //get username from file
+        file_password = line.substr(delimiter_pos + 1); //get password from file
+
+        std::cout << "Username: " << file_username << ", Password: " << file_password << std::endl;// debug to check file values
+
+        if (username == file_username && password == file_password) {
+            std::cout << "Username: " << file_username << ", Password: " << file_password << std::endl; // debug to confirm match
+            std::cout << "Login successful!" << std::endl;  // debug successful login message in terminal
+            outfile.close();
+            return;
+        }
+    }
+    std::cout << "Invalid username or password." << std::endl; // debug invalid login message in terminal
+    outfile.close(); //close file so that it restarts properly on next login attempt
+    
+
     // Placeholder for login button click handling
 }

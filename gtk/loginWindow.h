@@ -7,7 +7,7 @@
 class loginWindow : public Gtk::Window{
     public:
         loginWindow();
-
+       
     private:
         Gtk::Entry usernameEntry, passwordEntry;
         Gtk::Grid screenGrid;
