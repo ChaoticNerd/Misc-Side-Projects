@@ -2,7 +2,7 @@
 #include <gdk/gdkkeysyms.h> // for GDK_KEY_F11, GDK_KEY_Escape
 #include "calcScores.h"
 #include "mainScreen.h"
-
+#include "loginWindow.h"
 
 class app : public Gtk::Application{
     public:
@@ -13,6 +13,9 @@ class app : public Gtk::Application{
             auto mainWindow = new mainScreen();
             add_window(*mainWindow);
             mainWindow -> present();
+            auto loginWin = new loginWindow();
+            add_window(*loginWin);
+            loginWin -> present();
 
         }
 };
