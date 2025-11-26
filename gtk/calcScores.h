@@ -1,3 +1,6 @@
+#ifndef CALCSCORES_H
+#define CALCSCORES_H
+
 #include <iostream>
 #include <iomanip>
 #include <fstream>
@@ -70,8 +73,7 @@ class calcScore{
         // TODO: CONSTRUCTOR
         calcScore(); // default constructor
 
-        calcScore(fstream inFile, string fileName, vector<double> calcPerc, vector<double> avgScore, vector<vector<double>> calcClassPerc, vector<vector<vector<double>>> allGrades, int studentID,
-                  int classSize);
+        calcScore(fstream inFile, string fileName, int studentID, int classSize);
 
 
         void generateReportClass(int classSize, int sortSelect, int isGradesDropped);
@@ -115,8 +117,4 @@ class calcScore{
         // TODO: requires setter for filestream upload
         void setIsFileUploaded(bool);
 };
-
-
-
-
-
+#endif
