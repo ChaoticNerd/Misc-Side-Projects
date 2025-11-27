@@ -11,7 +11,10 @@ void RandGen::generateReport(std::string fileName){
 
     out.open(fileLoc + fileName);
     srand(time(0)); // Ensures that each randomly generated attempt is different
-    
+    //add the weights of each category at the top of the file
+    out << LAB_WEIGHT << " " << QUIZ_WEIGHT << " " << MIDTERM_WEIGHT << " " << PROJECT_WEIGHT << " " << FINAL_EXAM_WEIGHT << endl;
+
+
     // Generate number of assignments in each category
     labAmount = generateAssignmentAmount(MAX_LABS);
     quizAmount = generateAssignmentAmount(MAX_QUIZZES);
