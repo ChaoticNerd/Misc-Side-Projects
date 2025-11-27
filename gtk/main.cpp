@@ -1,6 +1,7 @@
 #include <gtkmm.h>
 #include <gdk/gdkkeysyms.h> // for GDK_KEY_F11, GDK_KEY_Escape
 #include "mainScreen.h"
+#include "loginWindow.h"
 
 // PROGRAM HAS TO BE RUN FROM TERMINAL OF VSC
 // CD INTO build AND DO ./app
@@ -15,6 +16,9 @@ class app : public Gtk::Application{
             auto mainWindow = new mainScreen();
             add_window(*mainWindow);
             mainWindow -> present();
+            auto loginWin = new loginWindow();
+            add_window(*loginWin);
+            loginWin -> present();
 
         }
 };
