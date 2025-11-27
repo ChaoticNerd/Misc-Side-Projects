@@ -37,7 +37,7 @@ entry text {
 }
 
 /* ============================= */
-/*  UNDERTALE DIALOGS (#ut-box)  */
+/*       UNDERTALE DIALOGS       */
 /* ============================= */
 
 /* The dialog itself (we let content box show visuals) */
@@ -98,7 +98,6 @@ button:active {
 
 /* ============================= */
 /*  MESSAGE BOX ABOVE BUTTONS    */
-/*  (if you're using ut-message) */
 /* ============================= */
 
 /* Outer frame that holds battle text (e.g., battleFrame / messageFrame) */
