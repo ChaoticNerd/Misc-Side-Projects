@@ -3,7 +3,9 @@
 RandGen::RandGen(){}
 
 void RandGen::generateReport(std::string fileName){
-    int labAmount, quizAmount, midtermAmount;
+    int labAmount, quizAmount, midtermAmount; // max assignments per category
+    int droppedLabs, droppedQuizzes;
+    //int classSize = 40;
     std::string fileLoc = "../data/"; ;
     ofstream out;
 
@@ -16,6 +18,15 @@ void RandGen::generateReport(std::string fileName){
     midtermAmount = generateAssignmentAmount(MAX_MIDTERMS);
     out << labAmount << " " << quizAmount << " " << midtermAmount << " " << PROJECT_AMOUNT << " " << FINAL_EXAM_AMOUNT << endl;
 
+    // Generate Dropped assignments for each category (added by the Oracle Justine)
+    droppedLabs = generateDroppedAmount(labAmount);
+    droppedQuizzes = generateDroppedAmount(quizAmount);  
+    // Set up in case we want to add dropped assignments for midterms/projects/finals later
+    // generateDroppedAmount(midtermAmount);
+    // generateDroppedAmount(PROJECT_AMOUNT);
+    // generateDroppedAmount(FINAL_EXAM_AMOUNT);
+    out << droppedLabs << " " << droppedQuizzes << " " << DROPPED_MIDTERMS << " " << DROPPED_PROJECTS << " " << DROPPED_FINAL_EXAM << endl; 
+
     // Generate max scores
     generateMaxScores(out, MAX_LAB_SCORE, labAmount);
     generateMaxScores(out, MAX_QUIZ_SCORE, quizAmount);
@@ -25,12 +36,15 @@ void RandGen::generateReport(std::string fileName){
 
     out << endl;
 
-    generateScores(out, labAmount, MAX_LAB_SCORE); // Labs
-    generateScores(out, quizAmount, MAX_QUIZ_SCORE); // Quizzes
-    generateScores(out, midtermAmount, MAX_MIDTERM_SCORE); // Midterms
-    generateScores(out, PROJECT_AMOUNT, MAX_MIDTERM_SCORE); // Projects
-    generateScores(out, FINAL_EXAM_AMOUNT, MAX_FINAL_EXAM_SCORE); // Final
-    
+    for (int i = 0; i < CLASS_SIZE; i++){
+        generateScores(out, labAmount, MAX_LAB_SCORE); // Labs
+        generateScores(out, quizAmount, MAX_QUIZ_SCORE); // Quizzes
+        generateScores(out, midtermAmount, MAX_MIDTERM_SCORE); // Midterms
+        generateScores(out, PROJECT_AMOUNT, MAX_MIDTERM_SCORE); // Projects
+        generateScores(out, FINAL_EXAM_AMOUNT, MAX_FINAL_EXAM_SCORE); // Final
+        
+        out << endl;
+    }
     out.close();
 }
 
@@ -50,4 +64,12 @@ void RandGen::generateMaxScores(ofstream& out, int maxScore, int amount){
 int RandGen::generateAssignmentAmount(int maxAssignments){
     int min = 1, numAssignments = 0;
     return numAssignments = min + rand() % (maxAssignments - min);
+}
+
+int RandGen::generateDroppedAmount(int assignmentAmount){
+    int numDropped = 0;
+    if (assignmentAmount == 1)
+        return numDropped = 0;
+    else
+        return numDropped = rand() % (assignmentAmount);
 }
