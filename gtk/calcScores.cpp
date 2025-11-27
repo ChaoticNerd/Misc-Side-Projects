@@ -1,5 +1,34 @@
 #include "calcScores.h"
 
+// default constructor
+calcScore::calcScore()
+    : inputFile(),          // default-constructed, closed stream
+      fileName(),           // empty string
+      dropped(),
+      threshold(0.10),      // matches usage as 0.x threshold
+      studentID(0),
+      classSize(40),
+      isFileUploaded(false)
+{
+    std::fill(std::begin(totalAssignments),
+              std::end(totalAssignments), 0);
+    std::fill(std::begin(totalAssignmentsDropped),
+              std::end(totalAssignmentsDropped), 0);
+
+    calculatedPercentages.clear();
+    averageScores.clear();
+    calculatedClassPercentages.clear();
+    allGrades.clear();
+}
+
+
+calcScore::~calcScore() {
+    if (inputFile.is_open()) {
+        inputFile.close();
+    }
+}
+
+
 /*
  * Sorting algo
 */
@@ -35,7 +64,7 @@ void calcScore::bubbleSort(vector<vector<double>> &calculatedClassPercentages){
 
 /*
  * isHigh: 1 = greater than
- * threshold input is 0.xxxxxx
+ * threshold input is 0.xxxxxx 
 */
 void calcScore::threshScore(double threshold, int isHigh){
     size_t index = calculatedClassPercentages.size();
@@ -193,12 +222,13 @@ void calcScore::populateStudentVector(int (&totalAssignmentAmount)[5], vector<ve
  * @param: total grade after calculations
  * @return letter grade based on score
 */
-std::string calcScore::getLetterGrade(vector<double> &calculatedPercentages){
-    double totalGrade;
-    for(size_t i = 0; i < calculatedPercentages.size(); i++){
-        totalGrade += calculatedPercentages[i];
+std::string calcScore::getLetterGrade(std::vector<double> &calculatedPercentages) {
+    double totalGrade = 0.0;
+
+    for (double x : calculatedPercentages) {
+        totalGrade += x;
     }
-    // cout << "Total Grade: " << totalGrade <<endl;
+
     calculatedPercentages.push_back(totalGrade);
 
     if (totalGrade >= GradeA) {
@@ -214,7 +244,8 @@ std::string calcScore::getLetterGrade(vector<double> &calculatedPercentages){
     }
 }
 
-std::string calcScore::getLetterGradeSorted(vector<double> &calculatedPercentages){
+
+std::string calcScore::getLetterGradeSorted(const vector<double>& calculatedPercentages){
 
 
     if (calculatedPercentages[5] >= GradeA) {
@@ -246,44 +277,19 @@ void calcScore::calculatePercentage(double grade, double total, double gradeWeig
  * @author: Natasha Kho
  * secret second author
 */
-void calcScore::calculateClassPercentage(vector<vector<vector<double>>> grade, vector<double> total, double gradeWeight, vector<vector<double>> &calculatedPercentages, int assignmentType){
-    // we need a temp variable that calculates all the quiz or lab or whatever grade
-    // and then, push that into the calculated percentages double array  
-    double forklift = 0;
-    // cout <<"student amt: "<< grade.size() << " category: "<< grade[0].size() << endl;
-    for (size_t i = 0; i < grade.size(); i++){ // 40 iterations
-        forklift = 0;
-        for (size_t j = 0; j < grade[i].size(); j++){ //  5 iterations
-            for (size_t k = 0; k < grade[i][j].size(); k++){ // amt of assignments
-                // cout << "fork life lift error check :total check: " << grade[i][assignmentType][k] <<  endl;
-                forklift += grade[i][assignmentType][k] / total[assignmentType] * gradeWeight;
-                // cout << "EYE TRACKER: " << i << endl;
-            }
-            // cout << " ASS DID I????" << endl;
-            // cout << "CHECKING CALC PRECENTG " <<  calculatedPercentages[i][assignmentType] << endl;
-            calculatedPercentages[i].at(assignmentType) = forklift; //40 x 5
-            
-            // cout << "What's on the lift!! " << forklift <<endl;
-            // cout << "what Gibby thinkin about (calcpercentage[i]): " << calculatedPercentages[i][assignmentType] << endl;
-           
-            break;
-            //cout << "what (i,j) CalcPercent:  (" << i << " " << j << ") " << calculatedPercentages[i][j] << endl; 
+void calcScore::calculateClassPercentage( const std::vector<std::vector<std::vector<double>>> &grade, const std::vector<double> &total,
+                                          double gradeWeight, std::vector<std::vector<double>> &calculatedPercentages, int assignmentType){
+    double forklift = 0.0;
 
+    for (size_t i = 0; i < grade.size(); i++) {
+        forklift = 0.0;
+        for (size_t j = 0; j < grade[i][assignmentType].size(); j++) {
+            forklift += grade[i][assignmentType][j] / total[assignmentType] * gradeWeight;
         }
-        //calculatedPercentages[studentTrack].at(assignmentType) = forklift;
-        //cout << "TELL ME YOUR SECRETS CALCULATED PERCENT[i][0-4]:  " << calculatedPercentages[studentTrack][0] << " " << calculatedPercentages[studentTrack][1] << " "<< calculatedPercentages[studentTrack][2] << " "<< calculatedPercentages[studentTrack][3] << " "<< calculatedPercentages[studentTrack][4] << " " <<endl;
+        calculatedPercentages[i].at(assignmentType) = forklift;
     }
-
-    // cout << "CHECKING CALCULATED PERCENTAGES" << endl;
-    // for(int i = 0; i < calculatedPercentages.size(); i++){
-    //     for(double x: calculatedPercentages[i]){
-    //         cout << x << " ";
-    //     }
-    //     cout << endl;
-    // }
-
-    // far far outside, you have the push_back
 }
+
 
 /*
  * @author: Natasha Kho
@@ -297,13 +303,13 @@ void calcScore::getAverageOfCategory(double pointsEarned, int amountOfAssignment
  * @author: Natasha Kho
  * for class average
 */
-void calcScore::getAverageOfCategoryOfClass(vector<vector<double>> calculatedPercentages, int assignmentType, vector<double> &averageOfSingleCategory){
+void calcScore::getAverageOfCategoryOfClass(const vector<vector<double>>& calculatedPercentages, int assignmentType, vector<double>& averageOfSingleCategory){
     double pointsEarned = 0; 
     for (size_t i = 0; i < calculatedPercentages.size(); i++){
         pointsEarned += calculatedPercentages[i][assignmentType];
     }
     
-    averageOfSingleCategory.push_back(pointsEarned/40);
+    averageOfSingleCategory.push_back(pointsEarned/classSize);
 }
 
 /*
@@ -514,11 +520,18 @@ void calcScore::generateReportOneStudent(int isGradesDropped, int studentNumber)
     }
 }
 
-void calcScore::vector_dumptruck(void){
-        calculatedPercentages.clear();
-        averageScores.clear();
-        calculatedClassPercentages.clear();
-        allGrades.clear();
+void calcScore::vector_dumptruck(void) {
+    calculatedPercentages.clear();
+    calculatedPercentages.shrink_to_fit();
+
+    averageScores.clear();
+    averageScores.shrink_to_fit();
+
+    calculatedClassPercentages.clear();
+    calculatedClassPercentages.shrink_to_fit();
+
+    allGrades.clear();
+    allGrades.shrink_to_fit();
 }
 
 /*
@@ -566,20 +579,21 @@ void calcScore::printResults(void){
  * averageScores is calculated for class Average this time
 */
 void calcScore::printClassResults(void){
-    double totalAvg;
-    for(double x: averageScores){
+    double totalAvg = 0.0;
+    for (double x : averageScores) {
         totalAvg += x;
     }
     
     cout << "===============================================\n" << setw(25) << "CLASS AVERAGES" << "\n"
-    << "Project: "      << setw(23) << fixed << setprecision(2) << averageScores[3] * TO_PERCENT     << "%\n" 
-    << "Lab: "          << setw(27)                             << averageScores[0] * TO_PERCENT     << "%\n"
-    << "Quiz: "         << setw(26)                             << averageScores[1] * TO_PERCENT     << "%\n"
-    << "Exams: "        << setw(25)                             << averageScores[2] * TO_PERCENT     << "%\n"
-    << "Final Exam: "   << setw(20)                             << averageScores[4] * TO_PERCENT     << "%\n"
-    << "Total: "        << setw(25)                             << totalAvg    * TO_PERCENT     << "%\n"
-    << "===============================================\n" << endl;
+         << "Project: "    << setw(23) << fixed << setprecision(2) << averageScores[3] * TO_PERCENT << "%\n" 
+         << "Lab: "        << setw(27)                             << averageScores[0] * TO_PERCENT << "%\n"
+         << "Quiz: "       << setw(26)                             << averageScores[1] * TO_PERCENT << "%\n"
+         << "Exams: "      << setw(25)                             << averageScores[2] * TO_PERCENT << "%\n"
+         << "Final Exam: " << setw(20)                             << averageScores[4] * TO_PERCENT << "%\n"
+         << "Total: "      << setw(25)                             << totalAvg      * TO_PERCENT    << "%\n"
+         << "===============================================\n" << endl;
 }
+
 
 /*
  * @author Natasha Kho
@@ -617,33 +631,52 @@ void calcScore::printMenu(void){
 /*
  * @author: Natasha Kho
 */
-void calcScore::fileImport(fstream &inputFile) {
-  string scoreFile; // create string var for file name
-  cout << "Please Enter Score File:\n"; // prompt use to enter file name
-  cin  >> scoreFile; // take filename input from user
-  inputFile.open(scoreFile); // attempt to open file
+void calcScore::fileImportFromGTK(const std::string& path){
+    if (inputFile.is_open())
+        inputFile.close();
 
-  // if file did not open:
-  while(inputFile.is_open() == 0) {
-    inputFile.close(); // close file
-    cout << "There was an error opening the file. Please enter the Score File again:\n"; // repeat prompt to open valid file
-    cin  >> scoreFile; // take input from user and attempt to open file again
-    inputFile.open(scoreFile);
-    // if file still does not open, loop error message
-  }
+     // Base data folder relative to where the program runs
+    const std::string DATA_DIR = "../data/";   // or "data/" if that's your layout
+
+    std::string fileLoc = path;
+
+    // If the user just typed "grades.txt" (no / or \), prepend DATA_DIR
+    if (fileLoc.find('/') == std::string::npos && fileLoc.find('\\') == std::string::npos){
+        fileLoc = DATA_DIR + fileLoc;
+    }
+
+    inputFile.open(fileLoc);
+
+    if (!inputFile.is_open()) {
+        std::cerr << "Error: could not open file: " << fileLoc << std::endl;
+        isFileUploaded = false;
+        return;
+    }
+    std::cout << "File at " << fileLoc << " opened!" << std::endl;
+    fileName = fileLoc;
+    isFileUploaded = true;
 }
 
+std::string calcScore::readRawData(void){
+    std::string formattedRawFile;
+    std::string line;
+    while(std::getline(inputFile, line)){
+        formattedRawFile += line + '\n';
+    }
+    inputFile.clear();
+    inputFile.seekg(0);
+    std::cout << formattedRawFile;
+    return formattedRawFile;
+}
 
 /*
  * @author: Natasha Kho
  * Used in succession after fileImport()
 */
 int calcScore::checkFile(void){
-    while(!inputFile.is_open()){
-        cout << "Files is not open... Please input a file to use\n";
-        fileImport(inputFile);
-    }
-    return 1;
+    if(inputFile.is_open())
+        return 1;
+    return 0;
 }
 
 

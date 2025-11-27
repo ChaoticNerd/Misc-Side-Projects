@@ -1,0 +1,155 @@
+/* ============================= */
+/*  GLOBAL UNDERTALE-STYLE THEME */
+/* ============================= */
+
+/* All main windows, dialogs, and the TextViewer window */
+window,
+window.background,
+dialog,
+#ut-textviewer {
+  background-color: black;
+  color: white;
+  font-family: "Determination Mono", "Courier New", monospace;
+  font-size: 24px;  /* tweak this to taste */
+}
+
+/* Make all children inherit text color + font */
+window * {
+  color: inherit;
+  font-family: inherit;
+}
+
+/* ============================= */
+/*  ENTRY FIELDS (TEXT INPUTS)   */
+/* ============================= */
+
+entry {
+  background-color: black;
+  color: white;            /* typed text */
+  border: 2px solid white;
+  padding: 4px 6px;
+  caret-color: white;      /* text cursor */
+}
+
+/* Inner text node inside Gtk::Entry (GTK4) */
+entry text {
+  color: inherit;
+}
+
+/* ============================= */
+/*  UNDERTALE DIALOGS (#ut-box)  */
+/* ============================= */
+
+/* The dialog itself (we let content box show visuals) */
+#ut-box {
+  background-color: transparent;
+  color: white;
+}
+
+/* Dialog content area: the white-bordered HUD box */
+#ut-box > box {
+  background-color: black;
+  border: 2px solid white;
+  padding: 12px;
+  border-radius: 0;  /* pixel-y edges */
+}
+
+/* Labels inside Undertale dialogs */
+#ut-box label {
+  color: white;
+  font-size: 24px;
+}
+
+/* ============================= */
+/*  GLOBAL UNDERTALE BUTTONS     */
+/* ============================= */
+
+/* Reset ALL buttons and style them like Undertale */
+button {
+  all: unset;                     /* wipe theme styling */
+  background-color: black;
+  color: white;
+  border: 2px solid white;
+  padding: 6px 16px;
+  min-width: 80px;
+  min-height: 32px;
+  font-family: "Determination Mono", "Courier New", monospace;
+  font-size: 24px;
+  border-radius: 0;               /* no rounded corners */
+  text-align: center;
+}
+
+/* Make sure button labels inherit color/font */
+button label {
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+/* Hover effect */
+button:hover {
+  background-color: #222;
+}
+
+/* Active/clicked effect */
+button:active {
+  background-color: #444;
+}
+
+/* ============================= */
+/*  MESSAGE BOX ABOVE BUTTONS    */
+/*  (if you're using ut-message) */
+/* ============================= */
+
+/* Outer frame that holds battle text (e.g., battleFrame / messageFrame) */
+#ut-message-box {
+  background-color: black;
+  border: 2px solid white;
+  padding: 6px;
+}
+
+/* Ensure child background stays black */
+#ut-message-box > * {
+  background-color: black;
+}
+
+/* Text inside the bottom battle/message box */
+#ut-message-text,
+label.ut-message-text {
+  color: white;
+  font-size: 24px;
+}
+
+/* ============================= */
+/*  TEXTVIEWER RAW TEXT WINDOW   */
+/* ============================= */
+
+/* If you named the scrolled window scrolledWindow.set_name("ut-textviewer-frame"); */
+#ut-textviewer-frame {
+  background-color: black;
+  border: 2px solid white;
+  padding: 6px;
+}
+
+/* The TextView itself */
+#ut-textviewer-text,
+textview.ut-textviewer-text {
+  background-color: black;
+  color: white;
+  font-size: 24px;
+  padding: 8px;
+}
+
+/* Inner text node of TextView in GTK4 */
+#ut-textviewer-text text {
+  color: inherit;
+}
+
+/* Optional: scrollbar styling for TextViewer */
+#ut-textviewer-frame scrollbar {
+  background-color: black;
+}
+
+#ut-textviewer-frame scrollbar slider {
+  background-color: white;
+}
