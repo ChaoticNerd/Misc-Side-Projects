@@ -1,4 +1,5 @@
 #include "loginWindow.h"
+//#include "mainScreen.h"
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -6,6 +7,7 @@
 loginWindow::loginWindow(){
     set_title("Login Window");
     set_default_size(800, 600);
+    this->loggedIn = false;
     
     screenGrid.set_halign(Gtk::Align::FILL);
     screenGrid.set_valign(Gtk::Align::FILL);
@@ -45,12 +47,18 @@ loginWindow::loginWindow(){
     loginButton.set_vexpand(true);
     loginButton.set_size_request(20, 20);
 
+    //register button
+    registerButton.set_label("Register");
+    registerButton.set_hexpand(true);  
+    registerButton.set_vexpand(true);
+    registerButton.set_size_request(20, 20);
 
     
     textBox.append(usernameEntry);
     textBox.append(passwordEntry);
     textBox.append(loginButton);
-    
+    textBox.append(registerButton);
+
     screenGrid.attach(textBox, 0, 300);
 
     set_child(screenGrid);
@@ -62,9 +70,11 @@ loginWindow::loginWindow(){
     //     // Add your login logic here
     // });
     loginButton.signal_clicked().connect(sigc::mem_fun(*this, &loginWindow::on_login_button_clicked));
+    registerButton.signal_clicked().connect(sigc::mem_fun(*this, &loginWindow::on_register_button_clicked));
+    show();
 }
 
-void loginWindow::on_login_button_clicked(){
+void loginWindow::on_login_button_clicked(void){
     std::string file_username, file_password,line;
     std::ifstream outfile("user.txt");
     std::string username = usernameEntry.get_text(); //get username from entry
@@ -82,7 +92,13 @@ void loginWindow::on_login_button_clicked(){
         if (username == file_username && password == file_password) {
             std::cout << "Username: " << file_username << ", Password: " << file_password << std::endl; // debug to confirm match
             std::cout << "Login successful!" << std::endl;  // debug successful login message in terminal
-            outfile.close();
+
+            m_signal_login_successful.emit(); // emit signal for successful login
+            
+
+            this -> loggedIn = (true); // set loggedIn to true
+            //this->hide(); // close login window upon successful login   
+            outfile.close(); //close file upon successful login
             return;
         }
     }
@@ -91,4 +107,22 @@ void loginWindow::on_login_button_clicked(){
     
 
     // Placeholder for login button click handling
+}
+
+void loginWindow::on_register_button_clicked(void){
+    // Placeholder for register button click handling
+    std::cout << "Register button clicked!" << std::endl;
+
+}
+
+void loginWindow::setLoggedIn(bool status){
+    this->loggedIn = status;
+}
+
+bool loginWindow::getLoggedIn(void)const{
+    return this->loggedIn;
+}
+
+sigc::signal<void()> loginWindow::signal_login_successful(void)const{
+    return m_signal_login_successful;
 }
