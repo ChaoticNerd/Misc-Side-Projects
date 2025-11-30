@@ -26,36 +26,40 @@ mainScreen::mainScreen(){
     // Automatically adjust button box
     buttonBox.set_hexpand(true);
     buttonBox.set_vexpand(true);
-    buttonBox.set_halign(Gtk::Align::FILL); // stretches horizontally
+    buttonBox.set_halign(Gtk::Align::CENTER); // stretches horizontally
     buttonBox.set_valign(Gtk::Align::END); // puts at bottom of screen
     buttonBox.set_homogeneous(true); // all buttons same width
 
-    // button 1 (text file)
+    textFile.get_style_context()->add_class("Test-Button"); //reference to stly.css to do the orange and yellow buttons
+    
     textFile.set_label("Text File");
     textFile.set_hexpand(true);
     textFile.set_vexpand(true);
-    textFile.set_size_request(20, 20);
+    textFile.set_size_request(240, 80);
     textFile.signal_clicked().connect(sigc::mem_fun(*this, &mainScreen::on_textFile_clicked));
     
     // button 2 (bar chart)
+    barChart.get_style_context()->add_class("Test-Button"); //reference to stly.css to do the orange and yellow buttons
     barChart.set_label("Bar Chart");
     barChart.set_hexpand(true);
     barChart.set_vexpand(true);
-    barChart.set_size_request(20, 20);
+    barChart.set_size_request(240, 80);
     barChart.signal_clicked().connect(sigc::mem_fun(*this, &mainScreen::on_barChart_clicked));
     
     // button 3 (pie chart)
+    pieChart.get_style_context()->add_class("Test-Button"); //reference to stly.css to do the orange and yellow buttons
     pieChart.set_label("Pie Chart");
     pieChart.set_hexpand(true);
     pieChart.set_vexpand(true);
-    pieChart.set_size_request(20, 20);
+    pieChart.set_size_request(240, 80);
     pieChart.signal_clicked().connect(sigc::mem_fun(*this, &mainScreen::on_pieChart_clicked));
 
     // button 4 (sort) -- leads to drop-down menu type of thing
+    sortBy.get_style_context()->add_class("Test-Button"); //reference to stly.css to do the orange and yellow buttons
     sortBy.set_label("Sort by:");
     sortBy.set_hexpand(true);
     sortBy.set_vexpand(true);
-    sortBy.set_size_request(20, 20);
+    sortBy.set_size_request(240, 80);
     sortBy.signal_clicked().connect(sigc::mem_fun(*this, &mainScreen::on_sortBy_clicked));
 
     // add buttons into box in order
@@ -65,18 +69,25 @@ mainScreen::mainScreen(){
     buttonBox.append(sortBy);
 
     // === Undertale-style message box ===
+    battleText.get_style_context()->add_class("Battle-Text");
     battleText.set_text("* Hello.");
     battleText.set_halign(Gtk::Align::START);     // left-align text
     battleText.set_margin(5);
 
     // Put the label inside a frame that will become the white box
+    battleFrame.get_style_context()->add_class("Battle-Frame");
+    battleFrame.set_halign(Gtk::Align::CENTER);
+    battleFrame.set_valign(Gtk::Align::END);
     battleFrame.set_child(battleText);
-    battleFrame.set_hexpand(true);
+    battleFrame.set_hexpand(false);
     battleFrame.set_vexpand(false);
+    battleFrame.set_size_request(960, 240);
 
     // spacer fills all the top space
     spacer.set_vexpand(true);
     spacer.set_hexpand(true);
+
+    
 
     // Attach: spacer row, then battleFrame, then buttonBox (Top -> Bot)
     screenGrid.attach(spacer,     0, 0); // grows to fill space
@@ -141,7 +152,7 @@ void mainScreen::openTextMenu(void) {
 
     dialog -> set_modal(true);
     dialog -> set_decorated(false);           // no window frame = more "in-game"
-    dialog -> set_default_size(400, 200);     // tweak for aesthetics
+    dialog -> set_default_size(960, 240);     // tweak for aesthetics
 
     // Content area acts like the white text box
     auto content = dialog -> get_content_area();
@@ -175,7 +186,7 @@ void mainScreen::openSortMenu(void) {
 
     dialog -> set_modal(true);
     dialog -> set_decorated(false);           // no window frame = more "in-game"
-    dialog -> set_default_size(400, 200);     // tweak for aesthetics
+    dialog -> set_default_size(960, 240);     // tweak for aesthetics
 
     // Content area acts like the white text box
     auto content = dialog -> get_content_area();
@@ -185,11 +196,50 @@ void mainScreen::openSortMenu(void) {
     auto label = Gtk::make_managed<Gtk::Label>("* How do you want to sort?");
     label -> set_halign(Gtk::Align::START);
     content -> append(*label);
+    
+    //Buttons act like the Undertale menu options
+    //Justin added to make it more customizatble:
+    auto battleGrid = Gtk::make_managed<Gtk::Grid>(); //grid layout within dialog
+    content -> append(*battleGrid);  //attaching the new button grid to content
+    battleGrid -> set_halign(Gtk::Align::FILL); //Makes sure the button layout is like the inventroy
+    
+    battleGrid -> set_column_spacing(5);     //Column is spacing for battleGrid
+    battleGrid -> set_row_spacing(5);        //RowSpacing for battleGrid 
+    battleGrid -> set_margin(5);             //Setting margins for battleGrid
 
-    // Buttons act like the Undertale menu options
-    dialog -> add_button("Student ID",   1);
-    dialog -> add_button("Letter Grade", 2);
-    dialog -> add_button("Percentage",   3);
+
+    battleGrid -> set_hexpand(true);     //Expands horizontally
+    battleGrid -> set_vexpand(false);    //but doesnt expands vertically
+
+    
+    auto btnStudentID   = Gtk::make_managed<Gtk::Button>("Student-ID");  //manually creating the buttons  so that i can customize more
+    auto btnLetterGrade = Gtk::make_managed<Gtk::Button>("Letter-Grade");
+    auto btnPercentage  = Gtk::make_managed<Gtk::Button>("Percentage");
+
+    // not this, this is tasha:
+    // dialog -> add_button("Student ID",   1);
+    // dialog -> add_button("Letter Grade", 2);
+    // dialog -> add_button("Percentage",   3);
+    // not this, this is tasha
+    
+    
+    battleGrid -> attach(*btnStudentID,    0, 0, 1, 1); // Button layout within the new BattleGrid
+    battleGrid -> attach(*btnLetterGrade,  0, 1, 1, 1); //
+    battleGrid -> attach(*btnPercentage,   1, 0, 1, 1); // 
+    
+    btnStudentID    -> set_hexpand(true);    //Expands Buttons to fit
+    btnLetterGrade  -> set_hexpand(true);
+    btnPercentage   -> set_hexpand(true);
+
+    btnStudentID    -> signal_clicked().connect(sigc::bind([dialog]() { dialog->response(1);})); //
+    btnLetterGrade  -> signal_clicked().connect(sigc::bind([dialog]() { dialog->response(2);}));
+    btnPercentage   -> signal_clicked().connect(sigc::bind([dialog]() { dialog->response(3);}));
+    
+    //there was an attempt to make it match the layout but no...
+    // screenGrid.attach(spacer,0, 0);
+    // screenGrid.attach(*dialog, 0, 1);
+    // screenGrid.attach(buttonBox,0, 2);
+    //
 
     // Hook response → your handler
     dialog -> signal_response().connect(
@@ -255,7 +305,7 @@ void mainScreen::promptFilename(void){
     dialog->set_modal(true);
     dialog->set_decorated(false);        // no OS title bar
     dialog->set_transient_for(*this);    // center over main window
-    dialog->set_default_size(400, 200);  // tweak as you like
+    dialog->set_default_size(960, 240);  // tweak as you like
 
     dialog -> add_button("_Cancel", Gtk::ResponseType::CANCEL);
     dialog -> add_button("_OK",     Gtk::ResponseType::OK);

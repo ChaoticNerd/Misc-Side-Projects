@@ -19,9 +19,11 @@ class mainScreen : public Gtk::Window {
         TextFileOption userOption = TextFileOption::Upload;
         bool is_fullscreen_ = false;
         Gtk::Button textFile, barChart, pieChart, sortBy;
-        Gtk::Box buttonBox;
+        Gtk::Image textImg, barImg, pieImg, sortImg, menuSelectImg;
+        Gtk::Label textLabel, barLabel, pieLabel, sortLabel;
+        Gtk::Box buttonBox, temp;
         Gtk::Box spacer{Gtk::Orientation::VERTICAL};
-        Gtk::Grid screenGrid; 
+        Gtk::Grid screenGrid, battleGrid; 
         Gtk::Frame battleFrame;
         Gtk::Label battleText;
 

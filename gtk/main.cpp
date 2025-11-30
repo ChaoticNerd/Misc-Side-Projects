@@ -1,4 +1,6 @@
 #include <gtkmm.h>
+#include <fontconfig/fontconfig.h>
+#include <pango/pangocairo.h>
 #include <gdk/gdkkeysyms.h> // for GDK_KEY_F11, GDK_KEY_Escape
 #include "mainScreen.h"
 #include "loginWindow.h"
@@ -24,7 +26,20 @@ class app : public Gtk::Application{
 };
 
 int main(){
+    //Glib::ustring font_file_path = "../assets/fonts/DTM-Mono.otf";
+    PangoFontMap *font_map = pango_cairo_font_map_get_default();
+    if (font_map){
+        if (pango_font_map_add_font_file(font_map, "../assets/fonts/DTM-Mono.otf", NULL)){
+            std::cout << "font" << "../assets/fonts/DTM-Mono.otf" << "loaded Successfully." << endl;
+        } else {
+            std::cout << "error font not loaded" << endl;
+        }
+    }
+    
     auto launchApp = Glib::make_refptr_for_instance<app>(new app());
+
+    //FcConfigAppFontAddFile(FcConfigGetCurrent(), '../gtk/assets/fonts/DeterminationMonoWeb.otf');
+    
 
     auto css = Gtk::CssProvider::create();
     try {
@@ -44,3 +59,4 @@ int main(){
     // GTKmm 4: run() has no window parameter
     return launchApp -> run();
 }
+

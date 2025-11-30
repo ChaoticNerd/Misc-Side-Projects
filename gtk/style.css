@@ -2,7 +2,6 @@
 /*  GLOBAL UNDERTALE-STYLE THEME */
 /* ============================= */
 
-/* All main windows, dialogs, and the TextViewer window */
 window,
 window.background,
 dialog,
@@ -10,7 +9,8 @@ dialog,
   background-color: black;
   color: white;
   font-family: "Determination Mono", "Courier New", monospace;
-  font-size: 24px;  /* tweak this to taste */
+  font-size: 24px;
+  /* tweak this to taste */
 }
 
 /* Make all children inherit text color + font */
@@ -25,10 +25,12 @@ window * {
 
 entry {
   background-color: black;
-  color: white;            /* typed text */
+  color: white;
+  /* typed text */
   border: 2px solid white;
   padding: 4px 6px;
-  caret-color: white;      /* text cursor */
+  caret-color: white;
+  /* text cursor */
 }
 
 /* Inner text node inside Gtk::Entry (GTK4) */
@@ -47,11 +49,12 @@ entry text {
 }
 
 /* Dialog content area: the white-bordered HUD box */
-#ut-box > box {
+#ut-box>box {
   background-color: black;
   border: 2px solid white;
   padding: 12px;
-  border-radius: 0;  /* pixel-y edges */
+  border-radius: 0;
+  /* pixel-y edges */
 }
 
 /* Labels inside Undertale dialogs */
@@ -66,7 +69,8 @@ entry text {
 
 /* Reset ALL buttons and style them like Undertale */
 button {
-  all: unset;                     /* wipe theme styling */
+  all: unset;
+  /* wipe theme styling */
   background-color: black;
   color: white;
   border: 2px solid white;
@@ -75,7 +79,8 @@ button {
   min-height: 32px;
   font-family: "Determination Mono", "Courier New", monospace;
   font-size: 24px;
-  border-radius: 0;               /* no rounded corners */
+  border-radius: 0;
+  /* no rounded corners */
   text-align: center;
 }
 
@@ -93,7 +98,131 @@ button:hover {
 
 /* Active/clicked effect */
 button:active {
-  background-color: #444;
+  background-color: #444; 
+}
+
+/* ============================= */
+/*       MAIN MENU BUTTONS       */
+/* ============================= */
+.Text-Button{
+  background-image: url("../assets/sprites/TextFileButton.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: transparent;
+  border: 0px;
+  padding: 0;
+
+}
+
+.Text-Button:hover{
+  background-image: url("../assets/sprites/TextFileButtonHover.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: transparent;
+  border: 0px;
+  padding: 0;
+  
+
+}
+
+.Bar-Button{
+  background-image: url("../assets/sprites/BarChartButton.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: transparent;
+  border: 0px;
+  padding: 0;
+
+}
+
+
+.Bar-Button:hover{
+  background-image: url("../assets/sprites/BarChartButtonHover.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: transparent;
+  border: 0px;
+  padding: 0;
+  
+
+}
+
+.Pie-Button{
+  background-image: url("../assets/sprites/PieChartButton.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: transparent;
+  border: 0px;
+  padding: 0;
+
+}
+
+
+.Pie-Button:hover{
+  background-image: url("../assets/sprites/PieChartButtonHover.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: transparent;
+  border: 0px;
+  padding: 0;
+  
+
+}
+
+.Sort-Button{
+  background-image: url("../assets/sprites/SortByButton.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: transparent;
+  border: 0px;
+  padding: 0;
+
+}
+
+
+.Sort-Button:hover{
+  background-image: url("../assets/sprites/SortByButtonHover.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: transparent;
+  border: 0px;
+  padding: 0;
+  
+
+}
+
+.Test-Button{
+  background-image: url("../assets/sprotes");
+  background-color: black;
+  border: 2px solid #E58541;
+  color: #E58541;
+  padding: inherit;
+
+}
+
+/* .Test-Button image{
+  margin-right:5px;
+  
+  
+} */
+
+.Test-Button label{
+  color: #E58541;
+}
+
+.Test-Button:hover{
+  background-image: none;
+  background-color: black;
+  border: 2px solid #FCFE58;
+  font-size: 32px;
+  color: #FCFE58;
+  padding: inherit;
+  
+
+}
+
+.Test-Button:hover label{
+  color: #FCFE58;
 }
 
 /* ============================= */
@@ -103,12 +232,12 @@ button:active {
 /* Outer frame that holds battle text (e.g., battleFrame / messageFrame) */
 #ut-message-box {
   background-color: black;
-  border: 2px solid white;
+  border: 6px solid white;
   padding: 6px;
 }
 
 /* Ensure child background stays black */
-#ut-message-box > * {
+#ut-message-box>* {
   background-color: black;
 }
 
@@ -116,7 +245,19 @@ button:active {
 #ut-message-text,
 label.ut-message-text {
   color: white;
-  font-size: 24px;
+  font-size: 32px;
+}
+
+.Battle-Text {
+  color: white; 
+  font-size: 32px;
+}
+
+.Battle-Frame {
+  background-color: black;
+  border: 6px solid white;
+  padding: 6px;
+  border-radius: 0px;
 }
 
 /* ============================= */
