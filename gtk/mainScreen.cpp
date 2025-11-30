@@ -30,36 +30,36 @@ mainScreen::mainScreen(){
     buttonBox.set_valign(Gtk::Align::END); // puts at bottom of screen
     buttonBox.set_homogeneous(true); // all buttons same width
 
-    textFile.get_style_context()->add_class("Test-Button"); //reference to stly.css to do the orange and yellow buttons
+    textFile.add_css_class("Text-Button"); //reference to stly.css to do the orange and yellow buttons
     
-    textFile.set_label("Text File");
+    //textFile.set_label("Text File");
     textFile.set_hexpand(true);
     textFile.set_vexpand(true);
-    textFile.set_size_request(240, 80);
+    textFile.set_size_request(240, 92);
     textFile.signal_clicked().connect(sigc::mem_fun(*this, &mainScreen::on_textFile_clicked));
     
     // button 2 (bar chart)
-    barChart.get_style_context()->add_class("Test-Button"); //reference to stly.css to do the orange and yellow buttons
-    barChart.set_label("Bar Chart");
+    barChart.add_css_class("Bar-Button"); //reference to stly.css to do the orange and yellow buttons
+    //barChart.set_label("Bar Chart");
     barChart.set_hexpand(true);
     barChart.set_vexpand(true);
-    barChart.set_size_request(240, 80);
+    barChart.set_size_request(240, 92);
     barChart.signal_clicked().connect(sigc::mem_fun(*this, &mainScreen::on_barChart_clicked));
     
     // button 3 (pie chart)
-    pieChart.get_style_context()->add_class("Test-Button"); //reference to stly.css to do the orange and yellow buttons
-    pieChart.set_label("Pie Chart");
+    pieChart.add_css_class("Pie-Button"); //reference to stly.css to do the orange and yellow buttons
+    //pieChart.set_label("Pie Chart");
     pieChart.set_hexpand(true);
     pieChart.set_vexpand(true);
-    pieChart.set_size_request(240, 80);
+    pieChart.set_size_request(240, 92);
     pieChart.signal_clicked().connect(sigc::mem_fun(*this, &mainScreen::on_pieChart_clicked));
 
     // button 4 (sort) -- leads to drop-down menu type of thing
-    sortBy.get_style_context()->add_class("Test-Button"); //reference to stly.css to do the orange and yellow buttons
-    sortBy.set_label("Sort by:");
+    sortBy.add_css_class("Sort-Button"); //reference to stly.css to do the orange and yellow buttons
+    //sortBy.set_label("Sort by:");
     sortBy.set_hexpand(true);
     sortBy.set_vexpand(true);
-    sortBy.set_size_request(240, 80);
+    sortBy.set_size_request(240, 92);
     sortBy.signal_clicked().connect(sigc::mem_fun(*this, &mainScreen::on_sortBy_clicked));
 
     // add buttons into box in order

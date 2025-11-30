@@ -17,7 +17,7 @@ class mainScreen : public Gtk::Window {
     
     private:
         TextFileOption userOption = TextFileOption::Upload;
-        bool is_fullscreen_ = false;
+        bool is_fullscreen_ = true;
         Gtk::Button textFile, barChart, pieChart, sortBy;
         Gtk::Image textImg, barImg, pieImg, sortImg, menuSelectImg;
         Gtk::Label textLabel, barLabel, pieLabel, sortLabel;
