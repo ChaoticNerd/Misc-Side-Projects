@@ -596,9 +596,7 @@ void calcScore::sortByTotalPerc(void) {
 // ------------------------
 // main class report
 // ------------------------
-void calcScore::generateReportClass(int classSizeParam,
-                                    int sortSelect,
-                                    int isGradesDropped)
+void calcScore::generateReportClass(int classSizeParam, int sortSelect, int isGradesDropped)
 {
     if (!inputFile.is_open()) {
         std::cerr << "generateReportClass: inputFile is not open\n";
@@ -625,7 +623,7 @@ void calcScore::generateReportClass(int classSizeParam,
     inputFile.clear();
     inputFile.seekg(0);
 
-    // 1) Skip the weights line (we use the hard-coded gradeWeights instead)
+    // 1) Skip the weights line
     readGradeWeights(inputFile);
 
     // 2) Read counts: labs, quizzes, midterms, project, final

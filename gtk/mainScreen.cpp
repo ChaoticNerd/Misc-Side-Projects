@@ -37,41 +37,39 @@ mainScreen::mainScreen(){
     barChartArea.set_hexpand(true);   // chart stretches horizontally
     
     // button 1 (text file)
-    textFile.add_css_class("Text-Button"); //reference to stly.css to do the orange and yellow buttons
-    
-    //textFile.set_label("Text File");
+    textFile.set_label("Text File");
     textFile.set_hexpand(true);
     textFile.set_vexpand(true);
-    textFile.set_size_request(240, 92);
+    textFile.set_size_request(240, 80);
     textFile.signal_clicked().connect(sigc::mem_fun(*this, &mainScreen::on_textFile_clicked));
     textFile.get_style_context()->add_class("Test-Button"); //reference to stly.css to do the orange and yellow buttons
     
     // button 2 (bar chart)
-    barChart.add_css_class("Bar-Button"); //reference to stly.css to do the orange and yellow buttons
-    //barChart.set_label("Bar Chart");
+    barChart.get_style_context()->add_class("Test-Button"); //reference to stly.css to do the orange and yellow buttons
+    barChart.set_label("Bar Chart");
     barChart.set_hexpand(true);
     barChart.set_vexpand(true);
-    barChart.set_size_request(240, 92);
+    barChart.set_size_request(240, 80);
     barChart.signal_clicked().connect(sigc::mem_fun(*this, &mainScreen::on_barChart_clicked));
     
     // button 3 (pie chart)
-    pieChart.add_css_class("Pie-Button"); //reference to stly.css to do the orange and yellow buttons
-    //pieChart.set_label("Pie Chart");
+    pieChart.get_style_context()->add_class("Test-Button"); //reference to stly.css to do the orange and yellow buttons
+    pieChart.set_label("Pie Chart");
     pieChart.set_hexpand(true);
     pieChart.set_vexpand(true);
-    pieChart.set_size_request(240, 92);
+    pieChart.set_size_request(240, 80);
     pieChart.signal_clicked().connect(sigc::mem_fun(*this, &mainScreen::on_pieChart_clicked));
 
     // button 4 (sort) -- leads to drop-down menu type of thing
-    sortBy.add_css_class("Sort-Button"); //reference to stly.css to do the orange and yellow buttons
-    //sortBy.set_label("Sort by:");
+    sortBy.get_style_context()->add_class("Test-Button"); //reference to stly.css to do the orange and yellow buttons
+    sortBy.set_label("Sort by:");
     sortBy.set_hexpand(true);
     sortBy.set_vexpand(true);
-    sortBy.set_size_request(240, 92);
+    sortBy.set_size_request(240, 80);
     sortBy.signal_clicked().connect(sigc::mem_fun(*this, &mainScreen::on_sortBy_clicked));
 
     // Connect draw function
-    barChartArea.set_draw_func(sigc::mem_fun(*this, &mainScreen::on_barChart_draw));
+    barChartArea.set_draw_func(sigc::mem_fun(*this, &mainScreen::drawBarChart));
 
     // add buttons into box in order
     buttonBox.append(textFile);
@@ -125,15 +123,13 @@ void mainScreen::on_textFile_clicked(void) {
 }
 
 void mainScreen::on_barChart_clicked(void) {
+    currentChartKind = ChartKind::Bar;
     openBarMenu();
-    // generateReportClass(userSortOption, int isGradesDropped);
 }
 
 void mainScreen::on_pieChart_clicked(void) {
-    // TODO: use score to compute data and show a pie chart window
-    std::cout << "Pie chart button clicked.\n";
-    // generateReportClass(userSortOption, int isGradesDropped);
-
+    currentChartKind = ChartKind::Pie;
+    openPieMenu();
 }
 
 void mainScreen::on_sortBy_clicked(void) {
@@ -233,7 +229,46 @@ void mainScreen::openBarMenu(void){
 
 
 void mainScreen::openPieMenu(void){
+    auto dialog = new Gtk::Dialog("Pie Chart Options", *this);
+    dialog->set_name("ut-box");
 
+    dialog->set_modal(true);
+    dialog->set_decorated(false);
+    dialog->set_transient_for(*this);
+    dialog->set_default_size(400, 200);
+
+    auto content = dialog->get_content_area();
+    content->set_orientation(Gtk::Orientation::VERTICAL);
+    content->set_margin(20);
+    content->set_spacing(8);
+
+    auto label = Gtk::make_managed<Gtk::Label>("* Drop lowest scores for grade distribution?");
+    label->set_halign(Gtk::Align::START);
+    content->append(*label);
+
+    auto dropNoBtn = Gtk::make_managed<Gtk::CheckButton>("No (use raw scores)");
+    auto dropYesBtn = Gtk::make_managed<Gtk::CheckButton>("Yes (apply drops)");
+
+    // Make them a radio group
+    dropNoBtn->set_active(!userDropGrades);
+    content->append(*dropNoBtn);
+
+    dropYesBtn->set_group(*dropNoBtn);
+    dropYesBtn->set_active(userDropGrades);
+    content->append(*dropYesBtn);
+
+    dialog->add_button("_Cancel", Gtk::ResponseType::CANCEL);
+    dialog->add_button("_OK",     Gtk::ResponseType::OK);
+
+    dialog->signal_response().connect(
+        sigc::bind(
+            sigc::mem_fun(*this, &mainScreen::pieMenuResponse),
+            dialog,
+            dropYesBtn
+        )
+    );
+
+    dialog->show();
 }
 
 void mainScreen::openTextMenu(void) {
@@ -325,12 +360,6 @@ void mainScreen::openSortMenu(void) {
     btnStudentID    -> signal_clicked().connect(sigc::bind([dialog]() { dialog->response(1);})); //
     btnLetterGrade  -> signal_clicked().connect(sigc::bind([dialog]() { dialog->response(2);}));
     btnPercentage   -> signal_clicked().connect(sigc::bind([dialog]() { dialog->response(3);}));
-    
-    //there was an attempt to make it match the layout but no...
-    // screenGrid.attach(spacer,0, 0);
-    // screenGrid.attach(*dialog, 0, 1);
-    // screenGrid.attach(buttonBox,0, 2);
-    //
 
     // Hook response → your handler
     dialog -> signal_response().connect(
@@ -366,6 +395,9 @@ void mainScreen::sortMenuResponse(int response_id, Gtk::Dialog* dialog) {
             break; // Cancel or unknown
     }
 
+    // Make sure the main window comes back to the foreground
+    this->present();
+
     delete dialog;
 }
 
@@ -390,10 +422,17 @@ void mainScreen::textFileMenuResponse(int response_id, Gtk::Dialog* dialog) {
             break; // Cancel or unknown
     }
 
+    // Make sure the main window comes back to the foreground
+    this->present();
+
     delete dialog; 
 }
 
-void mainScreen::on_barChart_draw(const Cairo::RefPtr<Cairo::Context>& cr, int width, int height){
+void mainScreen::drawBarChart(const Cairo::RefPtr<Cairo::Context>& cr, int width, int height){
+    if (currentChartKind == ChartKind::Pie) {
+        drawPieChart(cr, width, height);
+        return;
+    }
     // Background (black)
     cr->save();
     cr->set_source_rgb(0.0, 0.0, 0.0);
@@ -549,6 +588,125 @@ void mainScreen::on_barChart_draw(const Cairo::RefPtr<Cairo::Context>& cr, int w
     }
 }
 
+void mainScreen::drawPieChart(const Cairo::RefPtr<Cairo::Context>& cr, int width, int height){
+    // Background
+    cr->set_source_rgb(0.0, 0.0, 0.0);
+    cr->paint();
+
+    if (pieChartData.size() < 5 || pieTotalStudents <= 0) {
+        cr->set_source_rgb(1.0, 1.0, 1.0);
+        cr->select_font_face("Determination Mono", Cairo::ToyFontFace::Slant::NORMAL, Cairo::ToyFontFace::Weight::NORMAL);
+        cr->set_font_size(24.0);
+        cr->move_to(20, height / 2);
+        cr->show_text("No grade data.");
+        return;
+    }
+
+    const double PI = 3.14159265358979323846;
+    double cx = width  / 2.0;
+    double cy = height / 2.0;
+    double radius = std::min(width, height) * 0.35;
+
+    const char* labels[5] = { "A", "B", "C", "D", "F" };
+
+    double startAngle = 0.0;
+
+    for (int i = 0; i < 5; ++i) {
+        double fraction = pieChartData[i];
+        if (fraction <= 0.0) continue;
+
+        double endAngle = startAngle + fraction * 2.0 * PI;
+
+        // Path for the slice
+        cr->move_to(cx, cy);
+        cr->arc(cx, cy, radius, startAngle, endAngle);
+        cr->close_path();
+
+        // Fill color per grade
+        switch (i) {
+            case 0: cr->set_source_rgb(0.2, 0.8, 0.2); break; // A - green
+            case 1: cr->set_source_rgb(0.2, 0.4, 0.9); break; // B - blue
+            case 2: cr->set_source_rgb(0.9, 0.9, 0.2); break; // C - yellow
+            case 3: cr->set_source_rgb(0.9, 0.6, 0.2); break; // D - orange
+            case 4: cr->set_source_rgb(0.9, 0.2, 0.2); break; // F - red
+        }
+
+        // Fill slice
+        cr->fill_preserve();
+
+        // White outline
+        cr->set_source_rgb(1.0, 1.0, 1.0);
+        cr->set_line_width(2.0);
+        cr->stroke();
+
+        // Label text: e.g. "A (4)"
+        double midAngle = (startAngle + endAngle) / 2.0;
+        double tx = cx + std::cos(midAngle) * (radius * 0.65);
+        double ty = cy + std::sin(midAngle) * (radius * 0.65);
+
+        std::string label = std::string(labels[i]) + " (" +
+                            std::to_string(pieCounts[i]) + ")";
+
+        cr->set_source_rgb(1.0, 1.0, 1.0);
+        cr->select_font_face("Determination Mono", Cairo::ToyFontFace::Slant::NORMAL, Cairo::ToyFontFace::Weight::NORMAL);
+        cr->set_font_size(18.0);
+        cr->move_to(tx - 10, ty + 6); // slight offset
+        cr->show_text(label);
+
+        startAngle = endAngle;
+    }
+
+    // Optional legend/text at bottom
+    cr->set_source_rgb(1.0, 1.0, 1.0);
+    cr->select_font_face("Determination Mono", Cairo::ToyFontFace::Slant::NORMAL, Cairo::ToyFontFace::Weight::NORMAL);
+    cr->set_font_size(16.0);
+    cr->move_to(20, height - 20);
+    cr->show_text("* Grade distribution (A–F)");
+}
+
+void mainScreen::computePieFromCalcScore() {
+    pieCounts.assign(5, 0);   // A,B,C,D,F
+    pieChartData.clear();
+    pieTotalStudents = 0;
+
+    const auto& perc = score.getClassPercentages();
+    if (perc.empty())
+        return;
+
+    for (const auto& row : perc) {
+        if (row.size() < 6) continue;
+
+        // Use calcScore’s logic:
+        std::string gradeStr = score.getLetterGradeSorted(row);
+        if (gradeStr.empty()) continue;
+
+        char g = gradeStr[0];
+        switch (g) {
+            case 'A': ++pieCounts[0]; break;
+            case 'B': ++pieCounts[1]; break;
+            case 'C': ++pieCounts[2]; break;
+            case 'D': ++pieCounts[3]; break;
+            default:  ++pieCounts[4]; break; // treat others as F
+        }
+    }
+
+    for (int c : pieCounts) pieTotalStudents += c;
+    if (pieTotalStudents == 0)
+        return;
+
+    pieChartData.resize(5);
+    for (int i = 0; i < 5; ++i) {
+        pieChartData[i] = static_cast<double>(pieCounts[i]) / pieTotalStudents;
+    }
+
+    // Debug:
+    std::cout << "Pie fractions A..F: ";
+    for (double f : pieChartData) std::cout << f << " ";
+    std::cout << "\nCounts: ";
+    for (int c : pieCounts) std::cout << c << " ";
+    std::cout << std::endl;
+}
+
 void mainScreen::barMenuResponse(int response_id, Gtk::Dialog* dialog, Gtk::CheckButton* totalBtn, Gtk::CheckButton* labBtn,
                                  Gtk::CheckButton* quizBtn, Gtk::CheckButton* examBtn, Gtk::CheckButton* projectBtn,
                                  Gtk::CheckButton* finalBtn,  Gtk::CheckButton* dropYesBtn){
@@ -647,29 +805,73 @@ void mainScreen::barMenuResponse(int response_id, Gtk::Dialog* dialog, Gtk::Chec
         barChartArea.queue_draw();
     }
 
+    // Make sure the main window comes back to the foreground
+    this->present();
+
     delete dialog;
 }
+
+void mainScreen::pieMenuResponse(int response_id,
+                                 Gtk::Dialog* dialog,
+                                 Gtk::CheckButton* dropYesBtn)
+{
+    if (response_id == Gtk::ResponseType::OK) {
+
+        if (!score.checkFile()) {
+            battleText.set_text("* Upload a file first!");
+            // Make sure the main window comes back to the foreground
+            this->present();
+            delete dialog;
+            return;
+        }
+
+        // Read “drop grades?” choice
+        userDropGrades = dropYesBtn->get_active();
+
+        // Recompute report with chosen drop setting
+        score.generateReportClass(
+            score.getClassSize(),
+            /*sortSelect=*/0,                         // no sorting needed for distribution
+            /*isGradesDropped=*/ userDropGrades ? 1 : 0
+        );
+
+        // Build A/B/C/D/F fractions using existing calcScore logic
+        computePieFromCalcScore();                   // uses getClassPercentages + getLetterGradeSorted 
+
+        currentChartKind = ChartKind::Pie;
+        battleText.set_text("* Drawing pie chart: grade distribution.");
+
+        barChartArea.queue_draw();
+    }
+    // Make sure the main window comes back to the foreground
+    this->present();
+    delete dialog;
+}
+
 
 void mainScreen::promptFilename(void){
     // Create dialog dynamically
     auto dialog = new Gtk::Dialog("Enter File Name", *this);
-    dialog -> set_name("ut-box");
+    dialog->set_name("ut-box");
     
     dialog->set_modal(true);
     dialog->set_decorated(false);        // no OS title bar
     dialog->set_transient_for(*this);    // center over main window
-    dialog->set_default_size(960, 240);  // tweak as you like
+    dialog->set_default_size(400, 200);  // tweak as you like
 
-    dialog -> add_button("_Cancel", Gtk::ResponseType::CANCEL);
-    dialog -> add_button("_OK",     Gtk::ResponseType::OK);
+    dialog->add_button("_Cancel", Gtk::ResponseType::CANCEL);
+    dialog->add_button("_OK",     Gtk::ResponseType::OK);
 
     // Create an Entry widget
     Gtk::Entry* entry = Gtk::make_managed<Gtk::Entry>();
-    entry -> set_placeholder_text("example.txt");
+    entry->set_placeholder_text("example.txt");
 
-    dialog -> get_content_area() -> append(*entry);
+    dialog->get_content_area()->append(*entry);
 
-    dialog -> signal_response().connect(
+    //  Make sure the cursor is in the entry right away
+    entry->grab_focus();
+
+    dialog->signal_response().connect(
         sigc::bind(
             sigc::mem_fun(*this, &mainScreen::filenameEntered),
             dialog,
@@ -677,12 +879,12 @@ void mainScreen::promptFilename(void){
         )
     );
 
-    dialog -> show();
+    dialog->show();
 }
 
 void mainScreen::filenameEntered(int response_id, Gtk::Dialog* dialog, Gtk::Entry* entry){
     if (response_id == Gtk::ResponseType::OK){
-        std::string filename = entry -> get_text();
+        std::string filename = entry->get_text();
 
         // basic validation
         if (filename.size() < 4 || filename.substr(filename.size() - 4) != ".txt"){
@@ -690,35 +892,36 @@ void mainScreen::filenameEntered(int response_id, Gtk::Dialog* dialog, Gtk::Entr
             battleText.set_text("Filename must end in .txt");
         } else {
             std::cout << "User entered filename: " << filename << "\n";
-            // if(score.checkFile()){
-            switch(userFileOption){
-                case TextFileOption::ViewRaw:{
+
+            switch (userFileOption){
+                case TextFileOption::ViewRaw: {
                     score.fileImportFromGTK(filename);
-                    if(score.checkFile()){
+                    if (score.checkFile()){
                         battleText.set_text("* Viewing Raw Data");
                         viewRawText.present();
                         viewRawText.setText(score.readRawData());
-                        }
+                    }
                     break;
                 }
-                case TextFileOption::Upload:{
+                case TextFileOption::Upload: {
                     score.fileImportFromGTK(filename);
-                    if(score.checkFile()){
+                    if (score.checkFile()){
                         battleText.set_text("* File Uploaded");
                         score.countStudentsInFile();
                     }
                     break;
                 }
-                case TextFileOption::GenFile:{ // maybe have this write to a file?
+                case TextFileOption::GenFile: {
                     randomScoreFile.generateReport(filename);
                     battleText.set_text("Generated Random Score File");
                     break;
                 }
             }
-                
-            // }
         }
     }
+
+    // Make sure the main window comes back to the foreground
+    this->present();
+
     delete dialog; // required in gtkmm4
 }
-

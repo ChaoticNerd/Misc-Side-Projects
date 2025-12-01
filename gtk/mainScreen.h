@@ -6,6 +6,13 @@
 #include "textViewer.h"
 #include "randGen.h"
 
+enum class ChartKind {
+    None,
+    Bar,
+    Pie
+};
+
+
 enum class TextFileOption{
     Upload,
     ViewRaw,
@@ -40,6 +47,9 @@ class mainScreen : public Gtk::Window {
         BarChartOption userBarChartOption = BarChartOption::TotalPercent;
         bool is_fullscreen_ = false;
         bool userDropGrades = false;
+        std::vector<double> pieChartData;  // [A, B, C, D, F] as fractions
+        int                 pieTotalStudents = 0;       
+
         Gtk::Button textFile, barChart, pieChart, sortBy;
         Gtk::Image textImg, barImg, pieImg, sortImg, menuSelectImg;
         Gtk::Label textLabel, barLabel, pieLabel, sortLabel;
@@ -49,9 +59,16 @@ class mainScreen : public Gtk::Window {
         Gtk::Frame battleFrame;
         Gtk::Label battleText;
 
+        // which chart?
+        ChartKind currentChartKind = ChartKind::None;
+
         // Bar chart drawing on main screen
         Gtk::DrawingArea barChartArea;
         std::vector<double> barChartData;
+
+        // For pie chart (A, B, C, D, F counts)
+        std::vector<int> pieCounts;  // size 5 when used
+
 
         Glib::RefPtr<Gtk::EventControllerKey> key_controller;
 
@@ -85,8 +102,13 @@ class mainScreen : public Gtk::Window {
                              Gtk::CheckButton* dropYesBtn);
 
         // Draw callback for the bar chart
-        void on_barChart_draw(const Cairo::RefPtr<Cairo::Context>& cr, int width, int height);
+        void drawBarChart(const Cairo::RefPtr<Cairo::Context>& cr, int width, int height);
+
         // Chart callbacks (Pie)
         void openPieMenu(void);
+        void pieMenuResponse(int response_id, Gtk::Dialog* dialog, Gtk::CheckButton* dropYesBtn);
+        void computePieFromCalcScore(void);   // helper that uses calcScore
+        void drawPieChart(const Cairo::RefPtr<Cairo::Context>& cr, int width, int height); // draws the piechart
+
 };
 #endif

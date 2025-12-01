@@ -73,7 +73,6 @@ class calcScore {
                                  int amountOfStudents);
 
       std::string getLetterGrade(vector<double>& calculatedPercentages);
-      std::string getLetterGradeSorted(const vector<double>& calculatedPercentages);
 
       void calculatePercentage(double grade, double total, double gradeWeight,
                               vector<double>& calculatedPercentages);
@@ -163,6 +162,7 @@ class calcScore {
       */
       const std::vector<std::vector<double>>& getClassPercentages() const;
       const std::vector<double>& getAverageScores() const;
+      std::string getLetterGradeSorted(const vector<double>& calculatedPercentages);
       int getClassSize() const;
       double getGradeWeight(int category) const;
 
