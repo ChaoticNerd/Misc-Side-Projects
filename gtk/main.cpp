@@ -50,11 +50,7 @@ int main(){
 
     auto display = Gdk::Display::get_default();
     if (display) {
-        Gtk::StyleContext::add_provider_for_display(
-            display,
-            css,
-            GTK_STYLE_PROVIDER_PRIORITY_APPLICATION
-        );
+        Gtk::StyleContext::add_provider_for_display(display, css,GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
     }
     // GTKmm 4: run() has no window parameter
     return launchApp -> run();

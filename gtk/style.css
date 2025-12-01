@@ -1,19 +1,20 @@
 /* ============================= */
-/*  GLOBAL UNDERTALE-STYLE THEME */
+/*  GLOBAL UNDERTALE THEME       */
 /* ============================= */
 
+/* All windows, dialogs, popovers */
 window,
 window.background,
 dialog,
-#ut-textviewer {
+popover {
   background-color: black;
   color: white;
   font-family: "Determination Mono", "Courier New", monospace;
-  font-size: 24px;
+  font-size: 32px;
   /* tweak this to taste */
 }
 
-/* Make all children inherit text color + font */
+/* All children inherit text color + font */
 window * {
   color: inherit;
   font-family: inherit;
@@ -67,7 +68,6 @@ entry text {
 /*  GLOBAL UNDERTALE BUTTONS     */
 /* ============================= */
 
-/* Reset ALL buttons and style them like Undertale */
 button {
   all: unset;
   /* wipe theme styling */
@@ -84,19 +84,17 @@ button {
   text-align: center;
 }
 
-/* Make sure button labels inherit color/font */
+/* The label inside the button */
 button label {
   color: inherit;
-  font-family: inherit;
-  font-size: inherit;
+  font: inherit;
 }
 
-/* Hover effect */
+/* Hover / active states */
 button:hover {
   background-color: #222;
 }
 
-/* Active/clicked effect */
 button:active {
   background-color: #444; 
 }
@@ -226,11 +224,134 @@ button:active {
 }
 
 /* ============================= */
-/*  MESSAGE BOX ABOVE BUTTONS    */
+/*       MAIN MENU BUTTONS       */
+/* ============================= */
+.Text-Button{
+  background-image: url("../assets/sprites/TextFileButton.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: transparent;
+  border: 0px;
+  padding: 0;
+
+}
+
+.Text-Button:hover{
+  background-image: url("../assets/sprites/TextFileButtonHover.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: transparent;
+  border: 0px;
+  padding: 0;
+  
+
+}
+
+.Bar-Button{
+  background-image: url("../assets/sprites/BarChartButton.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: transparent;
+  border: 0px;
+  padding: 0;
+
+}
+
+
+.Bar-Button:hover{
+  background-image: url("../assets/sprites/BarChartButtonHover.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: transparent;
+  border: 0px;
+  padding: 0;
+  
+
+}
+
+.Pie-Button{
+  background-image: url("../assets/sprites/PieChartButton.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: transparent;
+  border: 0px;
+  padding: 0;
+
+}
+
+
+.Pie-Button:hover{
+  background-image: url("../assets/sprites/PieChartButtonHover.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: transparent;
+  border: 0px;
+  padding: 0;
+  
+
+}
+
+.Sort-Button{
+  background-image: url("../assets/sprites/SortByButton.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: transparent;
+  border: 0px;
+  padding: 0;
+
+}
+
+
+.Sort-Button:hover{
+  background-image: url("../assets/sprites/SortByButtonHover.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: transparent;
+  border: 0px;
+  padding: 0;
+  
+
+}
+
+.Test-Button{
+  background-image: url("../assets/sprotes");
+  background-color: black;
+  border: 2px solid #E58541;
+  color: #E58541;
+  padding: inherit;
+
+}
+
+/* .Test-Button image{
+  margin-right:5px;
+  
+  
+} */
+
+.Test-Button label{
+  color: #E58541;
+}
+
+.Test-Button:hover{
+  background-image: none;
+  background-color: black;
+  border: 2px solid #FCFE58;
+  font-size: 32px;
+  color: #FCFE58;
+  padding: inherit;
+  
+
+}
+
+.Test-Button:hover label{
+  color: #FCFE58;
+}
+
+/* ============================= */
+/*  ENTRY FIELDS (TEXT INPUTS)   */
 /* ============================= */
 
-/* Outer frame that holds battle text (e.g., battleFrame / messageFrame) */
-#ut-message-box {
+entry {
   background-color: black;
   border: 6px solid white;
   padding: 6px;
@@ -261,35 +382,25 @@ label.ut-message-text {
 }
 
 /* ============================= */
-/*  TEXTVIEWER RAW TEXT WINDOW   */
+/*  TEXT AREAS (Gtk::TextView)   */
 /* ============================= */
 
-/* If you named the scrolled window scrolledWindow.set_name("ut-textviewer-frame"); */
-#ut-textviewer-frame {
+textview {
   background-color: black;
+  color: white;
   border: 2px solid white;
   padding: 6px;
 }
 
-/* The TextView itself */
-#ut-textviewer-text,
-textview.ut-textviewer-text {
-  background-color: black;
-  color: white;
-  font-size: 24px;
-  padding: 8px;
-}
-
-/* Inner text node of TextView in GTK4 */
-#ut-textviewer-text text {
+textview text {
   color: inherit;
 }
 
-/* Optional: scrollbar styling for TextViewer */
-#ut-textviewer-frame scrollbar {
+/* Optional: scrollbars */
+scrollbar {
   background-color: black;
 }
 
-#ut-textviewer-frame scrollbar slider {
+scrollbar slider {
   background-color: white;
 }

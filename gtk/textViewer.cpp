@@ -14,12 +14,6 @@ textViewer::textViewer() {
     scrolledWindow.set_policy(Gtk::PolicyType::AUTOMATIC, Gtk::PolicyType::AUTOMATIC);
     scrolledWindow.set_child(textView);
 
-    set_name("ut-textviewer");          // window
-
-    scrolledWindow.set_name("ut-textviewer-frame");
-    textView.set_name("ut-textviewer-text");
-    textView.add_css_class("ut-textviewer-text");
-
     set_child(scrolledWindow);
 
     // key controller for ESC to close
