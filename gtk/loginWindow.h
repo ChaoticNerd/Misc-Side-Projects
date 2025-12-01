@@ -15,7 +15,7 @@ class loginWindow : public Gtk::Window{
         bool getLoggedIn(void)const; // login Success Boolean get
         
         
-        sigc::signal<void()> signal_login_successful(void)const; //LoginSuccess singnal to communicate login was successful
+        sigc::signal<void()>& signal_login_successful(void); //LoginSuccess singnal to communicate login was successful
 
        
     private:
@@ -41,8 +41,6 @@ class loginWindow : public Gtk::Window{
         bool checkPasswordSecurity(std::string newPass);
         bool confirmPassword(std::string newPass, std::string confirmPass);
         void registrationSuccess(std::string newUser,std::string newPass);
-
-
 
     protected:
         void on_login_button_clicked(void);     //Login function if LoginButton was pressed

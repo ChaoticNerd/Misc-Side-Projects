@@ -100,11 +100,9 @@ bool loginWindow::getLoggedIn(void)const{   //get the login bool so that it can 
     return this->loggedIn;
 }
 
-sigc::signal<void()> loginWindow::signal_login_successful(void)const{   //a signal that was used to communicate that login was successful
+sigc::signal<void()>& loginWindow::signal_login_successful() { // success login
     return m_signal_login_successful;
 }
-
-
 
 bool loginWindow::loginAuthentication(std::string username, std::string password){
     std::string file_username, file_password, databaseLine;

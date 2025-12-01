@@ -4,26 +4,10 @@
 #include <gdk/gdkkeysyms.h> // for GDK_KEY_F11, GDK_KEY_Escape
 #include "mainScreen.h"
 #include "loginWindow.h"
+#include "app.h"
 
 // PROGRAM HAS TO BE RUN FROM TERMINAL OF VSC
 // CD INTO build AND DO ./app
-
-
-class app : public Gtk::Application{
-    public:
-        app() : Gtk::Application("App name?"){};
-
-    protected:
-        void on_activate() override{
-            auto mainWindow = new mainScreen();
-            add_window(*mainWindow);
-            mainWindow -> present();
-            auto loginWin = new loginWindow();
-            add_window(*loginWin);
-            loginWin -> present();
-
-        }
-};
 
 int main(){
     //Glib::ustring font_file_path = "../assets/fonts/DTM-Mono.otf";
@@ -36,7 +20,7 @@ int main(){
         }
     }
     
-    auto launchApp = Glib::make_refptr_for_instance<app>(new app());
+    auto launchApp = Glib::make_refptr_for_instance<App>(new App());
 
     //FcConfigAppFontAddFile(FcConfigGetCurrent(), '../gtk/assets/fonts/DeterminationMonoWeb.otf');
     
