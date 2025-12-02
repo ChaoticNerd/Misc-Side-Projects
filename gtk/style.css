@@ -104,139 +104,7 @@ button:active {
 /*       MAIN MENU BUTTONS       */
 /* ============================= */
 .Text-Button{
-  background-image: url("../gtk/assets/sprites/TextFileButton.png");
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-color: transparent;
-  border: 0px;
-  padding: 0;
-
-}
-
-.Text-Button:hover{
-  background-image: url("../gtk/assets/sprites/TextFileButtonHover.png");
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-color: transparent;
-  border: 0px;
-  padding: 0;
-  
-
-}
-
-.Bar-Button{
-  background-image: url("../gtk/assets/sprites/BarChartButton.png");
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-color: transparent;
-  border: 0px;
-  padding: 0;
-
-}
-
-
-.Bar-Button:hover{
-  background-image: url("../gtk/assets/sprites/BarChartButtonHover.png");
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-color: transparent;
-  border: 0px;
-  padding: 0;
-  
-
-}
-
-.Pie-Button{
-  background-image: url("../gtk/assets/sprites/PieChartButton.png");
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-color: transparent;
-  border: 0px;
-  padding: 0;
-
-}
-
-
-.Pie-Button:hover{
-  background-image: url("../gtk/assets/sprites/PieChartButtonHover.png");
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-color: transparent;
-  border: 0px;
-  padding: 0;
-  
-
-}
-
-.Sort-Button{
-  background-image: url("../gtk/assets/sprites/SortByButton.png");
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-color: transparent;
-  border: 0px;
-  padding: 0;
-
-}
-
-
-.Sort-Button:hover{
-  background-image: url("../gtk/assets/sprites/SortByButtonHover.png");
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-color: transparent;
-  border: 0px;
-  padding: 0;
-  
-
-}
-
-.Test-Button{
-  background-image: none;
-  background-color: black;
-  border: 2px solid #E58541;
-  color: #E58541;
-  padding: inherit;
-
-}
-
-/* .Test-Button image{
-  margin-right:5px;
-  
-  
-} */
-
-.Test-Button label{
-  color: #E58541;
-}
-
-.Test-Button:hover{
-  background-image: none;
-  background-color: black;
-  border: 2px solid #FCFE58;
-  font-size: 32px;
-  color: #FCFE58;
-  padding: inherit;
-  
-
-}
-
-.Test-Button:hover label{
-  color: #FCFE58;
-}
-
-/* ============================= */
-/*       MAIN MENU BUTTONS       */
-/* ============================= */
-.Text-Button{
-  background-image: url("../assets/sprites/TextFileButton.png");
+  background-image: url("assets/sprites/TextFileButton.png");
   background-repeat: no-repeat;
   background-position: center;
   background-color: transparent;
@@ -247,7 +115,7 @@ button:active {
 }
 
 .Text-Button:hover{
-  background-image: url("../assets/sprites/TextFileButtonHover.png");
+  background-image: url("assets/sprites/TextFileButtonHover.png");
   background-repeat: no-repeat;
   background-position: center;
   background-color: transparent;
@@ -259,7 +127,7 @@ button:active {
 }
 
 .Bar-Button{
-  background-image: url("../assets/sprites/BarChartButton.png");
+  background-image: url("assets/sprites/BarChartButton.png");
   background-repeat: no-repeat;
   background-position: center;
   background-color: transparent;
@@ -271,7 +139,7 @@ button:active {
 
 
 .Bar-Button:hover{
-  background-image: url("../assets/sprites/BarChartButtonHover.png");
+  background-image: url("assets/sprites/BarChartButtonHover.png");
   background-repeat: no-repeat;
   background-position: center;
   background-color: transparent;
@@ -283,7 +151,7 @@ button:active {
 }
 
 .Pie-Button{
-  background-image: url("../assets/sprites/PieChartButton.png");
+  background-image: url("assets/sprites/PieChartButton.png");
   background-repeat: no-repeat;
   background-position: center;
   background-color: transparent;
@@ -295,7 +163,7 @@ button:active {
 
 
 .Pie-Button:hover{
-  background-image: url("../assets/sprites/PieChartButtonHover.png");
+  background-image: url("assets/sprites/PieChartButtonHover.png");
   background-repeat: no-repeat;
   background-position: center;
   background-color: transparent;
@@ -307,7 +175,7 @@ button:active {
 }
 
 .Sort-Button{
-  background-image: url("../assets/sprites/SortByButton.png");
+  background-image: url("assets/sprites/SortByButton.png");
   background-repeat: no-repeat;
   background-position: center;
   background-color: transparent;
@@ -319,7 +187,7 @@ button:active {
 
 
 .Sort-Button:hover{
-  background-image: url("../assets/sprites/SortByButtonHover.png");
+  background-image: url("assets/sprites/SortByButtonHover.png");
   background-repeat: no-repeat;
   background-position: center;
   background-color: transparent;
@@ -331,7 +199,7 @@ button:active {
 }
 
 .Test-Button{
-  background-image: url("../assets/sprotes");
+  background-image: url("assets/sprites");
   background-color: black;
   border: 2px solid #E58541;
   color: #E58541;

@@ -39,7 +39,6 @@ mainScreen::mainScreen(){
     // button 1 (text file)
     //textFile.set_name("Text File");
     textFile.get_style_context()->add_class("Text-Button"); //reference to stly.css to do the orange and yellow buttons
-    
     textFile.set_hexpand(true);
     textFile.set_vexpand(true);
     textFile.set_size_request(240, 92);
@@ -56,7 +55,7 @@ mainScreen::mainScreen(){
     
     // button 3 (pie chart)
     pieChart.get_style_context()->add_class("Pie-Button"); //reference to stly.css to do the orange and yellow buttons
-    pieChart.set_label("Pie Chart");
+    pieChart.set_name("Pie Chart");
     pieChart.set_hexpand(true);
     pieChart.set_vexpand(true);
     pieChart.set_size_request(240, 92);
@@ -64,7 +63,7 @@ mainScreen::mainScreen(){
 
     // button 4 (sort) -- leads to drop-down menu type of thing
     sortBy.get_style_context()->add_class("Sort-Button"); //reference to stly.css to do the orange and yellow buttons
-    sortBy.set_label("Sort by:");
+    sortBy.set_name("Sort by:");
     sortBy.set_hexpand(true);
     sortBy.set_vexpand(true);
     sortBy.set_size_request(240, 92);
