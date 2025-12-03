@@ -26,10 +26,12 @@ int main(void){
     cout << "Populating string and int boards using insert Element" << endl;
     for(int i = 0; i < 5; i++){
         for(int j = 0; j < 5; j++){
-            stringBoard.insertElement(i, j, to_string(i+1));
+            stringBoard.insertElement(i, j, "B");
             intBoard.insertElement(i,j,i+1);
         }
     }
+    stringBoard.insertElement(2, 3, "P");
+
     cout << "Both boards populated" << endl << endl;
     cout << "====================================================" << endl << endl;
     cout << "Drawing out string board" << endl;

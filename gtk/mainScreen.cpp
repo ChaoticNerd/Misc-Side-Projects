@@ -199,20 +199,10 @@ void mainScreen::openBarMenu(void){
     finalBtn->set_group(*totalBtn);
     content->append(*finalBtn);
 
-    // Divider
-    auto sepLabel = Gtk::make_managed<Gtk::Label>("* Drop lowest scores?");
-    sepLabel->set_margin_top(10);
-    sepLabel->set_halign(Gtk::Align::START);
-    content->append(*sepLabel);
-
-    // --- Drop grades radio group ---
-    auto dropNoBtn = Gtk::make_managed<Gtk::CheckButton>("No (use raw scores)");
-    dropNoBtn->set_active(true);
-    content->append(*dropNoBtn);
-
-    auto dropYesBtn = Gtk::make_managed<Gtk::CheckButton>("Yes (apply drops)");
-    dropYesBtn->set_group(*dropNoBtn);
-    content->append(*dropYesBtn);
+    // --- Reusable "Drop grades?" widget ---
+    auto gradeDropBtns = Gtk::make_managed<DropGradeBtn>();
+    gradeDropBtns->setGradeDropped(userDropGrades);   // remember last choice
+    content->append(*gradeDropBtns);
 
     dialog->add_button("_Cancel", Gtk::ResponseType::CANCEL);
     dialog->add_button("_OK",     Gtk::ResponseType::OK);
@@ -222,7 +212,7 @@ void mainScreen::openBarMenu(void){
             sigc::mem_fun(*this, &mainScreen::barMenuResponse),
             dialog,
             totalBtn, labBtn, quizBtn, examBtn, projectBtn, finalBtn,
-            dropYesBtn)
+            gradeDropBtns)
     );
 
     dialog->show();
@@ -243,20 +233,9 @@ void mainScreen::openPieMenu(void){
     content->set_margin(20);
     content->set_spacing(8);
 
-    auto label = Gtk::make_managed<Gtk::Label>("* Drop lowest scores for grade distribution?");
-    label->set_halign(Gtk::Align::START);
-    content->append(*label);
-
-    auto dropNoBtn = Gtk::make_managed<Gtk::CheckButton>("No (use raw scores)");
-    auto dropYesBtn = Gtk::make_managed<Gtk::CheckButton>("Yes (apply drops)");
-
-    // Make them a radio group
-    dropNoBtn->set_active(!userDropGrades);
-    content->append(*dropNoBtn);
-
-    dropYesBtn->set_group(*dropNoBtn);
-    dropYesBtn->set_active(userDropGrades);
-    content->append(*dropYesBtn);
+    auto gradeDropBtns = Gtk::make_managed<DropGradeBtn>();
+    gradeDropBtns->setGradeDropped(userDropGrades);
+    content->append(*gradeDropBtns);
 
     dialog->add_button("_Cancel", Gtk::ResponseType::CANCEL);
     dialog->add_button("_OK",     Gtk::ResponseType::OK);
@@ -265,7 +244,7 @@ void mainScreen::openPieMenu(void){
         sigc::bind(
             sigc::mem_fun(*this, &mainScreen::pieMenuResponse),
             dialog,
-            dropYesBtn
+            gradeDropBtns
         )
     );
 
@@ -337,18 +316,10 @@ void mainScreen::openSortMenu(void) {
 
     battleGrid -> set_hexpand(true);     //Expands horizontally
     battleGrid -> set_vexpand(false);    //but doesnt expands vertically
-
     
     auto btnStudentID   = Gtk::make_managed<Gtk::Button>("Student-ID");  //manually creating the buttons  so that i can customize more
     auto btnLetterGrade = Gtk::make_managed<Gtk::Button>("Letter-Grade");
     auto btnPercentage  = Gtk::make_managed<Gtk::Button>("Percentage");
-
-    // not this, this is tasha:
-    // dialog -> add_button("Student ID",   1);
-    // dialog -> add_button("Letter Grade", 2);
-    // dialog -> add_button("Percentage",   3);
-    // not this, this is tasha
-    
     
     battleGrid -> attach(*btnStudentID,    0, 0, 1, 1); // Button layout within the new BattleGrid
     battleGrid -> attach(*btnLetterGrade,  0, 1, 1, 1); //
@@ -358,7 +329,7 @@ void mainScreen::openSortMenu(void) {
     btnLetterGrade  -> set_hexpand(true);
     btnPercentage   -> set_hexpand(true);
 
-    btnStudentID    -> signal_clicked().connect(sigc::bind([dialog]() { dialog->response(1);})); //
+    btnStudentID    -> signal_clicked().connect(sigc::bind([dialog]() { dialog->response(1);}));
     btnLetterGrade  -> signal_clicked().connect(sigc::bind([dialog]() { dialog->response(2);}));
     btnPercentage   -> signal_clicked().connect(sigc::bind([dialog]() { dialog->response(3);}));
 
@@ -549,7 +520,6 @@ void mainScreen::drawBarChart(const Cairo::RefPtr<Cairo::Context>& cr, int width
 
     // ======================================
     //  Numeric labels above each bar
-    //  (only if there is enough horizontal space)
     // ======================================
     if (barSpace >= 10.0) {   // avoid ugly overlapping when too cramped
         cr->save();
@@ -573,16 +543,21 @@ void mainScreen::drawBarChart(const Cairo::RefPtr<Cairo::Context>& cr, int width
             Cairo::TextExtents textExt;
             cr->get_text_extents(txt, textExt);
 
-            double textX = x + barWidth / 2.0
-                         - (textExt.width / 2.0 + textExt.x_bearing);
-            double textY = y - 3.0; // a little above the top of bar
+            double textX = x + barWidth / 2.0 - (textExt.width / 2.0 + textExt.x_bearing);
+            double textY = y - 9.0; // a little above the top of bar
 
             // Clamp so it doesn't go above the top margin
             if (textY - textExt.height < top)
                 textY = top + textExt.height;
 
-            cr->move_to(textX, textY);
-            cr->show_text(txt);
+            // cr->move_to(textX, textY);
+            // cr->show_text(txt);
+            cr->save();
+            cr->set_source_rgb(1.0, 0.0, 0.0); // red dot
+            cr->rectangle(textX, textY, 3, 3);
+            cr->fill();
+            cr->restore();
+
         }
 
         cr->restore();
@@ -710,7 +685,7 @@ void mainScreen::computePieFromCalcScore() {
 
 void mainScreen::barMenuResponse(int response_id, Gtk::Dialog* dialog, Gtk::CheckButton* totalBtn, Gtk::CheckButton* labBtn,
                                  Gtk::CheckButton* quizBtn, Gtk::CheckButton* examBtn, Gtk::CheckButton* projectBtn,
-                                 Gtk::CheckButton* finalBtn,  Gtk::CheckButton* dropYesBtn){
+                                 Gtk::CheckButton* finalBtn,  DropGradeBtn* gradeDropBtns){
     if (response_id == Gtk::ResponseType::OK) {
 
         // Figure out which option the user chose
@@ -728,15 +703,14 @@ void mainScreen::barMenuResponse(int response_id, Gtk::Dialog* dialog, Gtk::Chec
             userBarChartOption = BarChartOption::FinalPercent;
 
         // Drop grade?
-        userDropGrades = dropYesBtn->get_active(); // true or false
+        userDropGrades = gradeDropBtns->getGradeDropped(); // true or false
 
         if (!score.checkFile()) {
             battleText.set_text("* Upload a file first!");
             barChartData.clear();
         } else {
             // Recompute report so vectors are fresh
-            score.generateReportClass(score.getClassSize(),
-                                      /*sortSelect=*/0,     // sort by total %
+            score.generateReportClass(score.getClassSize(), /*sortSelect=*/0,
                                       /*isGradesDropped=*/ userDropGrades ? 1:0);
 
             barChartData.clear();
@@ -812,10 +786,7 @@ void mainScreen::barMenuResponse(int response_id, Gtk::Dialog* dialog, Gtk::Chec
     delete dialog;
 }
 
-void mainScreen::pieMenuResponse(int response_id,
-                                 Gtk::Dialog* dialog,
-                                 Gtk::CheckButton* dropYesBtn)
-{
+void mainScreen::pieMenuResponse(int response_id, Gtk::Dialog* dialog, DropGradeBtn* gradeDropBtns){
     if (response_id == Gtk::ResponseType::OK) {
 
         if (!score.checkFile()) {
@@ -827,7 +798,7 @@ void mainScreen::pieMenuResponse(int response_id,
         }
 
         // Read “drop grades?” choice
-        userDropGrades = dropYesBtn->get_active();
+        userDropGrades = gradeDropBtns->getGradeDropped();
 
         // Recompute report with chosen drop setting
         score.generateReportClass(
@@ -899,6 +870,7 @@ void mainScreen::filenameEntered(int response_id, Gtk::Dialog* dialog, Gtk::Entr
                     score.fileImportFromGTK(filename);
                     if (score.checkFile()){
                         battleText.set_text("* Viewing Raw Data");
+                        viewRawText.set_transient_for(*this);
                         viewRawText.present();
                         viewRawText.setText(score.readRawData());
                     }

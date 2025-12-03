@@ -5,6 +5,7 @@
 #include "calcScores.h"
 #include "textViewer.h"
 #include "randGen.h"
+#include "DropGradeBtn.h"
 
 enum class ChartKind {
     None,
@@ -45,6 +46,8 @@ class mainScreen : public Gtk::Window {
         TextFileOption userFileOption = TextFileOption::Upload;
         SortByOption userSortOption = SortByOption::NoSort;
         BarChartOption userBarChartOption = BarChartOption::TotalPercent;
+        ChartKind currentChartKind = ChartKind::None;
+
         bool is_fullscreen_ = false;
         bool userDropGrades = false;
         std::vector<double> pieChartData;  // [A, B, C, D, F] as fractions
@@ -59,9 +62,6 @@ class mainScreen : public Gtk::Window {
         Gtk::Frame battleFrame;
         Gtk::Label battleText;
 
-        // which chart?
-        ChartKind currentChartKind = ChartKind::None;
-
         // Bar chart drawing on main screen
         Gtk::DrawingArea barChartArea;
         std::vector<double> barChartData;
@@ -75,6 +75,7 @@ class mainScreen : public Gtk::Window {
         // custom classes
         calcScore  score;        // for grade calculations
         textViewer viewRawText; // to display the raw text
+        textViewer viewSortedResults;
         RandGen    randomScoreFile;
 
         bool on_key_pressed(guint keyval, guint /*keycode*/, Gdk::ModifierType /*state*/);
@@ -99,14 +100,14 @@ class mainScreen : public Gtk::Window {
         void openBarMenu(void);
         void barMenuResponse(int response_id, Gtk::Dialog* dialog, Gtk::CheckButton* totalBtn, Gtk::CheckButton* labBtn,
                              Gtk::CheckButton* quizBtn, Gtk::CheckButton* examBtn, Gtk::CheckButton* projectBtn, Gtk::CheckButton* finalBtn,
-                             Gtk::CheckButton* dropYesBtn);
+                             DropGradeBtn* gradeDropBtns);
 
         // Draw callback for the bar chart
         void drawBarChart(const Cairo::RefPtr<Cairo::Context>& cr, int width, int height);
 
         // Chart callbacks (Pie)
         void openPieMenu(void);
-        void pieMenuResponse(int response_id, Gtk::Dialog* dialog, Gtk::CheckButton* dropYesBtn);
+        void pieMenuResponse(int response_id, Gtk::Dialog* dialog, DropGradeBtn* gradeDropBtns);
         void computePieFromCalcScore(void);   // helper that uses calcScore
         void drawPieChart(const Cairo::RefPtr<Cairo::Context>& cr, int width, int height); // draws the piechart
 
