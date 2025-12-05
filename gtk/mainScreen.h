@@ -2,6 +2,7 @@
 #define MAINSCREEN_H
 #include <gtkmm.h>
 #include <cairomm/cairomm.h>
+#include <cmath>
 #include "calcScores.h"
 #include "textViewer.h"
 #include "randGen.h"
@@ -51,7 +52,7 @@ class mainScreen : public Gtk::Window {
         bool is_fullscreen_ = false;
         bool userDropGrades = false;
         std::vector<double> pieChartData;  // [A, B, C, D, F] as fractions
-        int                 pieTotalStudents = 0;       
+        int pieTotalStudents = 0;       
 
         Gtk::Button textFile, barChart, pieChart, sortBy;
         Gtk::Image textImg, barImg, pieImg, sortImg, menuSelectImg;
@@ -75,7 +76,7 @@ class mainScreen : public Gtk::Window {
         // custom classes
         calcScore  score;        // for grade calculations
         textViewer viewRawText; // to display the raw text
-        textViewer viewSortedResults;
+        textViewer viewSortedResults; // like viewRawText but for the sorted data
         RandGen    randomScoreFile;
 
         bool on_key_pressed(guint keyval, guint /*keycode*/, Gdk::ModifierType /*state*/);

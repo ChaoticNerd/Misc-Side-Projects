@@ -1,10 +1,6 @@
 #include "calcScores.h"
 
-// ------------------------
-// small free helpers
-// ------------------------
-
-// small helpers as member functions, matching calcScores.h
+// helper functs
 bool calcScore::nonemptyLine(const std::string& line) {
     for (size_t i = 0; i < line.size(); ++i) {
         char c = line[i];
@@ -53,10 +49,8 @@ double calcScore::sumVector(const std::vector<double>& v) {
 //     return s;
 // }
 
-// ------------------------
-// constructors / destructor
-// ------------------------
 
+// constructors 
 calcScore::calcScore() {
     isFileUploaded = false;
     classSize = 0;
@@ -70,14 +64,13 @@ calcScore::calcScore() {
     }
 }
 
-calcScore::calcScore(fstream inFile, string fName, int sID, int cSize)
-    : inputFile(std::move(inFile)),
-      fileName(std::move(fName)),
-      threshold(0.0),
-      studentID(sID),
-      classSize(cSize),
-      isFileUploaded(false)
-{
+calcScore::calcScore(fstream inFile, string fileName, int studentID, int classSize) : 
+                     inputFile(std::move(inFile)),
+                     fileName(std::move(fileName)),
+                     threshold(0.0),
+                     studentID(studentID),
+                     classSize(classSize),
+                     isFileUploaded(false){
     for (int i = 0; i < 5; ++i) {
         gradeWeights[i] = 0;
         totalAssignments[i] = 0;
@@ -90,10 +83,7 @@ calcScore::~calcScore() {
         inputFile.close();
 }
 
-// ------------------------
 // reset major vectors
-// ------------------------
-
 void calcScore::vector_dumptruck(void) {
     calculatedPercentages.clear();
     averageScores.clear();
@@ -103,10 +93,8 @@ void calcScore::vector_dumptruck(void) {
     letterGrades.clear();
 }
 
-// ------------------------
-// file handling
-// ------------------------
-
+// ------------------------------------------------------------------------------------------------
+// file stuff
 void calcScore::fileImportFromGTK(const std::string& path) {
     if (inputFile.is_open())
         inputFile.close();
@@ -215,12 +203,10 @@ void calcScore::countStudentsInFile(void) {
     classSize = count;
 
     inputFile.clear();
-    inputFile.seekg(0);
+    inputFile.seekg(0); //ove cursor back to beginning
 }
 
-// ------------------------
-// internal helpers defined in header
-// ------------------------
+// ------------------------------------------------------------------------------------------------
 
 void calcScore::getTotalAssignments(fstream& file, int (&totalAssignmentsArray)[5]) {
     for (int i = 0; i < 5; ++i) {
@@ -358,10 +344,10 @@ void calcScore::calculateClassPercentage(const vector<vector<vector<double>>>& g
         return;
 
     // Use the size of 'out' (students), not 'grade' (which has an extra row)
-    int nStudents = (int)out.size();
+    int numStudents = (int)out.size();
 
-    for (int i = 0; i < nStudents; ++i) {
-        double pts    = grade[i][assignmentType][0];   // total points this student earned
+    for (int i = 0; i < numStudents; ++i) {
+        double pts = grade[i][assignmentType][0];   // total points this student earned
         double maxPts = total[assignmentType];         // total possible points for category
 
         double contrib = 0.0;
@@ -387,7 +373,7 @@ void calcScore::getAverageOfCategoryOfClass(const vector<vector<double>>& calcul
     for (size_t i = 0; i < calculated.size(); ++i) {
         if ((int)calculated[i].size() > assignmentType) {
             sum += calculated[i][assignmentType];
-            ++count;
+            count++;
         }
     }
     if (count > 0)
@@ -420,10 +406,8 @@ void calcScore::getTotalPercentage(std::vector<std::vector<double>>& classPercen
 }
 
 
-// ------------------------
-// letter grade helpers
-// ------------------------
-
+// ------------------------------------------------------------------------
+// letter grade stuff (tons bc simplifying all would take too long)
 char calcScore::letterFromTotal(double total) const {
     // total is 0..1
     if (total >= GradeA)      return 'A';
@@ -466,10 +450,8 @@ std::string calcScore::getLetterGradeSorted(const vector<double>& percentages) {
     return std::string(1, g);
 }
 
-// ------------------------
-// sorting
-// ------------------------
-
+// ------------------------------------------------------------------------
+// SORTS
 void calcScore::bubbleSort(std::vector<std::vector<double>>& classPercentages) {
     int n = (int)classPercentages.size();
     if (n <= 1) return;
@@ -593,9 +575,8 @@ void calcScore::sortByTotalPerc(void) {
     }
 }
 
-// ------------------------
-// main class report
-// ------------------------
+// ------------------------------------------------------------------------
+// GENERATE REPORTS
 void calcScore::generateReportClass(int classSizeParam, int sortSelect, int isGradesDropped)
 {
     if (!inputFile.is_open()) {
@@ -716,10 +697,6 @@ void calcScore::generateReportClass(int classSizeParam, int sortSelect, int isGr
     }
 }
 
-
-// ------------------------
-// one-student report
-// ------------------------
 void calcScore::generateReportOneStudent(int isGradesDropped, int studentIndex) {
     // Make sure class report is up to date
     int n = classSize;
@@ -738,16 +715,15 @@ void calcScore::generateReportOneStudent(int isGradesDropped, int studentIndex) 
     calculatedPercentages = calculatedClassPercentages[studentIndex];
 }
 
-// ------------------------
-// printing & threshold
-// ------------------------
+// ------------------------------------------------------------------------
+// THRESHOLD (DO WE STILL NEED THIS?)
 void calcScore::threshScore(double thresh, int isHigh) {
     if (calculatedClassPercentages.empty()) {
         cout << "No class data.\n";
         return;
     }
 
-    double t = thresh / TO_PERCENT; // convert % → fraction
+    double t = thresh / TO_PERCENT; // convert % to fraction
     cout << "Students with total "
          << (isHigh ? ">=" : "<=") << " " << thresh << "%:\n";
 
@@ -774,10 +750,8 @@ void calcScore::testPrintVector(vector<vector<double>>& v) {
     cout << "\n";
 }
 
-// ------------------------
+// ------------------------------------------------------------------------
 // setters / getters
-// ------------------------
-
 void calcScore::setThreshold(int newThreshold) {
     threshold = (double)newThreshold / TO_PERCENT; // store as 0..1 fraction
 }

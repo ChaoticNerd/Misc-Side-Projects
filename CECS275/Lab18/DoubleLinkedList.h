@@ -67,10 +67,7 @@ public:
     bool operator!=(const LinkedList &rhs) const;
 
     // Give operator<< friend access (for printing)
-    friend std::ostream& operator<< <>(std::ostream &os,
-                                       const LinkedList<ElementType> &list);
+    friend std::ostream& operator<< <>(std::ostream &os, const LinkedList<ElementType> &list);
 };
-
 #include "DoubleLinkedList.cpp"
-
 #endif // LINKEDLIST_H

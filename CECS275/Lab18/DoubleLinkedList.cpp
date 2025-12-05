@@ -2,10 +2,6 @@
 #ifndef DOUBLELINKEDLIST_TPP
 #define DOUBLELINKEDLIST_TPP
 
-// =====================
-// Private helpers
-// =====================
-
 template <typename ElementType>
 void LinkedList<ElementType>::copyFrom(const LinkedList &source) {
     head = nullptr;
@@ -31,10 +27,6 @@ void LinkedList<ElementType>::freeList() {
     tail = nullptr;
     m_size = 0;
 }
-
-// =====================
-// Constructors / Destructor / Assignment
-// =====================
 
 template <typename ElementType>
 LinkedList<ElementType>::LinkedList()
@@ -86,10 +78,6 @@ LinkedList<ElementType>& LinkedList<ElementType>::operator=(
     }
     return *this;
 }
-
-// =====================
-// Modifiers
-// =====================
 
 template <typename ElementType>
 void LinkedList<ElementType>::push_front(ElementType value) {
@@ -259,10 +247,6 @@ void LinkedList<ElementType>::clear() {
     freeList();
 }
 
-// =====================
-// Accessors
-// =====================
-
 template <typename ElementType>
 ElementType LinkedList<ElementType>::front() const {
     if (head == nullptr) {
@@ -289,10 +273,6 @@ bool LinkedList<ElementType>::empty() const {
     return (m_size == 0);
 }
 
-// =====================
-// Comparisons
-// =====================
-
 template <typename ElementType>
 bool LinkedList<ElementType>::operator==(const LinkedList &rhs) const {
     if (m_size != rhs.m_size) return false;
@@ -315,10 +295,6 @@ template <typename ElementType>
 bool LinkedList<ElementType>::operator!=(const LinkedList &rhs) const {
     return !(*this == rhs);
 }
-
-// =====================
-// External operator<<
-// =====================
 
 template <typename ElementType>
 std::ostream& operator<<(std::ostream &os, const LinkedList<ElementType> &list) {

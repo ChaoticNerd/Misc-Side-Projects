@@ -1,8 +1,4 @@
 #include "mainScreen.h"
-#include "calcScores.h"
-#include <cairomm/cairomm.h>
-
-// 0.9253 0.8647 0.9560 0.8190 0.8730 0.9263 0.7910 0.8750 0.8115 0.9775
 
 mainScreen::mainScreen(){
     set_title("Main Screen");
@@ -26,7 +22,7 @@ mainScreen::mainScreen(){
     buttonBox.set_margin(5);
 
     // Automatically adjust button box
-    buttonBox.set_hexpand(true);
+    buttonBox.set_hexpand(false);
     buttonBox.set_vexpand(false);
     buttonBox.set_halign(Gtk::Align::FILL); // stretches horizontally
     buttonBox.set_valign(Gtk::Align::END); // puts at bottom of screen
@@ -199,7 +195,7 @@ void mainScreen::openBarMenu(void){
     finalBtn->set_group(*totalBtn);
     content->append(*finalBtn);
 
-    // --- Reusable "Drop grades?" widget ---
+    // drop grades button use example
     auto gradeDropBtns = Gtk::make_managed<DropGradeBtn>();
     gradeDropBtns->setGradeDropped(userDropGrades);   // remember last choice
     content->append(*gradeDropBtns);
@@ -238,7 +234,7 @@ void mainScreen::openPieMenu(void){
     content->append(*gradeDropBtns);
 
     dialog->add_button("_Cancel", Gtk::ResponseType::CANCEL);
-    dialog->add_button("_OK",     Gtk::ResponseType::OK);
+    dialog->add_button("_OK", Gtk::ResponseType::OK);
 
     dialog->signal_response().connect(
         sigc::bind(
@@ -412,6 +408,7 @@ void mainScreen::drawBarChart(const Cairo::RefPtr<Cairo::Context>& cr, int width
     cr->fill();
     cr->restore();
 
+    // THIS IS WHERE U CHANGE WHEN EMPTEE
     if (barChartData.empty()) {
         // nothing to draw yet
         cr->save();
@@ -444,7 +441,7 @@ void mainScreen::drawBarChart(const Cairo::RefPtr<Cairo::Context>& cr, int width
 
     // Axes
     cr->save();
-    cr->set_source_rgb(1.0, 1.0, 1.0);
+    cr->set_source_rgb(1.0, 1.0, 1.0); // COLOR OF AXES (BOTH)
     cr->set_line_width(2.0);
 
     // Y axis
@@ -462,12 +459,15 @@ void mainScreen::drawBarChart(const Cairo::RefPtr<Cairo::Context>& cr, int width
     const double barWidth = barSpace * 0.6;
 
     for (size_t i = 0; i < n; ++i) {
+
+        // I REFERENCED THE INTERNET FOR THIS
         double value = barChartData[i];
         double normalized = value / maxVal;   // e.g. 0.87
 
         double barHeight = normalized * chartHeight;
         double x = left + barSpace * i + (barSpace - barWidth) / 2.0;
         double y = top + chartHeight - barHeight;
+        // REFERENCED UNTIL HERE ========================================================
 
         cr->save();
         cr->set_source_rgb(1.0, 1.0, 1.0);   // white bars
@@ -476,9 +476,7 @@ void mainScreen::drawBarChart(const Cairo::RefPtr<Cairo::Context>& cr, int width
         cr->restore();
     }
 
-    // =============================
     //  Axis labels (Cairo text)
-    // =============================
     cr->save();
     cr->set_source_rgb(1.0, 1.0, 1.0);
     cr->select_font_face("Determination Mono", Cairo::ToyFontFace::Slant::NORMAL, Cairo::ToyFontFace::Weight::NORMAL);
@@ -518,9 +516,7 @@ void mainScreen::drawBarChart(const Cairo::RefPtr<Cairo::Context>& cr, int width
 
     cr->restore();
 
-    // ======================================
     //  Numeric labels above each bar
-    // ======================================
     if (barSpace >= 10.0) {   // avoid ugly overlapping when too cramped
         cr->save();
         cr->set_source_rgb(1.0, 1.0, 1.0);
@@ -544,7 +540,7 @@ void mainScreen::drawBarChart(const Cairo::RefPtr<Cairo::Context>& cr, int width
             cr->get_text_extents(txt, textExt);
 
             double textX = x + barWidth / 2.0 - (textExt.width / 2.0 + textExt.x_bearing);
-            double textY = y - 9.0; // a little above the top of bar
+            double textY = y - 9.0; // text for each bar (above bar slightly)
 
             // Clamp so it doesn't go above the top margin
             if (textY - textExt.height < top)
@@ -553,7 +549,7 @@ void mainScreen::drawBarChart(const Cairo::RefPtr<Cairo::Context>& cr, int width
             // cr->move_to(textX, textY);
             // cr->show_text(txt);
             cr->save();
-            cr->set_source_rgb(1.0, 0.0, 0.0); // red dot
+            cr->set_source_rgb(1.0, 0.0, 0.0); // red dot DEBUG
             cr->rectangle(textX, textY, 3, 3);
             cr->fill();
             cr->restore();
@@ -570,7 +566,7 @@ void mainScreen::drawPieChart(const Cairo::RefPtr<Cairo::Context>& cr, int width
     cr->paint();
 
     if (pieChartData.size() < 5 || pieTotalStudents <= 0) {
-        cr->set_source_rgb(1.0, 1.0, 1.0);
+        cr->set_source_rgb(0.0, 0.0, 0.0); // color of text inside pie slice
         cr->select_font_face("Determination Mono", Cairo::ToyFontFace::Slant::NORMAL, Cairo::ToyFontFace::Weight::NORMAL);
         cr->set_font_size(24.0);
         cr->move_to(20, height / 2);
@@ -578,20 +574,21 @@ void mainScreen::drawPieChart(const Cairo::RefPtr<Cairo::Context>& cr, int width
         return;
     }
 
-    const double PI = 3.14159265358979323846;
     double cx = width  / 2.0;
     double cy = height / 2.0;
     double radius = std::min(width, height) * 0.35;
 
+    // this is what shows up inside each pie slice
     const char* labels[5] = { "A", "B", "C", "D", "F" };
 
     double startAngle = 0.0;
 
+    // this creates each slice based on data from calcscore
     for (int i = 0; i < 5; ++i) {
         double fraction = pieChartData[i];
         if (fraction <= 0.0) continue;
 
-        double endAngle = startAngle + fraction * 2.0 * PI;
+        double endAngle = startAngle + fraction * 2.0 * G_PI;
 
         // Path for the slice
         cr->move_to(cx, cy);
@@ -620,8 +617,7 @@ void mainScreen::drawPieChart(const Cairo::RefPtr<Cairo::Context>& cr, int width
         double tx = cx + std::cos(midAngle) * (radius * 0.65);
         double ty = cy + std::sin(midAngle) * (radius * 0.65);
 
-        std::string label = std::string(labels[i]) + " (" +
-                            std::to_string(pieCounts[i]) + ")";
+        std::string label = std::string(labels[i]) + " (" + std::to_string(pieCounts[i]) + ")";
 
         cr->set_source_rgb(1.0, 1.0, 1.0);
         cr->select_font_face("Determination Mono", Cairo::ToyFontFace::Slant::NORMAL, Cairo::ToyFontFace::Weight::NORMAL);
@@ -670,7 +666,7 @@ void mainScreen::computePieFromCalcScore() {
     if (pieTotalStudents == 0)
         return;
 
-    pieChartData.resize(5);
+    pieChartData.resize(5); // populates vector
     for (int i = 0; i < 5; ++i) {
         pieChartData[i] = static_cast<double>(pieCounts[i]) / pieTotalStudents;
     }
@@ -710,8 +706,7 @@ void mainScreen::barMenuResponse(int response_id, Gtk::Dialog* dialog, Gtk::Chec
             barChartData.clear();
         } else {
             // Recompute report so vectors are fresh
-            score.generateReportClass(score.getClassSize(), /*sortSelect=*/0,
-                                      /*isGradesDropped=*/ userDropGrades ? 1:0);
+            score.generateReportClass(score.getClassSize(), /*sortSelect=*/0, /*isGradesDropped=*/ userDropGrades ? 1:0);
 
             barChartData.clear();
 
@@ -802,9 +797,8 @@ void mainScreen::pieMenuResponse(int response_id, Gtk::Dialog* dialog, DropGrade
 
         // Recompute report with chosen drop setting
         score.generateReportClass(
-            score.getClassSize(),
-            /*sortSelect=*/0,                         // no sorting needed for distribution
-            /*isGradesDropped=*/ userDropGrades ? 1 : 0
+            // default sort to nothing
+            score.getClassSize(), /*sortSelect=*/0, /*isGradesDropped=*/ userDropGrades ? 1 : 0
         );
 
         // Build A/B/C/D/F fractions using existing calcScore logic
@@ -840,7 +834,7 @@ void mainScreen::promptFilename(void){
 
     dialog->get_content_area()->append(*entry);
 
-    //  Make sure the cursor is in the entry right away
+    // Make sure the cursor is in the entry right away
     entry->grab_focus();
 
     dialog->signal_response().connect(
@@ -855,7 +849,7 @@ void mainScreen::promptFilename(void){
 }
 
 void mainScreen::filenameEntered(int response_id, Gtk::Dialog* dialog, Gtk::Entry* entry){
-    if (response_id == Gtk::ResponseType::OK){
+    if (response_id == Gtk::ResponseType::OK){ // gtk::responsetype::ok is basically an enum!!
         std::string filename = entry->get_text();
 
         // basic validation
@@ -896,5 +890,5 @@ void mainScreen::filenameEntered(int response_id, Gtk::Dialog* dialog, Gtk::Entr
     // Make sure the main window comes back to the foreground
     this->present();
 
-    delete dialog; // required in gtkmm4
+    delete dialog; // kill dialog (gtkmm4)
 }
