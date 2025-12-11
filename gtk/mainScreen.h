@@ -63,6 +63,7 @@ class mainScreen : public Gtk::Window {
         Gtk::Frame battleFrame;
         Gtk::Label battleText;
 
+        //Gtk::FileChooserDialog uploadFile;
         // Bar chart drawing on main screen
         Gtk::DrawingArea barChartArea;
         std::vector<double> barChartData;

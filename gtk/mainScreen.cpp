@@ -2,7 +2,7 @@
 
 mainScreen::mainScreen(){
     set_title("Main Screen");
-    set_default_size(800, 600);
+    set_default_size(800, 1000);
 
     // setup grid for fullscreen
     screenGrid.set_halign(Gtk::Align::FILL);
@@ -424,7 +424,7 @@ void mainScreen::drawBarChart(const Cairo::RefPtr<Cairo::Context>& cr, int width
     // Margins around chart area
     const double left   = 60.0;
     const double right  = 20.0;
-    const double top    = 20.0;
+    const double top    = 90.0;
     const double bottom = 50.0;   // a little extra for X label
 
     const double chartWidth  = width  - left - right;
@@ -540,17 +540,17 @@ void mainScreen::drawBarChart(const Cairo::RefPtr<Cairo::Context>& cr, int width
             cr->get_text_extents(txt, textExt);
 
             double textX = x + barWidth / 2.0 - (textExt.width / 2.0 + textExt.x_bearing);
-            double textY = y - 9.0; // text for each bar (above bar slightly)
+            double textY = y - 12.0; // text for each bar (above bar slightly)
 
             // Clamp so it doesn't go above the top margin
-            if (textY - textExt.height < top)
-                textY = top + textExt.height;
+            // if (textY - textExt.height < top)
+            //     textY = top + textExt.height * 1.5;
 
-            // cr->move_to(textX, textY);
-            // cr->show_text(txt);
+            cr->move_to(textX, textY);
+            cr->show_text(txt);
             cr->save();
-            cr->set_source_rgb(1.0, 0.0, 0.0); // red dot DEBUG
-            cr->rectangle(textX, textY, 3, 3);
+            //cr->set_source_rgb(1.0, 0.0, 0.0); // red dot DEBUG
+            //cr->rectangle(textX, textY, 3, 3);
             cr->fill();
             cr->restore();
 

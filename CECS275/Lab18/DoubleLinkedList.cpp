@@ -2,8 +2,8 @@
 #ifndef DOUBLELINKEDLIST_TPP
 #define DOUBLELINKEDLIST_TPP
 
-template <typename ElementType>
-void LinkedList<ElementType>::copyFrom(const LinkedList &source) {
+template <class T>
+void LinkedList<T>::copyFrom(const LinkedList &source) {
     head = nullptr;
     tail = nullptr;
     m_size = 0;
@@ -15,8 +15,8 @@ void LinkedList<ElementType>::copyFrom(const LinkedList &source) {
     }
 }
 
-template <typename ElementType>
-void LinkedList<ElementType>::freeList() {
+template <class T>
+void LinkedList<T>::freeList() {
     Node* current = head;
     while (current != nullptr) {
         Node* toDelete = current;
@@ -28,32 +28,31 @@ void LinkedList<ElementType>::freeList() {
     m_size = 0;
 }
 
-template <typename ElementType>
-LinkedList<ElementType>::LinkedList()
-    : head(nullptr), tail(nullptr), m_size(0) {}
+template <class T>
+LinkedList<T>::LinkedList() : head(nullptr), tail(nullptr), m_size(0) {}
 
-template <typename ElementType>
-LinkedList<ElementType>::LinkedList(const LinkedList &source)
-    : head(nullptr), tail(nullptr), m_size(0) {
+template <class T>
+LinkedList<T>::LinkedList(const LinkedList &source) : head(nullptr), 
+                                                      tail(nullptr), m_size(0) {
     copyFrom(source);
 }
 
-template <typename ElementType>
-LinkedList<ElementType>::LinkedList(LinkedList &&source) noexcept
-    : head(source.head), tail(source.tail), m_size(source.m_size) {
+template <class T>
+LinkedList<T>::LinkedList(LinkedList &&source) : head(source.head), 
+                                                tail(source.tail),
+                                                m_size(source.m_size) {
     source.head = nullptr;
     source.tail = nullptr;
     source.m_size = 0;
 }
 
-template <typename ElementType>
-LinkedList<ElementType>::~LinkedList() {
+template <class T>
+LinkedList<T>::~LinkedList() {
     freeList();
 }
 
-template <typename ElementType>
-LinkedList<ElementType>& LinkedList<ElementType>::operator=(
-    const LinkedList &source) {
+template <class T>
+LinkedList<T>& LinkedList<T>::operator=(const LinkedList &source) {
 
     if (this != &source) {
         freeList();
@@ -62,9 +61,8 @@ LinkedList<ElementType>& LinkedList<ElementType>::operator=(
     return *this;
 }
 
-template <typename ElementType>
-LinkedList<ElementType>& LinkedList<ElementType>::operator=(
-    LinkedList &&source) noexcept {
+template <class T>
+LinkedList<T>& LinkedList<T>::operator=(LinkedList &&source) {
 
     if (this != &source) {
         freeList();
@@ -79,8 +77,8 @@ LinkedList<ElementType>& LinkedList<ElementType>::operator=(
     return *this;
 }
 
-template <typename ElementType>
-void LinkedList<ElementType>::push_front(ElementType value) {
+template <class T>
+void LinkedList<T>::push_front(T value) {
     Node* newNode = new Node(value, nullptr, head);
     if (head != nullptr) {
         head->prev = newNode;
@@ -92,8 +90,8 @@ void LinkedList<ElementType>::push_front(ElementType value) {
     ++m_size;
 }
 
-template <typename ElementType>
-void LinkedList<ElementType>::push_back(ElementType value) {
+template <class T>
+void LinkedList<T>::push_back(T value) {
     Node* newNode = new Node(value, tail, nullptr);
     if (tail != nullptr) {
         tail->next = newNode;
@@ -105,8 +103,8 @@ void LinkedList<ElementType>::push_back(ElementType value) {
     ++m_size;
 }
 
-template <typename ElementType>
-void LinkedList<ElementType>::push_at(ElementType value, int pos) {
+template <class T>
+void LinkedList<T>::push_at(T value, int pos) {
     if (pos <= 0) {
         push_front(value);
         return;
@@ -132,8 +130,8 @@ void LinkedList<ElementType>::push_at(ElementType value, int pos) {
     ++m_size;
 }
 
-template <typename ElementType>
-void LinkedList<ElementType>::pop_front() {
+template <class T>
+void LinkedList<T>::pop_front() {
     if (head == nullptr) {
         return; // list empty
     }
@@ -151,8 +149,8 @@ void LinkedList<ElementType>::pop_front() {
     --m_size;
 }
 
-template <typename ElementType>
-void LinkedList<ElementType>::pop_back() {
+template <class T>
+void LinkedList<T>::pop_back() {
     if (tail == nullptr) {
         return; // list empty
     }
@@ -170,8 +168,8 @@ void LinkedList<ElementType>::pop_back() {
     --m_size;
 }
 
-template <typename ElementType>
-void LinkedList<ElementType>::pop_at(int pos) {
+template <class T>
+void LinkedList<T>::pop_at(int pos) {
     if (head == nullptr || pos < 0 || pos >= m_size) {
         return; // nothing to do
     }
@@ -208,8 +206,8 @@ void LinkedList<ElementType>::pop_at(int pos) {
 }
 
 // Remove all odd-indexed elements (1,3,5,...) using original indices
-template <typename ElementType>
-void LinkedList<ElementType>::RemoveOdd() {
+template <class T>
+void LinkedList<T>::RemoveOdd() {
     if (m_size <= 1) return;
 
     Node* current = head;
@@ -242,39 +240,39 @@ void LinkedList<ElementType>::RemoveOdd() {
     // after removal, head/tail should already be consistent
 }
 
-template <typename ElementType>
-void LinkedList<ElementType>::clear() {
+template <class T>
+void LinkedList<T>::clear() {
     freeList();
 }
 
-template <typename ElementType>
-ElementType LinkedList<ElementType>::front() const {
+template <class T>
+T LinkedList<T>::front() const {
     if (head == nullptr) {
         throw std::out_of_range("LinkedList::front() on empty list");
     }
     return head->data;
 }
 
-template <typename ElementType>
-ElementType LinkedList<ElementType>::back() const {
+template <class T>
+T LinkedList<T>::back() const {
     if (tail == nullptr) {
         throw std::out_of_range("LinkedList::back() on empty list");
     }
     return tail->data;
 }
 
-template <typename ElementType>
-int LinkedList<ElementType>::size() const {
+template <class T>
+int LinkedList<T>::size() const {
     return m_size;
 }
 
-template <typename ElementType>
-bool LinkedList<ElementType>::empty() const {
+template <class T>
+bool LinkedList<T>::empty() const {
     return (m_size == 0);
 }
 
-template <typename ElementType>
-bool LinkedList<ElementType>::operator==(const LinkedList &rhs) const {
+template <class T>
+bool LinkedList<T>::operator==(const LinkedList &rhs) const {
     if (m_size != rhs.m_size) return false;
 
     Node* a = head;
@@ -291,14 +289,14 @@ bool LinkedList<ElementType>::operator==(const LinkedList &rhs) const {
     return true;
 }
 
-template <typename ElementType>
-bool LinkedList<ElementType>::operator!=(const LinkedList &rhs) const {
+template <class T>
+bool LinkedList<T>::operator!=(const LinkedList &rhs) const {
     return !(*this == rhs);
 }
 
-template <typename ElementType>
-std::ostream& operator<<(std::ostream &os, const LinkedList<ElementType> &list) {
-    typename LinkedList<ElementType>::Node* current = list.head;
+template <class T>
+std::ostream& operator<<(std::ostream &os, const LinkedList<T> &list) {
+    class LinkedList<T>::Node* current = list.head;
 
     while (current != nullptr) {
         os << current->data;

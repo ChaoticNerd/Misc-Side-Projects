@@ -8,7 +8,6 @@
 template <typename ElementType>
 class LinkedList;
 
-// External operator<< declaration
 template <typename ElementType>
 std::ostream& operator<<(std::ostream &os, const LinkedList<ElementType> &list);
 
