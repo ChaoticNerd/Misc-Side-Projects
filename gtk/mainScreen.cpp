@@ -325,9 +325,15 @@ void mainScreen::openSortMenu(void) {
     btnLetterGrade  -> set_hexpand(true);
     btnPercentage   -> set_hexpand(true);
 
-    btnStudentID    -> signal_clicked().connect(sigc::bind([dialog]() { dialog->response(1);}));
-    btnLetterGrade  -> signal_clicked().connect(sigc::bind([dialog]() { dialog->response(2);}));
-    btnPercentage   -> signal_clicked().connect(sigc::bind([dialog]() { dialog->response(3);}));
+    btnStudentID    -> signal_clicked().connect(sigc::bind([dialog]() { 
+                                                                        dialog->response(1);
+                                                                    }));
+    btnLetterGrade  -> signal_clicked().connect(sigc::bind([dialog]() { 
+                                                                        dialog->response(2);
+                                                                    }));
+    btnPercentage   -> signal_clicked().connect(sigc::bind([dialog]() { 
+                                                                        dialog->response(3);
+                                                                    }));
 
     // Hook response → your handler
     dialog -> signal_response().connect(
@@ -338,56 +344,6 @@ void mainScreen::openSortMenu(void) {
     );
 
     dialog -> show();
-}
-void mainScreen::fileChooserResponse(int response_id, Gtk::FileChooserDialog* dialog){
-    if (response_id == Gtk::ResponseType::OK) {
-
-        auto file = dialog->get_file();  // Gio::File
-        if (file) {
-            const std::string path = file->get_path();  // local filesystem path
-
-            std::cout << "User selected file: " << path << "\n";
-
-            // Basic validation: ensure .txt as before
-            if (path.size() < 4 || path.substr(path.size() - 4) != ".txt") {
-                std::cerr << "Error: filename must end in .txt\n";
-                battleText.set_text("Filename must end in .txt");
-            }
-            else {
-                // Reuse your existing logic from filenameEntered()
-                switch (userFileOption) {
-                    case TextFileOption::ViewRaw: {
-                        score.fileImportFromGTK(path);
-                        if (score.checkFile()) {
-                            battleText.set_text("* Viewing Raw Data");
-                            viewRawText.set_transient_for(*this);
-                            viewRawText.present();
-                            viewRawText.setText(score.readRawData());
-                        }
-                        break;
-                    }
-                    case TextFileOption::Upload: {
-                        score.fileImportFromGTK(path);
-                        if (score.checkFile()) {
-                            battleText.set_text("* File Uploaded");
-                            score.countStudentsInFile();
-                        }
-                        break;
-                    }
-                    case TextFileOption::GenFile: {
-                        randomScoreFile.generateReport(path);
-                        battleText.set_text("Generated Random Score File");
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
-    // Bring main window back to front, same as other handlers
-    this->present();
-
-    delete dialog;
 }
 
 
@@ -816,7 +772,7 @@ void mainScreen::barMenuResponse(int response_id, Gtk::Dialog* dialog, Gtk::Chec
                 }
             }
 
-            // Optional: debug print
+            // DEBUG
             std::cout << "barChartData size: " << barChartData.size() << "\n";
             for (double v : barChartData)
                 std::cout << v << " ";
@@ -865,78 +821,80 @@ void mainScreen::pieMenuResponse(int response_id, Gtk::Dialog* dialog, DropGrade
     delete dialog;
 }
 
-
-// void mainScreen::promptFilename(void){
-//     // Create dialog dynamically
-//     auto dialog = new Gtk::Dialog("Enter File Name", *this);
-//     dialog->set_name("ut-box");
-    
-//     dialog->set_modal(true);
-//     dialog->set_decorated(false);        // no OS title bar
-//     dialog->set_transient_for(*this);    // center over main window
-//     dialog->set_default_size(400, 200);  // tweak as you like
-
-//     dialog->add_button("_Cancel", Gtk::ResponseType::CANCEL);
-//     dialog->add_button("_OK",     Gtk::ResponseType::OK);
-
-//     // Create an Entry widget
-//     Gtk::Entry* entry = Gtk::make_managed<Gtk::Entry>();
-//     entry->set_placeholder_text("example.txt");
-
-//     dialog->get_content_area()->append(*entry);
-
-//     // Make sure the cursor is in the entry right away
-//     entry->grab_focus();
-
-//     dialog->signal_response().connect(
-//         sigc::bind(
-//             sigc::mem_fun(*this, &mainScreen::filenameEntered),
-//             dialog,
-//             entry
-//         )
-//     );
-
-//     dialog->show();
-// }
-
 void mainScreen::promptFilename(void){
-    // Create an OPEN file chooser dialog parented to this window.
-    auto dialog = new Gtk::FileChooserDialog(
-        *this,
-        "Choose a text file",
-        Gtk::FileChooser::Action::OPEN
-    );
-    
-    auto folder = Gio::File::create_for_path(std::filesystem::current_path().string());
-    dialog->set_current_folder(folder);
+    // Create the dialog object (ref-counted, no manual delete).
+    auto dialog = Gtk::FileDialog::create();
 
-    dialog->set_modal(true);
-    dialog->set_transient_for(*this);
+    dialog->set_title("Choose a text file");
 
-    // Buttons: Cancel / Open
-    dialog->add_button("_Cancel", Gtk::ResponseType::CANCEL);
-    dialog->add_button("_Open",   Gtk::ResponseType::OK);
-
-    // Optional: filter to *.txt
+    // set file end to .txt
     auto filter_text = Gtk::FileFilter::create();
     filter_text->set_name("Text files (*.txt)");
     filter_text->add_pattern("*.txt");
-    dialog->add_filter(filter_text);
+    dialog->set_default_filter(filter_text);
 
-    auto filter_all = Gtk::FileFilter::create();
-    filter_all->set_name("All files");
-    filter_all->add_pattern("*");
-    dialog->add_filter(filter_all);
+    // FileDialog is async; Call open() and give it a callback.
+    dialog->open(
+        *this, // parent window
+        [this, dialog](const Glib::RefPtr<Gio::AsyncResult>& result) {
+            try {
+                // open_finish returns a Gio::File or throws if cancelled/error
+                auto file = dialog->open_finish(result);
+                if (!file) {
+                    // user cancelled or nothing selected
+                    return;
+                }
 
-    // Connect response handler
-    dialog->signal_response().connect(
-        sigc::bind(
-            sigc::mem_fun(*this, &mainScreen::fileChooserResponse),
-            dialog
-        )
+                std::cout << "User selected file: " << file->get_path() << "\n";
+                handleSelectedFile(file->get_path());
+                this->present();  // bring main window to front again
+            }
+            catch (const Glib::Error& ex) {
+                // This is usually "Operation was cancelled" when user closes dialog.
+                std::cerr << "FileDialog error: " << ex.what() << "\n";
+            }
+        }
+        // no cancellable argument → uses default {}
     );
+}
 
-    dialog->show();
+
+void mainScreen::handleSelectedFile(const std::string& path){
+    // Basic validation to match your old filenameEntered()
+    if (path.size() < 4 || path.substr(path.size() - 4) != ".txt") {
+        std::cerr << "Error: filename must end in .txt\n";
+        battleText.set_text("Filename must end in .txt");
+        this->present();
+        return;
+    }
+
+    // Use your existing logic based on userFileOption
+    switch (userFileOption) {
+        case TextFileOption::ViewRaw: {
+            score.fileImportFromGTK(path);
+            if (score.checkFile()) {
+                battleText.set_text("* Viewing Raw Data");
+                viewRawText.set_transient_for(*this);
+                viewRawText.present();
+                viewRawText.setText(score.readRawData());
+            }
+            break;
+        }
+        case TextFileOption::Upload: {
+            score.fileImportFromGTK(path);
+            if (score.checkFile()) {
+                battleText.set_text("* File Uploaded");
+                score.countStudentsInFile();
+            }
+            break;
+        }
+        case TextFileOption::GenFile: {
+            // For generating: we just write to this path.
+            randomScoreFile.generateReport(path);
+            battleText.set_text("Generated Random Score File");
+            break;
+        }
+    }
 }
 
 
@@ -947,7 +905,7 @@ void mainScreen::filenameEntered(int response_id, Gtk::Dialog* dialog, Gtk::Entr
         // basic validation
         if (filename.size() < 4 || filename.substr(filename.size() - 4) != ".txt"){
             std::cerr << "Error: filename must end in .txt\n";
-            battleText.set_text("Filename must end in .txt");
+            battleText.set_text("* Filename must end in .txt");
         } else {
             std::cout << "User entered filename: " << filename << "\n";
 
@@ -972,7 +930,7 @@ void mainScreen::filenameEntered(int response_id, Gtk::Dialog* dialog, Gtk::Entr
                 }
                 case TextFileOption::GenFile: {
                     randomScoreFile.generateReport(filename);
-                    battleText.set_text("Generated Random Score File");
+                    battleText.set_text("* Generated Random Score File");
                     break;
                 }
             }

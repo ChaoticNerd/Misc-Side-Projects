@@ -78,6 +78,7 @@ class mainScreen : public Gtk::Window {
         calcScore  score;        // for grade calculations
         textViewer viewRawText; // to display the raw text
         textViewer viewSortedResults; // like viewRawText but for the sorted data
+        textViewer viewRandGenFile;   // like viewRawText but for randomly generated score file
         RandGen    randomScoreFile;
 
         bool on_key_pressed(guint keyval, guint /*keycode*/, Gdk::ModifierType /*state*/);
@@ -87,7 +88,8 @@ class mainScreen : public Gtk::Window {
         void filenameEntered(int response_id, Gtk::Dialog* dialog, Gtk::Entry* entry);
         void textFileMenuResponse(int response_id, Gtk::Dialog* dialog);
         void openTextMenu(void);
-        void fileChooserResponse(int response_id, Gtk::FileChooserDialog* dialog);
+        void handleSelectedFile(const std::string& path);
+
 
         // Sort menu stuff
         void sortMenuResponse(int response_id, Gtk::Dialog* dialog);
