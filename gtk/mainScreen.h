@@ -2,6 +2,7 @@
 #define MAINSCREEN_H
 #include <gtkmm.h>
 #include <cairomm/cairomm.h>
+#include <filesystem>
 #include <cmath>
 #include "calcScores.h"
 #include "textViewer.h"
@@ -63,7 +64,6 @@ class mainScreen : public Gtk::Window {
         Gtk::Frame battleFrame;
         Gtk::Label battleText;
 
-        //Gtk::FileChooserDialog uploadFile;
         // Bar chart drawing on main screen
         Gtk::DrawingArea barChartArea;
         std::vector<double> barChartData;
@@ -87,6 +87,7 @@ class mainScreen : public Gtk::Window {
         void filenameEntered(int response_id, Gtk::Dialog* dialog, Gtk::Entry* entry);
         void textFileMenuResponse(int response_id, Gtk::Dialog* dialog);
         void openTextMenu(void);
+        void fileChooserResponse(int response_id, Gtk::FileChooserDialog* dialog);
 
         // Sort menu stuff
         void sortMenuResponse(int response_id, Gtk::Dialog* dialog);

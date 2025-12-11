@@ -339,6 +339,57 @@ void mainScreen::openSortMenu(void) {
 
     dialog -> show();
 }
+void mainScreen::fileChooserResponse(int response_id, Gtk::FileChooserDialog* dialog){
+    if (response_id == Gtk::ResponseType::OK) {
+
+        auto file = dialog->get_file();  // Gio::File
+        if (file) {
+            const std::string path = file->get_path();  // local filesystem path
+
+            std::cout << "User selected file: " << path << "\n";
+
+            // Basic validation: ensure .txt as before
+            if (path.size() < 4 || path.substr(path.size() - 4) != ".txt") {
+                std::cerr << "Error: filename must end in .txt\n";
+                battleText.set_text("Filename must end in .txt");
+            }
+            else {
+                // Reuse your existing logic from filenameEntered()
+                switch (userFileOption) {
+                    case TextFileOption::ViewRaw: {
+                        score.fileImportFromGTK(path);
+                        if (score.checkFile()) {
+                            battleText.set_text("* Viewing Raw Data");
+                            viewRawText.set_transient_for(*this);
+                            viewRawText.present();
+                            viewRawText.setText(score.readRawData());
+                        }
+                        break;
+                    }
+                    case TextFileOption::Upload: {
+                        score.fileImportFromGTK(path);
+                        if (score.checkFile()) {
+                            battleText.set_text("* File Uploaded");
+                            score.countStudentsInFile();
+                        }
+                        break;
+                    }
+                    case TextFileOption::GenFile: {
+                        randomScoreFile.generateReport(path);
+                        battleText.set_text("Generated Random Score File");
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    // Bring main window back to front, same as other handlers
+    this->present();
+
+    delete dialog;
+}
+
 
 void mainScreen::sortMenuResponse(int response_id, Gtk::Dialog* dialog) {
     switch (response_id) {
@@ -815,38 +866,79 @@ void mainScreen::pieMenuResponse(int response_id, Gtk::Dialog* dialog, DropGrade
 }
 
 
-void mainScreen::promptFilename(void){
-    // Create dialog dynamically
-    auto dialog = new Gtk::Dialog("Enter File Name", *this);
-    dialog->set_name("ut-box");
+// void mainScreen::promptFilename(void){
+//     // Create dialog dynamically
+//     auto dialog = new Gtk::Dialog("Enter File Name", *this);
+//     dialog->set_name("ut-box");
     
+//     dialog->set_modal(true);
+//     dialog->set_decorated(false);        // no OS title bar
+//     dialog->set_transient_for(*this);    // center over main window
+//     dialog->set_default_size(400, 200);  // tweak as you like
+
+//     dialog->add_button("_Cancel", Gtk::ResponseType::CANCEL);
+//     dialog->add_button("_OK",     Gtk::ResponseType::OK);
+
+//     // Create an Entry widget
+//     Gtk::Entry* entry = Gtk::make_managed<Gtk::Entry>();
+//     entry->set_placeholder_text("example.txt");
+
+//     dialog->get_content_area()->append(*entry);
+
+//     // Make sure the cursor is in the entry right away
+//     entry->grab_focus();
+
+//     dialog->signal_response().connect(
+//         sigc::bind(
+//             sigc::mem_fun(*this, &mainScreen::filenameEntered),
+//             dialog,
+//             entry
+//         )
+//     );
+
+//     dialog->show();
+// }
+
+void mainScreen::promptFilename(void){
+    // Create an OPEN file chooser dialog parented to this window.
+    auto dialog = new Gtk::FileChooserDialog(
+        *this,
+        "Choose a text file",
+        Gtk::FileChooser::Action::OPEN
+    );
+    
+    auto folder = Gio::File::create_for_path(std::filesystem::current_path().string());
+    dialog->set_current_folder(folder);
+
     dialog->set_modal(true);
-    dialog->set_decorated(false);        // no OS title bar
-    dialog->set_transient_for(*this);    // center over main window
-    dialog->set_default_size(400, 200);  // tweak as you like
+    dialog->set_transient_for(*this);
 
+    // Buttons: Cancel / Open
     dialog->add_button("_Cancel", Gtk::ResponseType::CANCEL);
-    dialog->add_button("_OK",     Gtk::ResponseType::OK);
+    dialog->add_button("_Open",   Gtk::ResponseType::OK);
 
-    // Create an Entry widget
-    Gtk::Entry* entry = Gtk::make_managed<Gtk::Entry>();
-    entry->set_placeholder_text("example.txt");
+    // Optional: filter to *.txt
+    auto filter_text = Gtk::FileFilter::create();
+    filter_text->set_name("Text files (*.txt)");
+    filter_text->add_pattern("*.txt");
+    dialog->add_filter(filter_text);
 
-    dialog->get_content_area()->append(*entry);
+    auto filter_all = Gtk::FileFilter::create();
+    filter_all->set_name("All files");
+    filter_all->add_pattern("*");
+    dialog->add_filter(filter_all);
 
-    // Make sure the cursor is in the entry right away
-    entry->grab_focus();
-
+    // Connect response handler
     dialog->signal_response().connect(
         sigc::bind(
-            sigc::mem_fun(*this, &mainScreen::filenameEntered),
-            dialog,
-            entry
+            sigc::mem_fun(*this, &mainScreen::fileChooserResponse),
+            dialog
         )
     );
 
     dialog->show();
 }
+
 
 void mainScreen::filenameEntered(int response_id, Gtk::Dialog* dialog, Gtk::Entry* entry){
     if (response_id == Gtk::ResponseType::OK){ // gtk::responsetype::ok is basically an enum!!
