@@ -163,15 +163,15 @@ void loginWindow::promptRegistration(void){
 
     //Creating the 3 Entries for newUsername, newPassword, confirmPassword
     Gtk::Entry* newUser = Gtk::make_managed<Gtk::Entry>(); //Create the Entry for a newUser's username
-    newUser -> set_placeholder_text("Hey Hooman! Whats your Username?");
+    newUser -> set_placeholder_text("Hooman, Whats your Username?");
     newUser -> set_hexpand(true);
 
     Gtk::Entry* newPass = Gtk::make_managed<Gtk::Entry>(); // create the Entry for a new user's Password
-    newPass -> set_placeholder_text("Now Hooman! Please enter a Password?");
+    newPass -> set_placeholder_text("Hooman, Please enter a Password?");
     newPass -> set_hexpand(true);
 
     Gtk::Entry* confirmPass = Gtk::make_managed<Gtk::Entry>(); // create the entry to confirm the Password
-    confirmPass -> set_placeholder_text("Hooman! Please re-type your Password!");
+    confirmPass -> set_placeholder_text("Hooman, Please re-type your Password!");
     confirmPass->set_hexpand(true);
 
 
