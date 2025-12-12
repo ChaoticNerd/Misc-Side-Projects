@@ -131,15 +131,15 @@ bool loginWindow::loginAuthentication(std::string username, std::string password
 void loginWindow::promptRegistration(void){
     auto dialog = new Gtk::Dialog("Registeration", *this);
     dialog->set_name("Reg-Box");
-    
+    dialog->set_deletable(false);
     dialog->set_modal(true);
-    dialog->set_decorated(false);        // no OS title bar
+    dialog->set_decorated(true);        // no OS title bar
     dialog->set_transient_for(*this);    // center over main window
-    dialog->set_default_size(700, 500);  // tweak as you like
+    dialog->set_default_size(800, 580);  // tweak as you like
 
     Gtk::Box* content_area = dialog->get_content_area();
     content_area->set_orientation(Gtk::Orientation::VERTICAL);
-    content_area->set_margin(20);
+    content_area->set_margin(5);
     content_area->set_halign(Gtk::Align::CENTER);
     content_area->set_valign(Gtk::Align::END);
     content_area->set_hexpand(true);
@@ -149,7 +149,7 @@ void loginWindow::promptRegistration(void){
     content_area -> append(*grid);
     grid -> set_row_spacing(5);
     grid -> set_column_spacing(5);
-    grid -> set_margin(10);
+    grid -> set_margin(5);
 
     grid -> set_halign(Gtk::Align::FILL);
     grid -> set_valign(Gtk::Align::FILL);
@@ -165,14 +165,17 @@ void loginWindow::promptRegistration(void){
     Gtk::Entry* newUser = Gtk::make_managed<Gtk::Entry>(); //Create the Entry for a newUser's username
     newUser -> set_placeholder_text("Hooman, Whats your Username?");
     newUser -> set_hexpand(true);
+    newUser -> set_size_request(80, 20);
 
     Gtk::Entry* newPass = Gtk::make_managed<Gtk::Entry>(); // create the Entry for a new user's Password
     newPass -> set_placeholder_text("Hooman, Please enter a Password?");
     newPass -> set_hexpand(true);
+    newPass -> set_size_request(80, 20);
 
     Gtk::Entry* confirmPass = Gtk::make_managed<Gtk::Entry>(); // create the entry to confirm the Password
     confirmPass -> set_placeholder_text("Hooman, Please re-type your Password!");
     confirmPass->set_hexpand(true);
+    confirmPass -> set_size_request(80, 20);
 
 
     //Icons next to entry to show an Error

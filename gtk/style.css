@@ -13,16 +13,12 @@ popover {
   font-size: 32px;
   border: 3px solid white;
   border-radius: 0px;
+  padding: 3px;
+  margin:3px;
   
   /* tweak this to taste */
 }
-/* 
-window.csd {
-  border-color: white;
-  border-width: 3px;
-  border-radius: 0px;
-  border-image: none;
-} */
+
 
 /* All children inherit text color + font */
 window * {
@@ -317,4 +313,35 @@ scrollbar {
 
 scrollbar slider {
   background-color: white;
+}
+
+/* ============================= */
+/*         FILE CHOOSER          */
+/* ============================= */
+window.filechooser{
+  background-color: Black;
+  background-image: none;
+  color: white;
+}
+window.filechooser .view{
+  background-color: Black;
+  background-image: none;
+  color: white;
+} 
+window.filechooser .view row:selected {
+   background-color: yellow;
+   color: Black;
+}
+
+window.filechooser .sidebar {
+  background-color: black;
+  background-image: none;
+}
+
+filechooser .sidebar row:selected,
+filechooser .sidebar .sidebar-row:selected,
+filechooser .sidebar .sidebar-row:hover{
+  background-color: yellow;
+  background-image: none;
+  color: Black;
 }
