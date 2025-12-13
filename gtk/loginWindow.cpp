@@ -8,7 +8,7 @@ loginWindow::loginWindow(){
     set_title("Login Window");
     set_default_size(800, 600);
     this->loggedIn = false;
-    
+    std::cout << "wtf2\n";
     //screenGrid set up to 
     screenGrid.set_halign(Gtk::Align::FILL);
     screenGrid.set_valign(Gtk::Align::FILL);
@@ -78,7 +78,7 @@ void loginWindow::on_login_button_clicked(void){    //Logic functionality to che
     std::string password = passwordEntry.get_text(); //get password from entry
 
     if(loginAuthentication(username, password)){
-        m_signal_login_successful.emit(); // emit signal for successful login
+        signal_login_successful.emit(username); // emit signal for successful login
 
         this -> loggedIn = (true); // set loggedIn to true
     }
@@ -100,9 +100,13 @@ bool loginWindow::getLoggedIn(void)const{   //get the login bool so that it can 
     return this->loggedIn;
 }
 
-sigc::signal<void()>& loginWindow::signal_login_successful() { // success login
-    return m_signal_login_successful;
+// sigc::signal<void()>& loginWindow::signal_login_successful() { // success login
+//     return m_signal_login_successful;
+// }
+loginWindow::type_signal_login_success& loginWindow::signal_login_success(){
+    return signal_login_successful;
 }
+
 
 bool loginWindow::loginAuthentication(std::string username, std::string password){
     std::string file_username, file_password, databaseLine;

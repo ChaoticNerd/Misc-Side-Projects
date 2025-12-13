@@ -1,9 +1,11 @@
 #include "mainScreen.h"
+#include <iostream>
 
-mainScreen::mainScreen(){
+mainScreen::mainScreen(const Glib::ustring& username):
+    menuProfileBox(username){
     set_title("Main Screen");
     set_default_size(800, 1000);
-
+    std::cout <<username<<std::endl;
     // setup grid for fullscreen
     screenGrid.set_halign(Gtk::Align::FILL);
     screenGrid.set_valign(Gtk::Align::FILL);
@@ -96,14 +98,26 @@ mainScreen::mainScreen(){
     // textViewer stuff (viewSortedResults in the menu funct)
     viewRawText.set_title("Raw Text File");
 
+    //set_child(menuProfileBox);
+    menuProfileBox.set_hexpand(false);
+    menuProfileBox.set_vexpand(false);
+    menuProfileBox.set_halign(Gtk::Align::CENTER);
+    //menuProfileBox.set_size_request(240, 64);
+    //Glib::ustring temporaryTemmie = "temmie";
+    menuProfileBox.set_username(username);
     // Attach: spacer row, then battleFrame, then buttonBox (Top -> Bot)
     screenGrid.attach(spacer,        0, 0); // blank space
     screenGrid.attach(barChartArea,  0, 1); // chart
     screenGrid.attach(battleFrame,   0, 2); // sits above buttons
-    screenGrid.attach(buttonBox,     0, 3); // bottom row
+    screenGrid.attach(menuProfileBox,0, 3);
+    screenGrid.attach(buttonBox,     0, 4); // bottom row
 
     // puts box containing buttons onto screen
     set_child(screenGrid); 
+
+    menuProfileBox.signal_upload().connect(
+        sigc::mem_fun(*this, &mainScreen::on_pfpUpload_button_clicked)
+    );
 
     // Create and attach key controller
     key_controller = Gtk::EventControllerKey::create();
@@ -971,3 +985,69 @@ void mainScreen::filenameEntered(int response_id, Gtk::Dialog* dialog, Gtk::Entr
 
     delete dialog; // kill dialog (gtkmm4)
 }
+
+
+void mainScreen::on_pfpUpload_button_clicked(void){
+    std::cout<<"IM RECEIVING MEPMEPMEP!\n";
+    auto dialog = new Gtk::FileChooserDialog(
+        *this,
+        "Choose a image file",
+        Gtk::FileChooser::Action::OPEN
+    );
+    std::cout<<"IM FILECHOOSER!\n";
+    auto folder = Gio::File::create_for_path(std::filesystem::current_path().string());
+    dialog->set_current_folder(folder);
+
+    dialog->set_modal(true);
+    dialog->set_transient_for(*this);
+
+    // Buttons: Cancel / Open
+    dialog->add_button("_Cancel", Gtk::ResponseType::CANCEL);
+    dialog->add_button("_Open",   Gtk::ResponseType::OK);
+    std::cout<<"IM Buttons!\n";
+    //filter 
+    auto filter_image = Gtk::FileFilter::create();
+    filter_image->set_name("Image files PNG JPEG JPG");
+    filter_image->add_pattern("*.png");
+    filter_image->add_pattern("*.jpg");
+    filter_image->add_pattern("*.jpeg");
+    dialog->add_filter(filter_image);
+
+    auto filter_all = Gtk::FileFilter::create();
+    filter_all->set_name("All files");
+    filter_all->add_pattern("*");
+    dialog->add_filter(filter_all);
+    std::cout<<"IM FILTERS!\n";
+
+    dialog->show();
+
+    dialog->signal_response().connect(
+        sigc::bind(
+            sigc::mem_fun(*this, &mainScreen::fileChooserImageResponse),
+            dialog
+        )
+    );
+
+    
+}
+
+void mainScreen::fileChooserImageResponse(int response_id, Gtk::FileChooserDialog* dialog){
+    if (response_id == Gtk::ResponseType::OK) {
+
+        auto file = dialog->get_file();  // Gio::File
+        if (file) {
+            const std::string path = file->get_path();  // local filesystem path
+            // namespace fs = std::filesystem;
+            // fs::path p(path);
+            // std::cout << "User selected file: " << path << "\n";
+            // std::string ext = p.extension().string();
+            // std::cout << "ext " << ext << "\n";
+            menuProfileBox.set_pfpImg(path);
+        }
+        std::cout<<"where the fuck am i!\n";
+
+    }
+
+    //profileBox->set_pfpImg()
+}
+

@@ -12,7 +12,7 @@ void App::on_activate() {
     loginWin->present();
 
     // Connect successful login signal
-    loginWin->signal_login_successful().connect(
+    loginWin->signal_login_success().connect(
         sigc::bind(
             sigc::mem_fun(*this, &App::on_login_success),
             loginWin
@@ -20,9 +20,9 @@ void App::on_activate() {
     );
 }
 
-void App::on_login_success(loginWindow* loginWin) {
+void App::on_login_success(const Glib::ustring& username, loginWindow* loginWin) {
     // Create the main window
-    auto mainWindow = new mainScreen();
+    auto mainWindow = new mainScreen(username);
 
     add_window(*mainWindow);
     mainWindow->present();

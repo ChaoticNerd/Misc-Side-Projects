@@ -8,6 +8,7 @@
 #include "textViewer.h"
 #include "randGen.h"
 #include "DropGradeBtn.h"
+#include "profile.h"
 
 enum class ChartKind {
     None,
@@ -42,7 +43,7 @@ enum class BarChartOption{
 
 class mainScreen : public Gtk::Window {
     public:
-        mainScreen();
+        mainScreen(const Glib::ustring& username);
     
     private:
         TextFileOption userFileOption = TextFileOption::Upload;
@@ -56,9 +57,9 @@ class mainScreen : public Gtk::Window {
         int pieTotalStudents = 0;       
 
         Gtk::Button textFile, barChart, pieChart, sortBy;
-        Gtk::Image textImg, barImg, pieImg, sortImg, menuSelectImg;
+        //Gtk::Image textImg, barImg, pieImg, sortImg, menuSelectImg;
         Gtk::Label textLabel, barLabel, pieLabel, sortLabel;
-        Gtk::Box buttonBox, temp;
+        Gtk::Box buttonBox;
         Gtk::Box spacer{Gtk::Orientation::VERTICAL};
         Gtk::Grid screenGrid, battleGrid; 
         Gtk::Frame battleFrame;
@@ -115,6 +116,12 @@ class mainScreen : public Gtk::Window {
         void pieMenuResponse(int response_id, Gtk::Dialog* dialog, DropGradeBtn* gradeDropBtns);
         void computePieFromCalcScore(void);   // helper that uses calcScore
         void drawPieChart(const Cairo::RefPtr<Cairo::Context>& cr, int width, int height); // draws the piechart
-
+        
+        //pfp dialogs
+        profileBox menuProfileBox;
+        void on_pfpUpload_button_clicked();
+        void set_profile_image(const Glib::RefPtr<Gio::File>& file);
+        void fileChooserImageResponse(int response_id, Gtk::FileChooserDialog* dialog);
+        
 };
 #endif

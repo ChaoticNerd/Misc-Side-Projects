@@ -13,7 +13,7 @@ protected:
     void on_activate() override;
 
 private:
-    void on_login_success(loginWindow* loginWin);
+    void on_login_success(const Glib::ustring& username, loginWindow* loginWin);
 };
 
 #endif

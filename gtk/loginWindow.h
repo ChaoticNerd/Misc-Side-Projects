@@ -15,7 +15,9 @@ class loginWindow : public Gtk::Window{
         bool getLoggedIn(void)const; // login Success Boolean get
         
         
-        sigc::signal<void()>& signal_login_successful(void); //LoginSuccess singnal to communicate login was successful
+        //sigc::signal<void()>& signal_login_successful(void); //LoginSuccess singnal to communicate login was successful
+        using type_signal_login_success = sigc::signal<void(const Glib::ustring&)>;
+        type_signal_login_success& signal_login_success();
 
        
     private:
@@ -24,7 +26,8 @@ class loginWindow : public Gtk::Window{
         Gtk::Grid screenGrid;   //Grid for layout 
         Gtk::Box textBox;       //TextBox to place in screenGrid
         Gtk::Button loginButton, registerButton; //Buttons for Login and Register
-        sigc::signal<void()> m_signal_login_successful; // The Login Successful Signal
+        //sigc::signal<void()> m_signal_login_successful; // The Login Successful Signal
+        type_signal_login_success signal_login_successful;
         //Gtk::Dialog 
         bool loggedIn;  //Login Boolean 
 
