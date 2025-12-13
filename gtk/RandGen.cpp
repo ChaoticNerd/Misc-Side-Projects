@@ -6,10 +6,10 @@ void RandGen::generateReport(std::string fileName){
     int labAmount, quizAmount, midtermAmount; // max assignments per category
     int droppedLabs, droppedQuizzes;
     //int classSize = 40;
-    std::string fileLoc = "../data/"; ;
+    //std::string fileLoc = "../data/"; ;
     ofstream out;
 
-    out.open(fileLoc + fileName);
+    out.open(fileName);
     srand(time(0)); // Ensures that each randomly generated attempt is different
     //add the weights of each category at the top of the file
     out << LAB_WEIGHT << " " << QUIZ_WEIGHT << " " << MIDTERM_WEIGHT << " " << PROJECT_WEIGHT << " " << FINAL_EXAM_WEIGHT << endl;
@@ -40,6 +40,7 @@ void RandGen::generateReport(std::string fileName){
     out << endl;
 
     for (int i = 0; i < CLASS_SIZE; i++){
+        generateStudentID(out, i);
         generateScores(out, labAmount, MAX_LAB_SCORE); // Labs
         generateScores(out, quizAmount, MAX_QUIZ_SCORE); // Quizzes
         generateScores(out, midtermAmount, MAX_MIDTERM_SCORE); // Midterms
@@ -75,4 +76,10 @@ int RandGen::generateDroppedAmount(int assignmentAmount){
         return numDropped = 0;
     else
         return numDropped = rand() % (assignmentAmount);
+}
+
+void RandGen::generateStudentID(ofstream& out, int studentID){
+    int width = 9;
+    out << std::setfill('0') << std::setw(width) << studentID <<" ";
+
 }

@@ -68,6 +68,15 @@ class RandGen{
         */
         void generateScores(ofstream& out, int amount, int maxPossibleScore);
 
+        /*
+        * @author: Justin Narciso
+        * @param: file to write to
+        * @param: amount of iterations
+        * @param: maximum points user can get on an assignment
+        * Generates the scores the user actually got
+        */
+        void generateStudentID(ofstream& out, int studentID);
+
     public:
         RandGen();
 
