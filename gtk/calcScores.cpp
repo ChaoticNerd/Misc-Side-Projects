@@ -17,39 +17,6 @@ double calcScore::sumVector(const std::vector<double>& v) {
     }
     return s;
 }
-
-
-// Sum of all but the smallest "dropCount" values (no std::sort).
-// static double sumVectorDropped(const std::vector<double>& v, int dropCount) {
-//     int n = (int)v.size();
-//     if (n == 0) return 0.0;
-//     if (dropCount <= 0) return sumVector(v);
-//     if (dropCount >= n) return 0.0;
-
-//     std::vector<double> tmp = v;  // local copy
-
-//     // Selection sort ascending
-//     for (int i = 0; i < n - 1; ++i) {
-//         int minIdx = i;
-//         for (int j = i + 1; j < n; ++j) {
-//             if (tmp[j] < tmp[minIdx])
-//                 minIdx = j;
-//         }
-//         if (minIdx != i) {
-//             double t = tmp[i];
-//             tmp[i] = tmp[minIdx];
-//             tmp[minIdx] = t;
-//         }
-//     }
-
-//     double s = 0.0;
-//     for (int i = dropCount; i < n; ++i)
-//         s += tmp[i];
-
-//     return s;
-// }
-
-
 // constructors 
 calcScore::calcScore() {
     isFileUploaded = false;
@@ -793,4 +760,79 @@ const std::vector<double>& calcScore::getAverageScores() const {
 double calcScore::getGradeWeight(int category) const {
     if (category < 0 || category >= 5) return 0.0;
     return gradeWeights[category];
+}
+
+// Format a 0..1 fraction as a percent with exactly 1 decimal, e.g. 0.875 -> "87.5"
+std::string calcScore::percentToDecimal(double fraction) const {
+    // fraction is 0..1; multiply so we can round to 1 decimal place
+    double scaled = fraction * 1000.0;               // percent * 10
+    int iv = static_cast<int>(std::floor(scaled + 0.5)); // round to nearest int
+
+    int whole = iv / 10;   // whole percent
+    int frac  = iv % 10;   // 1 decimal digit
+
+    std::string s = std::to_string(whole);
+    s.push_back('.');
+    s.push_back(static_cast<char>('0' + frac));
+    return s;
+}
+
+// Left-align s in a field of given width (pad with spaces or trim)
+std::string calcScore::padLeft(const std::string& s, int width) const {
+    int len = static_cast<int>(s.size());
+    if (len >= width)
+        return s.substr(0, width);
+    return s + std::string(width - len, ' ');
+}
+
+std::string calcScore::getClassReportString()const{
+    std::string out;
+
+    if (calculatedClassPercentages.empty()) {
+        out += "ERROR\n";
+        return out;
+    }
+
+    // Header row
+    out += padLeft("ID",        10);
+    out += padLeft("Lab",       8);
+    out += padLeft("Quiz",      8);
+    out += padLeft("Exam",      8);
+    out += padLeft("Proj",      8);
+    out += padLeft("Final",     8);
+    out += padLeft("Total %",   6);
+    out += padLeft("Letter",    4);
+    out += "\n";
+
+    out += "----------------------------------------------------------------\n";
+
+    // Each student row
+    for (std::size_t i = 0; i < calculatedClassPercentages.size(); ++i) {
+        int id = (i < studentIDs.size() ? studentIDs[i] : 0);
+        char letter = (i < letterGrades.size() ? letterGrades[i] : '?');
+
+        const auto& row = calculatedClassPercentages[i];
+
+        double lab   = row.size() > 0 ? row[0] : 0.0;
+        double quiz  = row.size() > 1 ? row[1] : 0.0;
+        double exam  = row.size() > 2 ? row[2] : 0.0;
+        double proj  = row.size() > 3 ? row[3] : 0.0;
+        double fin   = row.size() > 4 ? row[4] : 0.0;
+        double total = row.size() > 5 ? row[5] : 0.0;
+
+        std::string line;
+        line += padLeft(std::to_string(id),    10);
+        line += padLeft(percentToDecimal(lab),  8);
+        line += padLeft(percentToDecimal(quiz), 8);
+        line += padLeft(percentToDecimal(exam), 8);
+        line += padLeft(percentToDecimal(proj), 8);
+        line += padLeft(percentToDecimal(fin),  8);
+        line += padLeft(percentToDecimal(total),8);
+        line += padLeft(std::string(1, letter), 4);
+        line += "\n";
+
+        out += line;
+    }
+
+    return out;
 }

@@ -47,11 +47,11 @@ class calcScore {
          PRIVATE UTILITY FUNCTIONS
          ----------------------------------------------------------- 
       */
-      bool nonemptyLine(const std::string& line);
-      double sumVector(const std::vector<double>& v);
-      // static double sumVectorDropped(const std::vector<double>& v, int dropCount);
+      bool nonemptyLine(const string& line);
+      double sumVector(const vector<double>& v);
+      // static double sumVectorDropped(const vector<double>& v, int dropCount);
 
-      void bubbleSort(std::vector<std::vector<double>>& classPercentages);
+      void bubbleSort(vector<vector<double>>& classPercentages);
       void sortByStudentID();
       void sortByLetterGrade();
       void sortByTotalPerc(void);
@@ -72,7 +72,7 @@ class calcScore {
                                  vector<vector<double>>& allGrades,
                                  int amountOfStudents);
 
-      std::string getLetterGrade(vector<double>& calculatedPercentages);
+      string getLetterGrade(vector<double>& calculatedPercentages);
 
       void calculatePercentage(double grade, double total, double gradeWeight,
                               vector<double>& calculatedPercentages);
@@ -95,8 +95,12 @@ class calcScore {
                                        int assignmentType,
                                        vector<vector<vector<double>>>& totalCategoryPoints);
 
-      void readGradeWeights(std::fstream& file);
-
+      void readGradeWeights(fstream& file);
+      // -----------------------------------------------------------
+      // GUI/CHARTS HELPERS
+      // -----------------------------------------------------------
+      std::string percentToDecimal(double fraction)const;
+      std::string padLeft(const std::string& s, int width)const;
    public:
 
       /* 
@@ -122,7 +126,7 @@ class calcScore {
 
       int checkFile(void) const;
       void printMenu(void);
-      void fileImportFromGTK(const std::string& path);
+      void fileImportFromGTK(const string& path);
 
       void printResults(void);
       void printClassResults(void);
@@ -130,7 +134,7 @@ class calcScore {
 
       void threshScore(double threshold, int isHigh);
 
-      std::string readRawData(void);
+      string readRawData(void);
       void countStudentsInFile(void);
 
       /* 
@@ -160,11 +164,12 @@ class calcScore {
          GETTERS (for GUI / charts)
          ----------------------------------------------------------- 
       */
-      const std::vector<std::vector<double>>& getClassPercentages() const;
-      const std::vector<double>& getAverageScores() const;
-      std::string getLetterGradeSorted(const vector<double>& calculatedPercentages);
+      const vector<vector<double>>& getClassPercentages(void) const;
+      const vector<double>& getAverageScores(void) const;
+      string getLetterGradeSorted(const vector<double>& calculatedPercentages);
       int getClassSize() const;
       double getGradeWeight(int category) const;
+      string getClassReportString(void)const;
 
 };
 

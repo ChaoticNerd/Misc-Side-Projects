@@ -90,7 +90,9 @@ class mainScreen : public Gtk::Window {
         void fileChooserResponse(int response_id, Gtk::FileChooserDialog* dialog);
 
         // Sort menu stuff
-        void sortMenuResponse(int response_id, Gtk::Dialog* dialog);
+        void sortMenuResponse(int response_id, Gtk::Dialog* dialog, 
+                              Gtk::CheckButton* studentID, Gtk::CheckButton* letterGrade, Gtk::CheckButton* percentages,
+                              DropGradeBtn* gradeDropBtns);
         void openSortMenu(void);
 
         // button callback

@@ -93,7 +93,8 @@ mainScreen::mainScreen(){
     spacer.set_vexpand(false);
     spacer.set_hexpand(true);
 
-    
+    // textViewer stuff (viewSortedResults in the menu funct)
+    viewRawText.set_title("Raw Text File");
 
     // Attach: spacer row, then battleFrame, then buttonBox (Top -> Bot)
     screenGrid.attach(spacer,        0, 0); // blank space
@@ -270,74 +271,68 @@ void mainScreen::openTextMenu(void) {
     dialog ->add_button("View Raw Text File", 2);
     dialog ->add_button("Upload File",   3);
 
-    // Hook response → your handler
-    dialog ->signal_response().connect(
+    // Hook response -> your handler
+    dialog -> signal_response().connect(
         sigc::bind(
             sigc::mem_fun(*this, &mainScreen::textFileMenuResponse),
             dialog
         )
     );
 
-    dialog ->show();
+    dialog -> show();
 }
 
 void mainScreen::openSortMenu(void) {
-    // Create an Undertale-style dialog in the center
-    auto dialog = new Gtk::Dialog("Sort By", *this);
-    dialog -> set_name("ut-box");
+    auto dialog = new Gtk::Dialog("Sort Menu", *this);
+    dialog->set_name("ut-box");
+    
+    dialog->set_modal(true);
+    dialog->set_decorated(false);
+    dialog->set_transient_for(*this);
+    dialog->set_default_size(400, 280);
 
-    dialog -> set_modal(true);
-    dialog -> set_decorated(false);           // no window frame = more "in-game"
-    dialog -> set_default_size(960, 240);     // tweak for aesthetics
-
-    // Content area acts like the white text box
-    auto content = dialog -> get_content_area();
-    content -> set_orientation(Gtk::Orientation::VERTICAL);
-    content -> set_margin(20);
+    auto content = dialog->get_content_area();
+    content->set_orientation(Gtk::Orientation::VERTICAL);
+    content->set_margin(20);
+    content->set_spacing(8);
 
     auto label = Gtk::make_managed<Gtk::Label>("* How do you want to sort?");
-    label -> set_halign(Gtk::Align::START);
-    content -> append(*label);
-    
-    //Buttons act like the Undertale menu options
-    //Justin added to make it more customizatble:
-    auto battleGrid = Gtk::make_managed<Gtk::Grid>(); //grid layout within dialog
-    content -> append(*battleGrid);  //attaching the new button grid to content
-    battleGrid -> set_halign(Gtk::Align::FILL); //Makes sure the button layout is like the inventroy
-    
-    battleGrid -> set_column_spacing(5);     //Column is spacing for battleGrid
-    battleGrid -> set_row_spacing(5);        //RowSpacing for battleGrid 
-    battleGrid -> set_margin(5);             //Setting margins for battleGrid
+    label->set_halign(Gtk::Align::START);
+    content->append(*label);
 
+    // First button: group leader
+    auto studentID = Gtk::make_managed<Gtk::CheckButton>("Student ID");
+    studentID->set_active(true);
+    content->append(*studentID);
 
-    battleGrid -> set_hexpand(true);     //Expands horizontally
-    battleGrid -> set_vexpand(false);    //but doesnt expands vertically
-    
-    auto btnStudentID   = Gtk::make_managed<Gtk::Button>("Student-ID");  //manually creating the buttons  so that i can customize more
-    auto btnLetterGrade = Gtk::make_managed<Gtk::Button>("Letter-Grade");
-    auto btnPercentage  = Gtk::make_managed<Gtk::Button>("Percentage");
-    
-    battleGrid -> attach(*btnStudentID,    0, 0, 1, 1); // Button layout within the new BattleGrid
-    battleGrid -> attach(*btnLetterGrade,  0, 1, 1, 1); //
-    battleGrid -> attach(*btnPercentage,   1, 0, 1, 1); // 
-    
-    btnStudentID    -> set_hexpand(true);    //Expands Buttons to fit
-    btnLetterGrade  -> set_hexpand(true);
-    btnPercentage   -> set_hexpand(true);
+    auto letterGrade = Gtk::make_managed<Gtk::CheckButton>("Letter Grade");
+    letterGrade->set_group(*studentID);
+    content->append(*letterGrade);
 
-    btnStudentID    -> signal_clicked().connect(sigc::bind([dialog]() { dialog->response(1);}));
-    btnLetterGrade  -> signal_clicked().connect(sigc::bind([dialog]() { dialog->response(2);}));
-    btnPercentage   -> signal_clicked().connect(sigc::bind([dialog]() { dialog->response(3);}));
+    auto percentages = Gtk::make_managed<Gtk::CheckButton>("Percentages");
+    percentages->set_group(*studentID);
+    content->append(*percentages);
 
-    // Hook response → your handler
-    dialog -> signal_response().connect(
-        sigc::bind(
-            sigc::mem_fun(*this, &mainScreen::sortMenuResponse),
-            dialog
+    // drop grades buttons (dropgradebtn) object
+    auto gradeDropBtns = Gtk::make_managed<DropGradeBtn>();
+    gradeDropBtns->setGradeDropped(userDropGrades);   // remember last choice
+    content->append(*gradeDropBtns);
+
+    dialog->add_button("_Cancel", Gtk::ResponseType::CANCEL);
+    dialog->add_button("_OK",     Gtk::ResponseType::OK);
+
+    dialog->signal_response().connect(
+    sigc::bind(
+        sigc::mem_fun(*this, &mainScreen::sortMenuResponse),
+        dialog,
+        studentID,
+        letterGrade,
+        percentages,
+        gradeDropBtns
         )
     );
 
-    dialog -> show();
+    dialog->show();
 }
 void mainScreen::fileChooserResponse(int response_id, Gtk::FileChooserDialog* dialog){
     if (response_id == Gtk::ResponseType::OK) {
@@ -348,7 +343,7 @@ void mainScreen::fileChooserResponse(int response_id, Gtk::FileChooserDialog* di
 
             std::cout << "User selected file: " << path << "\n";
 
-            // Basic validation: ensure .txt as before
+            // Basic validation: ensure .txt file
             if (path.size() < 4 || path.substr(path.size() - 4) != ".txt") {
                 std::cerr << "Error: filename must end in .txt\n";
                 battleText.set_text("Filename must end in .txt");
@@ -391,31 +386,50 @@ void mainScreen::fileChooserResponse(int response_id, Gtk::FileChooserDialog* di
 }
 
 
-void mainScreen::sortMenuResponse(int response_id, Gtk::Dialog* dialog) {
-    switch (response_id) {
-        case 1:
-            std::cout << "Sort by Student ID\n";
+void mainScreen::sortMenuResponse(int response_id, Gtk::Dialog* dialog, 
+    Gtk::CheckButton* studentID, Gtk::CheckButton* letterGrade, Gtk::CheckButton* percentages,
+    DropGradeBtn* gradeDropBtns){
+    if(response_id == Gtk::ResponseType::OK){
+        if(studentID -> get_active()){
             userSortOption = SortByOption::StudentID;
-            //set text box to sort by student ID
             battleText.set_text("* Sort by StudentID");
-            break;
-        case 2:
-            std::cout << "Sort by Letter Grade\n";
+            // set window title
+            viewSortedResults.set_title("Sorted Results: StudentID");
+        }
+        else if (letterGrade -> get_active()){
             userSortOption = SortByOption::LetterGrade;
             battleText.set_text("* Sort by Letter Grade");
-            break;
-        case 3:
-            std::cout << "Sort by Percentage\n";
+            viewSortedResults.set_title("Sorted Results: Letter Grade");
+        }
+        else if(percentages -> get_active()){
             userSortOption = SortByOption::TotalPerc;
-            battleText.set_text("* Sort by Total Percent");
-            break;
-        default:
-            userSortOption = SortByOption::NoSort;
-            break; // Cancel or unknown
-    }
+            battleText.set_text("* Sort by Percentages");
+            viewSortedResults.set_title("Sorted Results: Percentages");
+        }
+        userDropGrades = gradeDropBtns -> getGradeDropped();
 
-    // Make sure the main window comes back to the foreground
-    this->present();
+        if (!score.checkFile()) {
+            battleText.set_text("* Upload a file first!");
+            this -> present();
+            delete dialog;
+            return;
+        } else {
+            // generate report
+            score.generateReportClass(score.getClassSize(), /*sortSelect=*/static_cast<int>(userSortOption), /*isGradesDropped=*/ userDropGrades ? 1:0);
+        }
+        
+        // open window to display file
+        viewSortedResults.set_transient_for(*this);
+        viewSortedResults.present();
+
+        // ENTER FORMATTED DATA HERE
+        viewSortedResults.setText(score.getClassReportString());
+        // Make sure the main window comes back to the foreground
+        this->present();
+    }else{
+        userSortOption = SortByOption::NoSort;
+        battleText.set_text("* No Sort Selected");
+    }
 
     delete dialog;
 }
@@ -487,7 +501,8 @@ void mainScreen::drawBarChart(const Cairo::RefPtr<Cairo::Context>& cr, int width
     // Find max value for scaling
     double maxVal = 0.0;
     for (double v : barChartData)
-        if (v > maxVal) maxVal = v;
+        if (v > maxVal) 
+            maxVal = v;
     if (maxVal <= 0.0) maxVal = 1.0;
 
     // Axes
@@ -511,7 +526,7 @@ void mainScreen::drawBarChart(const Cairo::RefPtr<Cairo::Context>& cr, int width
 
     for (size_t i = 0; i < n; ++i) {
 
-        // I REFERENCED THE INTERNET FOR THIS
+        // =========================================== I REFERENCED THE INTERNET FOR THIS
         double value = barChartData[i];
         double normalized = value / maxVal;   // e.g. 0.87
 
@@ -637,7 +652,8 @@ void mainScreen::drawPieChart(const Cairo::RefPtr<Cairo::Context>& cr, int width
     // this creates each slice based on data from calcscore
     for (int i = 0; i < 5; ++i) {
         double fraction = pieChartData[i];
-        if (fraction <= 0.0) continue;
+        if (fraction <= 0.0) 
+            continue;
 
         double endAngle = startAngle + fraction * 2.0 * G_PI;
 
@@ -648,11 +664,21 @@ void mainScreen::drawPieChart(const Cairo::RefPtr<Cairo::Context>& cr, int width
 
         // Fill color per grade
         switch (i) {
-            case 0: cr->set_source_rgb(0.2, 0.8, 0.2); break; // A - green
-            case 1: cr->set_source_rgb(0.2, 0.4, 0.9); break; // B - blue
-            case 2: cr->set_source_rgb(0.9, 0.9, 0.2); break; // C - yellow
-            case 3: cr->set_source_rgb(0.9, 0.6, 0.2); break; // D - orange
-            case 4: cr->set_source_rgb(0.9, 0.2, 0.2); break; // F - red
+            case 0: 
+                cr->set_source_rgb(0.2, 0.8, 0.2); 
+                break; // A - green
+            case 1: 
+                cr->set_source_rgb(0.2, 0.4, 0.9); 
+                break; // B - blue
+            case 2: 
+                cr->set_source_rgb(0.9, 0.9, 0.2); 
+                break; // C - yellow
+            case 3: 
+                cr->set_source_rgb(0.9, 0.6, 0.2); 
+                break; // D - orange
+            case 4: 
+                cr->set_source_rgb(0.9, 0.2, 0.2); 
+                break; // F - red
         }
 
         // Fill slice
@@ -816,7 +842,7 @@ void mainScreen::barMenuResponse(int response_id, Gtk::Dialog* dialog, Gtk::Chec
                 }
             }
 
-            // Optional: debug print
+            // DEBUG
             std::cout << "barChartData size: " << barChartData.size() << "\n";
             for (double v : barChartData)
                 std::cout << v << " ";
@@ -866,49 +892,9 @@ void mainScreen::pieMenuResponse(int response_id, Gtk::Dialog* dialog, DropGrade
 }
 
 
-// void mainScreen::promptFilename(void){
-//     // Create dialog dynamically
-//     auto dialog = new Gtk::Dialog("Enter File Name", *this);
-//     dialog->set_name("ut-box");
-    
-//     dialog->set_modal(true);
-//     dialog->set_decorated(false);        // no OS title bar
-//     dialog->set_transient_for(*this);    // center over main window
-//     dialog->set_default_size(400, 200);  // tweak as you like
-
-//     dialog->add_button("_Cancel", Gtk::ResponseType::CANCEL);
-//     dialog->add_button("_OK",     Gtk::ResponseType::OK);
-
-//     // Create an Entry widget
-//     Gtk::Entry* entry = Gtk::make_managed<Gtk::Entry>();
-//     entry->set_placeholder_text("example.txt");
-
-//     dialog->get_content_area()->append(*entry);
-
-//     // Make sure the cursor is in the entry right away
-//     entry->grab_focus();
-
-//     dialog->signal_response().connect(
-//         sigc::bind(
-//             sigc::mem_fun(*this, &mainScreen::filenameEntered),
-//             dialog,
-//             entry
-//         )
-//     );
-
-//     dialog->show();
-// }
-
 void mainScreen::promptFilename(void){
     // Create an OPEN file chooser dialog parented to this window.
-    auto dialog = new Gtk::FileChooserDialog(
-        *this,
-        "Choose a text file",
-        Gtk::FileChooser::Action::OPEN
-    );
-    
-    auto folder = Gio::File::create_for_path(std::filesystem::current_path().string());
-    dialog->set_current_folder(folder);
+    auto dialog = new Gtk::FileChooserDialog( *this, "* Choose a text file", Gtk::FileChooser::Action::OPEN);
 
     dialog->set_modal(true);
     dialog->set_transient_for(*this);
@@ -917,16 +903,17 @@ void mainScreen::promptFilename(void){
     dialog->add_button("_Cancel", Gtk::ResponseType::CANCEL);
     dialog->add_button("_Open",   Gtk::ResponseType::OK);
 
-    // Optional: filter to *.txt
+    // Filter set tto *.txt default
     auto filter_text = Gtk::FileFilter::create();
     filter_text->set_name("Text files (*.txt)");
     filter_text->add_pattern("*.txt");
     dialog->add_filter(filter_text);
 
-    auto filter_all = Gtk::FileFilter::create();
-    filter_all->set_name("All files");
-    filter_all->add_pattern("*");
-    dialog->add_filter(filter_all);
+
+    // auto filter_all = Gtk::FileFilter::create();
+    // filter_all->set_name("All files");
+    // filter_all->add_pattern("*");
+    // dialog->add_filter(filter_all);
 
     // Connect response handler
     dialog->signal_response().connect(
@@ -972,7 +959,7 @@ void mainScreen::filenameEntered(int response_id, Gtk::Dialog* dialog, Gtk::Entr
                 }
                 case TextFileOption::GenFile: {
                     randomScoreFile.generateReport(filename);
-                    battleText.set_text("Generated Random Score File");
+                    battleText.set_text("* Generated Random Score File");
                     break;
                 }
             }
