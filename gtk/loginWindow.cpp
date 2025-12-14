@@ -62,7 +62,7 @@ loginWindow::loginWindow(){
 
     //loginImage
     loginImage.set_size_request(100, 100);
-    loginImage.set("../assets/sprites/SaveSpriteDecor.png");
+    loginImage.set("assets/sprites/SaveSpriteDecor.png");
 
     loginImage.set_hexpand(true);
     loginImage.set_vexpand(true);
@@ -100,12 +100,12 @@ void loginWindow::on_login_button_clicked(void){    //Logic functionality to che
     std::string password = passwordEntry.get_text(); //get password from entry
 
     if(loginAuthentication(username, password)){
-        loginImage.set("../assets/sprites/SuccessDialogFlipped.png");
+        loginImage.set("assets/sprites/SuccessDialogFlipped.png");
         signal_login_successful.emit(username); // emit signal for successful login
         this -> loggedIn = (true); // set loggedIn to true
     } else {
         errorCall.set_label("Sorry, Username or Password is wrong");
-        loginImage.set("../assets/sprites/FailDialogFlipped.png");
+        loginImage.set("assets/sprites/FailDialogFlipped.png");
     }
 
 }
@@ -159,7 +159,7 @@ loginWindow::type_signal_login_success& loginWindow::signal_login_success(){
  */
 bool loginWindow::loginAuthentication(std::string username, std::string password){
     std::string file_username, file_password, databaseLine;
-    std::ifstream outfile("../data/user.txt");  //opening user database
+    std::ifstream outfile("data/user.txt");  //opening user database
 
     while (getline(outfile, databaseLine)) { // get username and password from file
         size_t delimiter_pos = databaseLine.find(' ');          // assuming username and password are separated by space
@@ -172,11 +172,11 @@ bool loginWindow::loginAuthentication(std::string username, std::string password
             std::cout << "Username: " << file_username << ", Password: " << file_password << std::endl; // debug to confirm match
             std::cout << "Login successful!" << std::endl;  // debug successful login message in terminal
             outfile.close();
-            loginImage.set("../assets/sprites/SuccessDialogFlipped.png");
+            loginImage.set("assets/sprites/SuccessDialogFlipped.png");
             return true;
         }
     }
-    loginImage.set("../assets/sprites/FailDialogFlipped.png");
+    loginImage.set("assets/sprites/FailDialogFlipped.png");
     std::cout << "Invalid username or password." << std::endl; // debug invalid login message in terminal
     outfile.close(); //close file so that it restarts properly on next login attempt
     return false;
@@ -251,7 +251,7 @@ void loginWindow::promptRegistration(void){
 
     Gtk::Image* registerImage = Gtk::make_managed<Gtk::Image>();
     registerImage -> set_size_request(100, 100);
-    registerImage -> set("../assets/sprites/SaveSpriteDecor.png");
+    registerImage -> set("assets/sprites/SaveSpriteDecor.png");
     registerImage -> set_hexpand(true);
     registerImage -> set_vexpand(true);
     registerImage -> set_halign(Gtk::Align::CENTER);
@@ -331,20 +331,20 @@ void loginWindow::registrationResponse(int response_id, Gtk::Dialog* dialog,
         bool errorCheck = false;
 
         if (!uniqueUsername(Username)){
-            registerImage -> set("../assets/sprites/FailDialogFlipped.png");
+            registerImage -> set("assets/sprites/FailDialogFlipped.png");
             userErrorIcon -> set_text("X");
             userErrorMsg -> set_text("That Username is in use!");
             errorCheck = true;
             //dialog -> show();
         }   
         if(!checkPasswordSecurity(Password)){
-            registerImage -> set("../assets/sprites/FailDialogFlipped.png");
+            registerImage -> set("assets/sprites/FailDialogFlipped.png");
             passErrorIcon -> set_text("X");
             passErrorMsg -> set_text("Im not sure your Password is secure!");
             errorCheck = true;
             //dialog -> show();
         }else if(!(Password == PasswordConfirm)){
-            registerImage -> set("../assets/sprites/FailDialogFlipped.png");
+            registerImage -> set("assets/sprites/FailDialogFlipped.png");
             passErrorIcon -> set_text("X");
             passErrorMsg -> set_text("The Passwords Does not Match!");
             passConfirmErrorIcon -> set_text("X");
@@ -353,7 +353,7 @@ void loginWindow::registrationResponse(int response_id, Gtk::Dialog* dialog,
             //dialog -> show();
         }
         if (!errorCheck){
-            registerImage -> set("../assets/sprites/SuccessDialogFlipped.png");
+            registerImage -> set("assets/sprites/SuccessDialogFlipped.png");
             // std::cout << "Succssful Register" << std::endl;
             registrationSuccess(Username, Password);
             delete dialog; // clean up heap-allocated dialog
@@ -367,7 +367,7 @@ void loginWindow::registrationResponse(int response_id, Gtk::Dialog* dialog,
 }
 
 bool loginWindow::uniqueUsername(std::string newUser){
-    std::ifstream outfile("../data/user.txt");
+    std::ifstream outfile("data/user.txt");
     std::string databaseLine, file_username;
 
     while (std::getline(outfile, databaseLine)) { // get username and password from file
@@ -402,7 +402,7 @@ bool loginWindow::checkPasswordSecurity(std::string newPass){
 }
 
 void loginWindow::registrationSuccess(std::string newUser,std::string newPass){
-    std::ofstream infile("../data/user.txt", std::ios::app);
+    std::ofstream infile("data/user.txt", std::ios::app);
 
     if(infile.is_open()){
         infile << newUser << " " << newPass << std::endl;

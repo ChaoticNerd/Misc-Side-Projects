@@ -1,5 +1,6 @@
 # ================================================
 #  PORTABLE PACKAGE BUILDER FOR GTKmm 4 (MSYS2)
+#  Uses ntldd to auto-detect DLL dependencies
 # ================================================
 
 # ---- CONFIG ----
@@ -7,6 +8,9 @@ $MsysRoot    = "C:\msys64"
 $SrcBin      = Join-Path $MsysRoot "mingw64\bin"
 $SrcShare    = Join-Path $MsysRoot "mingw64\share"
 $SrcLib      = Join-Path $MsysRoot "mingw64\lib"
+
+# Path to ntldd from MinGW64 environment
+$NtlddExe    = Join-Path $SrcBin "ntldd.exe"
 
 # Folder where this script lives = project root
 $ProjectRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
@@ -27,6 +31,14 @@ if (!(Test-Path $AppExe)) {
     exit 1
 }
 
+# ---- Ensure ntldd exists ----
+if (!(Test-Path $NtlddExe)) {
+    Write-Error "ERROR: ntldd.exe not found at $NtlddExe."
+    Write-Host "Install it from an MSYS2 MinGW64 shell with:"
+    Write-Host "  pacman -S mingw-w64-x86_64-ntldd-git"
+    exit 1
+}
+
 # ---- Rebuild output folder ----
 if (Test-Path $OutputDir) {
     Write-Host "Cleaning existing output dir..."
@@ -37,7 +49,6 @@ New-Item -ItemType Directory -Path $OutputDir | Out-Null
 # ---- Copy executable ----
 Write-Host "Copying app.exe..."
 Copy-Item $AppExe (Join-Path $OutputDir "app.exe") -Force
-
 
 # ====================================================
 #  COPY USER DATA (data/, assets/, style.css)
@@ -70,98 +81,113 @@ if (Test-Path $CssSrc) {
     Write-Host "No style.css found; skipping."
 }
 
+# ====================================================
+#  Helper: get DLL dependencies via ntldd
+# ====================================================
+
+function Get-MingwDllDeps {
+    param (
+        [Parameter(Mandatory=$true)][string]$BinaryPath
+    )
+
+    if (!(Test-Path $BinaryPath)) {
+        Write-Warning "  Dependency scan skipped; binary not found: $BinaryPath"
+        return @()
+    }
+
+    Write-Host "  Running ntldd on: $BinaryPath"
+    $output = & $NtlddExe -R "$BinaryPath"
+
+    $dllPaths = @()
+
+    foreach ($line in $output) {
+        # Example line formats:
+        #   C:\msys64\mingw64\bin\libgtk-4-1.dll => C:\msys64\mingw64\bin\libgtk-4-1.dll (0x...)
+        #   libxml2-2.dll => not found
+        #   C:\Windows\System32\KERNEL32.DLL => ...
+        if ($line -match '=>\s+not found') {
+            # e.g. "libxml2-2.dll => not found"
+            $missing = $line.Split(' ')[0]
+            Write-Warning "    MISSING dependency reported by ntldd: $missing"
+            continue
+        }
+
+        # Try to capture a full path after "=>"
+        if ($line -match '=>\s+([A-Z]:[\\\/][^ ]+)\s*\(') {
+            $path = $Matches[1]
+            # Only keep DLLs from mingw64\bin (skip system DLLs)
+            if ($path -like "$SrcBin\*") {
+                $dllPaths += $path
+            }
+            continue
+        }
+
+        # Some lines may be just "C:\msys64\mingw64\bin\libstdc++-6.dll (0x...)"
+        if ($line -match '^([A-Z]:[\\\/][^ ]+)\s*\(') {
+            $path = $Matches[1]
+            if ($path -like "$SrcBin\*") {
+                $dllPaths += $path
+            }
+            continue
+        }
+    }
+
+    return $dllPaths
+}
 
 # ====================================================
-#  COPY DLL DEPENDENCIES
+#  AUTO-COLLECT DLLs for app.exe and SVG loader
 # ====================================================
 
-$dlls = @(
-    "libcairomm-1.16-1.dll",
-    "libgiomm-2.68-1.dll",
-    "libglibmm-2.68-1.dll",
-    "libgcc_s_seh-1.dll",
-    "libpango-1.0-0.dll",
-    "libgtkmm-4.0-0.dll",
-    "libsigc-3.0-0.dll",
-    "libpangocairo-1.0-0.dll",
-    "libstdc++-6.dll",
-    "libwinpthread-1.dll",
-    "libcairo-2.dll",
-    "libgobject-2.0-0.dll",
-    "libglib-2.0-0.dll",
-    "libgio-2.0-0.dll",
-    "libgmodule-2.0-0.dll",
-    "libfribidi-0.dll",
-    "libthai-0.dll",
-    "libharfbuzz-0.dll",
-    "libcairo-gobject-2.dll",
-    "libfontconfig-1.dll",
-    "libpangowin32-1.0-0.dll",
-    "libpangoft2-1.0-0.dll",
-    "libgdk_pixbuf-2.0-0.dll",
-    "libgraphene-1.0-0.dll",
-    "libpangomm-2.48-1.dll",
-    "libffi-8.dll",
-    "libintl-8.dll",
-    "libgtk-4-1.dll",
-    "libfreetype-6.dll",
-    "libpixman-1-0.dll",
-    "libpng16-16.dll",
-    "zlib1.dll",
-    "libpcre2-8-0.dll",
-    "libdatrie-1.dll",
-    "libgraphite2.dll",
-    "libexpat-1.dll",
-    "libtiff-6.dll",
-    "libjpeg-8.dll",
-    "libiconv-2.dll",
-    "libbrotlidec.dll",
-    "libcairo-script-interpreter-2.dll",
-    "libharfbuzz-subset-0.dll",
-    "libepoxy-0.dll",
-    "libbz2-1.dll",
-    "libdeflate.dll",
-    "libjbig-0.dll",
-    "libLerc.dll",
-    "liblzma-5.dll",
-    "libwebp-7.dll",
-    "libzstd.dll",
-    "liblzo2-2.dll",
-    "libsharpyuv-0.dll",
-    "libbrotlicommon.dll",
-    # SVG support:
-    "librsvg-2-2.dll",
-    "libxml2-2.dll"
-)
+Write-Host ""
+Write-Host "Collecting DLL dependencies via ntldd..."
+
+$dllPaths = @()
+
+# 1) Dependencies of the main exe
+$dllPaths += Get-MingwDllDeps -BinaryPath $AppExe
+
+# 2) Dependencies of the SVG pixbuf loader (for Adwaita symbolic icons)
+$SvgLoader = Join-Path $SrcLib "gdk-pixbuf-2.0\2.10.0\loaders\pixbufloader_svg.dll"
+if (Test-Path $SvgLoader) {
+    $dllPaths += Get-MingwDllDeps -BinaryPath $SvgLoader
+} else {
+    Write-Warning "  SVG loader not found at $SvgLoader"
+}
+
+# Deduplicate
+$dllPaths = $dllPaths | Sort-Object -Unique
 
 Write-Host ""
 Write-Host "Copying DLLs..."
-foreach ($dll in $dlls) {
-    $src = Join-Path $SrcBin $dll
-    $dst = Join-Path $OutputDir $dll
+foreach ($src in $dllPaths) {
+    $name = Split-Path $src -Leaf
+    $dst  = Join-Path $OutputDir $name
 
     if (Test-Path $src) {
         Copy-Item $src $dst -Force
-        Write-Host "  Copied $dll"
+        Write-Host "  Copied $name"
     } else {
-        Write-Warning "  Missing DLL in $SrcBin -> $dll"
+        Write-Warning "  ntldd reported but file missing: $src"
     }
 }
 
-
 # ====================================================
-#  COPY GLIB SCHEMAS  (Fixes: No GSettings schemas installed)
+#  COPY GLIB (including schemas)  -> share\glib-2.0
 # ====================================================
 
-$SchemaSrc = Join-Path $SrcShare "glib-2.0\schemas"
-$SchemaDst = Join-Path $OutputDir "share\glib-2.0\schemas"
+$GlibSrc = Join-Path $SrcShare "glib-2.0"
+$GlibDstParent = Join-Path $OutputDir "share"
 
 Write-Host ""
-Write-Host "Copying GLib schemas..."
-if (!(Test-Path $SchemaDst)) {
-    New-Item -ItemType Directory -Path $SchemaDst -Force | Out-Null
+Write-Host "Copying GLib share (including schemas)..."
+
+if (Test-Path $GlibSrc) {
+    # This creates: dist\MyGtkApp\share\glib-2.0\...
+    Copy-Item $GlibSrc $GlibDstParent -Recurse -Force
+} else {
+    Write-Warning "GLib share directory not found at $GlibSrc"
 }
-Copy-Item $SchemaSrc $SchemaDst -Recurse -Force
 
 
 # ====================================================
@@ -179,7 +205,6 @@ if (Test-Path $PixbufSrc) {
     Write-Warning "GDK-pixbuf loader directory not found at $PixbufSrc"
 }
 
-
 # ====================================================
 #  COPY GTK RESOURCES  (Adwaita theme, gtk.gresource)
 # ====================================================
@@ -195,9 +220,8 @@ if (Test-Path $GtkShareSrc) {
     Write-Warning "GTK shared data directory not found at $GtkShareSrc"
 }
 
-
 # ====================================================
-#  COPY ICON THEMES (Adwaita only, skip hicolor)
+#  COPY ICON THEME (Adwaita only)
 # ====================================================
 
 $IconsRootSrc = Join-Path $SrcShare "icons"
@@ -220,7 +244,6 @@ if (Test-Path $AdwaitaSrc) {
 } else {
     Write-Warning "  Icon theme 'Adwaita' not found at $AdwaitaSrc"
 }
-
 
 # ====================================================
 #  DONE

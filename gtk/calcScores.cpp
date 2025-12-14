@@ -801,7 +801,7 @@ std::string calcScore::getClassReportString()const{
     out += padLeft("Proj",      8);
     out += padLeft("Final",     8);
     out += padLeft("Total %",   6);
-    out += padLeft("Letter",    4);
+    out += padLeft("LTTR",      4); // lesbians to the rescure
     out += "\n";
 
     out += "----------------------------------------------------------------\n";

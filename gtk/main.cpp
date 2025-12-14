@@ -2,6 +2,7 @@
 #include <fontconfig/fontconfig.h>
 #include <pango/pangocairo.h>
 #include <gdk/gdkkeysyms.h> // for GDK_KEY_F11, GDK_KEY_Escape
+#include <glib.h> // for custom fonts/theemse
 #include "mainScreen.h"
 #include "loginWindow.h"
 #include "app.h"
@@ -35,6 +36,17 @@ int main(int argc, char* argv[])
     catch (const std::exception& e) {
         std::cerr << "Warning: could not set working directory: "
                   << e.what() << std::endl;
+    }
+
+    // Point GLib/GSettings at the bundled schemas directory:
+    // dist\MyGtkApp\share\glib-2.0\schemas
+    std::filesystem::path schemaDir = exeDir / "share" / "glib-2.0" / "schemas";
+    if (std::filesystem::exists(schemaDir)) {
+        g_setenv("GSETTINGS_SCHEMA_DIR", schemaDir.string().c_str(), TRUE);
+        std::cout << "GSETTINGS_SCHEMA_DIR=" << schemaDir.string() << std::endl;
+    } else {
+        std::cerr << "WARNING: schemas directory not found at "
+                    << schemaDir.string() << std::endl;
     }
 
     std::cout << "Current working directory: "
