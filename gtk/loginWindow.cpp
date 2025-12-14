@@ -54,8 +54,15 @@ loginWindow::loginWindow(){
     registerButton.set_hexpand(true);  
     registerButton.set_vexpand(true);
     registerButton.set_size_request(20, 20);
+    
+    errorCall.set_hexpand(true);
+    errorCall.set_vexpand(true);
+    errorCall.set_halign(Gtk::Align::FILL);
+    errorCall.set_valign(Gtk::Align::END);
+    errorCall.set_label("Welcome to Grade Calc");
 
     //appends entries and buttons to the textBox so they appear in the order they are called from top to bottom
+    textBox.append(errorCall);
     textBox.append(usernameEntry);
     textBox.append(passwordEntry);
     textBox.append(loginButton);
@@ -81,6 +88,8 @@ void loginWindow::on_login_button_clicked(void){    //Logic functionality to che
         signal_login_successful.emit(username); // emit signal for successful login
 
         this -> loggedIn = (true); // set loggedIn to true
+    } else {
+        errorCall.set_label("Sorry, Username or Password is wrong");
     }
 
 }
@@ -134,17 +143,18 @@ bool loginWindow::loginAuthentication(std::string username, std::string password
 
 void loginWindow::promptRegistration(void){
     auto dialog = new Gtk::Dialog("Registeration", *this);
-    dialog->set_name("Reg-Box");
+    dialog->set_name("Reg Box");
     dialog->set_deletable(false);
     dialog->set_modal(true);
     dialog->set_decorated(true);        // no OS title bar
     dialog->set_transient_for(*this);    // center over main window
     dialog->set_default_size(800, 580);  // tweak as you like
+    dialog->get_style_context()->add_class("Reg-Dialog");
 
     Gtk::Box* content_area = dialog->get_content_area();
     content_area->set_orientation(Gtk::Orientation::VERTICAL);
     content_area->set_margin(5);
-    content_area->set_halign(Gtk::Align::CENTER);
+    content_area->set_halign(Gtk::Align::FILL);
     content_area->set_valign(Gtk::Align::END);
     content_area->set_hexpand(true);
     content_area->set_vexpand(true);
@@ -167,17 +177,17 @@ void loginWindow::promptRegistration(void){
 
     //Creating the 3 Entries for newUsername, newPassword, confirmPassword
     Gtk::Entry* newUser = Gtk::make_managed<Gtk::Entry>(); //Create the Entry for a newUser's username
-    newUser -> set_placeholder_text("Hooman, Whats your Username?");
+    newUser -> set_placeholder_text("Hooman, enter Username?");
     newUser -> set_hexpand(true);
     newUser -> set_size_request(80, 20);
 
     Gtk::Entry* newPass = Gtk::make_managed<Gtk::Entry>(); // create the Entry for a new user's Password
-    newPass -> set_placeholder_text("Hooman, Please enter a Password?");
+    newPass -> set_placeholder_text("Hooman, enter Password?");
     newPass -> set_hexpand(true);
     newPass -> set_size_request(80, 20);
 
     Gtk::Entry* confirmPass = Gtk::make_managed<Gtk::Entry>(); // create the entry to confirm the Password
-    confirmPass -> set_placeholder_text("Hooman, Please re-type your Password!");
+    confirmPass -> set_placeholder_text("Hooman, re-enter Password!");
     confirmPass->set_hexpand(true);
     confirmPass -> set_size_request(80, 20);
 

@@ -26,7 +26,7 @@ mainScreen::mainScreen(const Glib::ustring& username):
     // Automatically adjust button box
     buttonBox.set_hexpand(false);
     buttonBox.set_vexpand(false);
-    buttonBox.set_halign(Gtk::Align::FILL); // stretches horizontally
+    buttonBox.set_halign(Gtk::Align::CENTER); // stretches horizontally
     buttonBox.set_valign(Gtk::Align::END); // puts at bottom of screen
     buttonBox.set_homogeneous(true); // all buttons same width
 
@@ -679,14 +679,14 @@ void mainScreen::drawPieChart(const Cairo::RefPtr<Cairo::Context>& cr, int width
         // Fill color per grade
         switch (i) {
             case 0: 
-                cr->set_source_rgb(0.2, 0.8, 0.2); 
+                cr->set_source_rgb(0.2, 0.683, 0.2); 
                 break; // A - green
             case 1: 
                 cr->set_source_rgb(0.2, 0.4, 0.9); 
                 break; // B - blue
             case 2: 
-                cr->set_source_rgb(0.9, 0.9, 0.2); 
-                break; // C - yellow
+                cr->set_source_rgb(.835, 0.208, 0.851); 
+                break; // C - purple
             case 3: 
                 cr->set_source_rgb(0.9, 0.6, 0.2); 
                 break; // D - orange
@@ -1047,7 +1047,9 @@ void mainScreen::fileChooserImageResponse(int response_id, Gtk::FileChooserDialo
         std::cout<<"where the fuck am i!\n";
 
     }
+    this->present();
 
+    delete dialog;
     //profileBox->set_pfpImg()
 }
 

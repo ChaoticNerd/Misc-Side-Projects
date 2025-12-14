@@ -29,22 +29,6 @@ window * {
   border-radius: 0px;
   border-image: none;
 }
-
-/* ============================= */
-/*          HEADERBARS           */
-/* ============================= */
-
-window.csd headerbar {
-  color: white;
-  background-color: black;
-  border-color: white;
-  border-width: 3px;
-  background-image: none;
-  font-family: 'Determination Mono', Courier, monospace;
-  font-size: 32px;
-  margin: 4px;
-}
-
 /* ============================= */
 /*  ENTRY FIELDS (TEXT INPUTS)   */
 /* ============================= */
@@ -63,6 +47,10 @@ entry {
 /* Inner text node inside Gtk::Entry (GTK4) */
 entry text {
   color: inherit;
+}
+
+entry:focus{
+  border: 2px solid white;
 }
 
 /* ============================= */
@@ -118,12 +106,50 @@ button label {
 
 /* Hover / active states */
 button:hover {
-  background-color: #222;
+  background-color: black;
+  border: 2px solid yellow;
 }
 
-button:active {
-  background-color: #444; 
+button:hover label,
+button:active label{
+  color: yellow;
 }
+
+/* ============================= */
+/*          HEADERBARS           */
+/* ============================= */
+
+headerbar {
+  color: white;
+  background-color: black;
+  border-color: white;
+  border-width: 3px;
+  background-image: none;
+  font-family: 'Determination Mono', Courier, monospace;
+  font-size: 32px;
+  margin: 4px;
+}
+
+headerbar button.titlebutton.close image {
+  color: transparent;
+  -gtk-icon-transform: scale(0);
+  background-image: none;
+}
+
+headerbar button.titlebutton.close{
+  background-color: transparent;
+  background-size: contain;
+  background-position: 50% 50%;
+  
+  min-width: 24px;
+  min-height: 24px;
+  background-repeat: no-repeat;
+  background-image: url("assets/sprites/closeIcon.png");
+}
+headerbar button.titlebutton.close:hover {
+  background-image: url("assets/sprites/closeIconHover.png");
+}
+
 
 /* ============================= */
 /*       MAIN MENU BUTTONS       */
@@ -162,7 +188,6 @@ button:active {
 
 }
 
-
 .Bar-Button:hover{
   background-image: url("assets/sprites/BarChartButtonHover.png");
   background-repeat: no-repeat;
@@ -185,7 +210,6 @@ button:active {
   padding: 0;
 
 }
-
 
 .Pie-Button:hover{
   background-image: url("assets/sprites/PieChartButtonHover.png");
@@ -210,7 +234,6 @@ button:active {
 
 }
 
-
 .Sort-Button:hover{
   background-image: url("assets/sprites/SortByButtonHover.png");
   background-repeat: no-repeat;
@@ -232,29 +255,16 @@ button:active {
 
 }
 
-/* .Test-Button image{
-  margin-right:5px;
-  
-  
-} */
+/* ============================= */
+/*      REGISTRATION STYLE       */
+/* ============================= */
 
-.Test-Button label{
-  color: #E58541;
-}
-
-.Test-Button:hover{
-  background-image: none;
+.Reg-Dialog{
+  background-image: url("assets/sprites/Temmie.png");
   background-color: black;
-  border: 2px solid #FCFE58;
-  font-size: 32px;
-  color: #FCFE58;
-  padding: inherit;
-  
-
-}
-
-.Test-Button:hover label{
-  color: #FCFE58;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: 50% 50%;
 }
 
 /* ============================= */
@@ -323,14 +333,33 @@ window.filechooser{
   background-image: none;
   color: white;
 }
+
 window.filechooser .view{
+  background-color: black;
+  background-image: none;
+  color: white;
+}
+
+window.filechooser listview > row{
   background-color: Black;
   background-image: none;
   color: white;
 } 
-window.filechooser .view row:selected {
+window.filechooser listview > row:selected {
    background-color: yellow;
    color: Black;
+   border: 2px solid yellow;
+}
+
+window.filechooser gridview > child{
+   background-color: black;
+   color: white;
+}
+
+window.filechooser gridview > child:selected {
+   background-color: black;
+   color: white;
+   border: 2px solid yellow;
 }
 
 window.filechooser .sidebar {
@@ -344,6 +373,35 @@ filechooser .sidebar .sidebar-row:hover{
   background-color: yellow;
   background-image: none;
   color: Black;
+}
+
+window.filechooser popover{
+  background-color: black;
+  border: 2px solid white;
+  padding: 4px;
+}
+
+window.filechooser popover modelbutton,
+window.filechooser popover menuitem{
+  background-color: black;
+  border: 2px solid white;
+  padding: 4px 10px;
+}
+
+window.filechooser popover modelbutton:hover,
+window.filechooser popover menuitem:hover {
+  background-color: yellow;
+  color: black;
+}
+
+window.filechooser popover modelbutton:active,
+window.filechooser popover menuitem:active {
+  background-color: yellow;
+  color: black;
+}
+
+window.filechooser popover separator {
+  background-color: black;
 }
 
 /* ============================= */
@@ -379,3 +437,47 @@ filechooser .sidebar .sidebar-row:hover{
   background-image: none;
   
 }
+
+/* ============================= */
+/*         RADIO BUTTON          */
+/* ============================= */
+
+radio {
+  color: transparent;
+  padding: 6px;
+}
+
+radio:not(:checked){
+  border-radius: 50%;
+  border: 2px solid black;
+  background-color: black;
+
+  background-image: url("assets/sprites/radioButton-off.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+radio:checked{
+  border-radius: 0px;
+  border: 0px;
+  background-color: black;
+
+  background-image: url("assets/sprites/radioButton-on.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+radio:hover > radio{
+  border-color: orange;
+}
+
+radio label {
+  color: white;
+  font-weight: normal;
+}
+
+radio:checked label {
+  color: yellow;
+  font-weight: bold;
+}
+

@@ -23,8 +23,9 @@ class loginWindow : public Gtk::Window{
     private:
         Gtk::Entry usernameEntry, passwordEntry;    //Entry boxes
         Gtk::Entry newUserEntry, newPassEntry, newPassConfirmEntry; 
+        Gtk::Label errorCall;
         Gtk::Grid screenGrid;   //Grid for layout 
-        Gtk::Box textBox;       //TextBox to place in screenGrid
+        Gtk::Box textBox, animationBox;       //TextBox to place in screenGrid
         Gtk::Button loginButton, registerButton; //Buttons for Login and Register
         //sigc::signal<void()> m_signal_login_successful; // The Login Successful Signal
         type_signal_login_success signal_login_successful;
