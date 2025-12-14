@@ -1,5 +1,4 @@
 #include "loginWindow.h"
-//#include "mainScreen.h"
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -8,7 +7,7 @@ loginWindow::loginWindow(){
     set_title("Login Window");
     set_default_size(800, 600);
     this->loggedIn = false;
-    std::cout << "wtf2\n";
+
     //screenGrid set up to 
     screenGrid.set_halign(Gtk::Align::FILL);
     screenGrid.set_valign(Gtk::Align::FILL);
@@ -20,15 +19,15 @@ loginWindow::loginWindow(){
     screenGrid.set_hexpand(true);
     screenGrid.set_vexpand(true);
 
-    textBox.set_orientation(Gtk::Orientation::VERTICAL);
-    textBox.set_spacing(10);
-    textBox.set_margin(5);
+    loginBox.set_orientation(Gtk::Orientation::VERTICAL);
+    loginBox.set_spacing(10);
+    loginBox.set_margin(5);
 
-    textBox.set_hexpand(true);
-    textBox.set_vexpand(true);
-    textBox.set_halign(Gtk::Align::FILL);
-    textBox.set_valign(Gtk::Align::END);
-    textBox.set_homogeneous(true);
+    loginBox.set_hexpand(true);
+    loginBox.set_vexpand(true);
+    loginBox.set_halign(Gtk::Align::FILL);
+    loginBox.set_valign(Gtk::Align::END);
+    loginBox.set_homogeneous(true);
     
     // username entry set up
     usernameEntry.set_placeholder_text("Username");
@@ -61,15 +60,25 @@ loginWindow::loginWindow(){
     errorCall.set_valign(Gtk::Align::END);
     errorCall.set_label("Welcome to Grade Calc");
 
-    //appends entries and buttons to the textBox so they appear in the order they are called from top to bottom
-    textBox.append(errorCall);
-    textBox.append(usernameEntry);
-    textBox.append(passwordEntry);
-    textBox.append(loginButton);
-    textBox.append(registerButton);
+    //loginImage
+    loginImage.set_size_request(100, 100);
+    loginImage.set("../assets/sprites/SaveSpriteDecor.png");
+
+    loginImage.set_hexpand(true);
+    loginImage.set_vexpand(true);
+    loginImage.set_halign(Gtk::Align::CENTER);
+    loginImage.set_valign(Gtk::Align::CENTER);
+
+    //appends entries and buttons to the loginBox so they appear in the order they are called from top to bottom
+    loginBox.append(loginImage);
+    loginBox.append(errorCall);
+    loginBox.append(usernameEntry);
+    loginBox.append(passwordEntry);
+    loginBox.append(loginButton);
+    loginBox.append(registerButton);
 
     //set up screenGrid in case for more customization 
-    screenGrid.attach(textBox, 0, 300);
+    screenGrid.attach(loginBox, 0, 300);
 
     set_child(screenGrid); // setting screenGrid to child so that it works
 
@@ -78,48 +87,79 @@ loginWindow::loginWindow(){
     show();
 }
 
-
+/**
+ * Handles the Login button click: reads the username and password,
+ * authenticates them against the user database, updates the UI, and
+ * emits a signal if login succeeds.
+ *
+ * @return void
+ */
 
 void loginWindow::on_login_button_clicked(void){    //Logic functionality to check if login was successful on when log in is pressed
     std::string username = usernameEntry.get_text(); //get username from entry
     std::string password = passwordEntry.get_text(); //get password from entry
 
     if(loginAuthentication(username, password)){
+        loginImage.set("../assets/sprites/SuccessDialogFlipped.png");
         signal_login_successful.emit(username); // emit signal for successful login
-
         this -> loggedIn = (true); // set loggedIn to true
     } else {
         errorCall.set_label("Sorry, Username or Password is wrong");
+        loginImage.set("../assets/sprites/FailDialogFlipped.png");
     }
 
 }
 
-void loginWindow::on_register_button_clicked(void){ //used to detect if register button is pressed not done just setup...
-    // Placeholder for register button click handling
-    std::cout << "Papyrus: SANS?! WHAT IS THAT?!\n Sans: A Hooman Pap.\n Papyrus: WELL WHO ARE THEY?!?!\n SANS: Idk, lol. Why not let them Answer? \n";
+/**
+ * Handles the Register button click by opening the registration dialog.
+ *
+ * @return void
+ */
+void loginWindow::on_register_button_clicked(void){ //used to detect if register button is pressed and opens up the prompt for registration
     promptRegistration();
     
 }
 
+/**
+ * Sets the internal logged-in state of the window.
+ *
+ * @param status True if the user successfully logged in; false otherwise.
+ * @return void
+ */
 void loginWindow::setLoggedIn(bool status){ //set boolean to determine whether or not Login was successful
     this->loggedIn = status;
 }
 
+/**
+ * Retrieves the current login state.
+ *
+ * @return true if the user is logged in; false otherwise.
+ */
 bool loginWindow::getLoggedIn(void)const{   //get the login bool so that it can communicated to other systems that they logged in
     return this->loggedIn;
 }
 
-// sigc::signal<void()>& loginWindow::signal_login_successful() { // success login
-//     return m_signal_login_successful;
-// }
+/**
+ * Provides access to the login-success signal.
+ * This signal is emitted when the user successfully logs in.
+ *
+ * @return A reference to the signal that observers can connect to.
+ */
 loginWindow::type_signal_login_success& loginWindow::signal_login_success(){
     return signal_login_successful;
 }
 
-
+/**
+ * Authenticates the given username and password against the user database.
+ *
+ * @param username The username entered by the user.
+ * @param password The password entered by the user.
+ * @return true if the username and password match a record in data/user.txt;
+ *         false otherwise.
+ */
 bool loginWindow::loginAuthentication(std::string username, std::string password){
     std::string file_username, file_password, databaseLine;
-    std::ifstream outfile("data/user.txt");  //opening user database
+    std::ifstream outfile("../data/user.txt");  //opening user database
 
     while (getline(outfile, databaseLine)) { // get username and password from file
         size_t delimiter_pos = databaseLine.find(' ');          // assuming username and password are separated by space
@@ -132,15 +172,34 @@ bool loginWindow::loginAuthentication(std::string username, std::string password
             std::cout << "Username: " << file_username << ", Password: " << file_password << std::endl; // debug to confirm match
             std::cout << "Login successful!" << std::endl;  // debug successful login message in terminal
             outfile.close();
+            loginImage.set("../assets/sprites/SuccessDialogFlipped.png");
             return true;
         }
     }
+    loginImage.set("../assets/sprites/FailDialogFlipped.png");
     std::cout << "Invalid username or password." << std::endl; // debug invalid login message in terminal
     outfile.close(); //close file so that it restarts properly on next login attempt
     return false;
 
 }
 
+/**
+ * Handles the result of the registration dialog, validating the inputs,
+ * updating error labels, and writing a new user to the file if valid.
+ *
+ * @param response_id The dialog response (OK or CANCEL).
+ * @param dialog Pointer to the registration dialog.
+ * @param newUser Entry containing the desired username.
+ * @param newPass Entry containing the desired password.
+ * @param confirmPass Entry containing the password confirmation.
+ * @param userErrorIcon Label used to display username error indicator.
+ * @param passErrorIcon Label used to display password error indicator.
+ * @param passConfirmErrorIcon Label used to display confirmation error indicator.
+ * @param userErrorMsg Label used to display username error message.
+ * @param passErrorMsg Label used to display password error message.
+ * @param passConfirmErrorMsg Label used to display confirmation error message.
+ * @return void
+ */
 void loginWindow::promptRegistration(void){
     auto dialog = new Gtk::Dialog("Registeration", *this);
     dialog->set_name("Reg Box");
@@ -160,7 +219,6 @@ void loginWindow::promptRegistration(void){
     content_area->set_vexpand(true);
 
     Gtk::Grid* grid = Gtk::make_managed<Gtk::Grid>();
-    content_area -> append(*grid);
     grid -> set_row_spacing(5);
     grid -> set_column_spacing(5);
     grid -> set_margin(5);
@@ -191,7 +249,14 @@ void loginWindow::promptRegistration(void){
     confirmPass->set_hexpand(true);
     confirmPass -> set_size_request(80, 20);
 
-
+    Gtk::Image* registerImage = Gtk::make_managed<Gtk::Image>();
+    registerImage -> set_size_request(100, 100);
+    registerImage -> set("../assets/sprites/SaveSpriteDecor.png");
+    registerImage -> set_hexpand(true);
+    registerImage -> set_vexpand(true);
+    registerImage -> set_halign(Gtk::Align::CENTER);
+    registerImage -> set_valign(Gtk::Align::CENTER);
+    
     //Icons next to entry to show an Error
     Gtk::Label* userErrorIcon = Gtk::make_managed<Gtk::Label>("*");
     userErrorIcon -> set_hexpand(true);
@@ -212,7 +277,8 @@ void loginWindow::promptRegistration(void){
     Gtk::Label* passConfirmErrorMsg = Gtk::make_managed<Gtk::Label>(" ");
     passConfirmErrorMsg -> set_hexpand(true);
 
-
+    content_area -> append(*registerImage);
+    content_area -> append(*grid);
     //grid pos of entries
     grid -> attach(*newUser,                1, 3, 4, 1);
     grid -> attach(*newPass,                1, 5, 4, 1);
@@ -226,7 +292,7 @@ void loginWindow::promptRegistration(void){
     grid -> attach(*passErrorMsg,           1, 4, 4, 1);
     grid -> attach(*passConfirmErrorMsg,    1, 6, 4, 1);
     // grid pos of Buttons (make buttons follow the grid layout)
-    grid -> attach(*cancelBtn,              0, 9, 2, 2);
+    grid -> attach(*cancelBtn,              1, 9, 2, 2);
     grid -> attach(*registerBtn,            3, 9, 2, 2);
     
     // wire the grid buttons to emit dialog responses
@@ -242,6 +308,7 @@ void loginWindow::promptRegistration(void){
         sigc::bind(
             sigc::mem_fun(*this, &loginWindow::registrationResponse),
             dialog,                                                 // Dialog widget
+            registerImage,                                          // RegisterImage
             newUser,        newPass,        confirmPass,            // Entry Widgets used in response
             userErrorIcon,  passErrorIcon,  passConfirmErrorIcon,   // Labels for icons
             userErrorMsg,   passErrorMsg,   passConfirmErrorMsg     // Labels for messages
@@ -253,6 +320,7 @@ void loginWindow::promptRegistration(void){
 }
 
 void loginWindow::registrationResponse(int response_id, Gtk::Dialog* dialog, 
+    Gtk::Image* registerImage,
     Gtk::Entry* newUser,        Gtk::Entry* newPass,        Gtk::Entry* confirmPass,
     Gtk::Label* userErrorIcon,  Gtk::Label* passErrorIcon,  Gtk::Label* passConfirmErrorIcon,
     Gtk::Label* userErrorMsg,   Gtk::Label* passErrorMsg,   Gtk::Label* passConfirmErrorMsg){
@@ -263,17 +331,20 @@ void loginWindow::registrationResponse(int response_id, Gtk::Dialog* dialog,
         bool errorCheck = false;
 
         if (!uniqueUsername(Username)){
+            registerImage -> set("../assets/sprites/FailDialogFlipped.png");
             userErrorIcon -> set_text("X");
             userErrorMsg -> set_text("That Username is in use!");
             errorCheck = true;
             //dialog -> show();
         }   
         if(!checkPasswordSecurity(Password)){
+            registerImage -> set("../assets/sprites/FailDialogFlipped.png");
             passErrorIcon -> set_text("X");
             passErrorMsg -> set_text("Im not sure your Password is secure!");
             errorCheck = true;
             //dialog -> show();
         }else if(!(Password == PasswordConfirm)){
+            registerImage -> set("../assets/sprites/FailDialogFlipped.png");
             passErrorIcon -> set_text("X");
             passErrorMsg -> set_text("The Passwords Does not Match!");
             passConfirmErrorIcon -> set_text("X");
@@ -282,6 +353,7 @@ void loginWindow::registrationResponse(int response_id, Gtk::Dialog* dialog,
             //dialog -> show();
         }
         if (!errorCheck){
+            registerImage -> set("../assets/sprites/SuccessDialogFlipped.png");
             // std::cout << "Succssful Register" << std::endl;
             registrationSuccess(Username, Password);
             delete dialog; // clean up heap-allocated dialog
@@ -291,11 +363,11 @@ void loginWindow::registrationResponse(int response_id, Gtk::Dialog* dialog,
         delete dialog; // clean up heap-allocated dialog
         return;
     }
-    //delete dialog;
+
 }
 
 bool loginWindow::uniqueUsername(std::string newUser){
-    std::ifstream outfile("data/user.txt");
+    std::ifstream outfile("../data/user.txt");
     std::string databaseLine, file_username;
 
     while (std::getline(outfile, databaseLine)) { // get username and password from file
@@ -308,6 +380,7 @@ bool loginWindow::uniqueUsername(std::string newUser){
     }
     return true;
 }
+
 
 bool loginWindow::checkPasswordSecurity(std::string newPass){
     bool hasAlpha, hasDigit;
@@ -329,7 +402,7 @@ bool loginWindow::checkPasswordSecurity(std::string newPass){
 }
 
 void loginWindow::registrationSuccess(std::string newUser,std::string newPass){
-    std::ofstream infile("data/user.txt", std::ios::app);
+    std::ofstream infile("../data/user.txt", std::ios::app);
 
     if(infile.is_open()){
         infile << newUser << " " << newPass << std::endl;

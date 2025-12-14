@@ -144,10 +144,10 @@ headerbar button.titlebutton.close{
   min-width: 24px;
   min-height: 24px;
   background-repeat: no-repeat;
-  background-image: url("assets/sprites/closeIcon.png");
+  background-image: url("../assets/sprites/closeIcon.png");
 }
 headerbar button.titlebutton.close:hover {
-  background-image: url("assets/sprites/closeIconHover.png");
+  background-image: url("../assets/sprites/closeIconHover.png");
 }
 
 
@@ -155,7 +155,7 @@ headerbar button.titlebutton.close:hover {
 /*       MAIN MENU BUTTONS       */
 /* ============================= */
 .Text-Button{
-  background-image: url("assets/sprites/TextFileButton.png");
+  background-image: url("../assets/sprites/TextFileButton.png");
   background-repeat: no-repeat;
   background-position: center;
   background-color: transparent;
@@ -166,7 +166,7 @@ headerbar button.titlebutton.close:hover {
 }
 
 .Text-Button:hover{
-  background-image: url("assets/sprites/TextFileButtonHover.png");
+  background-image: url("../assets/sprites/TextFileButtonHover.png");
   background-repeat: no-repeat;
   background-position: center;
   background-color: transparent;
@@ -178,7 +178,7 @@ headerbar button.titlebutton.close:hover {
 }
 
 .Bar-Button{
-  background-image: url("assets/sprites/BarChartButton.png");
+  background-image: url("../assets/sprites/BarChartButton.png");
   background-repeat: no-repeat;
   background-position: center;
   background-color: transparent;
@@ -189,7 +189,7 @@ headerbar button.titlebutton.close:hover {
 }
 
 .Bar-Button:hover{
-  background-image: url("assets/sprites/BarChartButtonHover.png");
+  background-image: url("../assets/sprites/BarChartButtonHover.png");
   background-repeat: no-repeat;
   background-position: center;
   background-color: transparent;
@@ -201,7 +201,7 @@ headerbar button.titlebutton.close:hover {
 }
 
 .Pie-Button{
-  background-image: url("assets/sprites/PieChartButton.png");
+  background-image: url("../assets/sprites/PieChartButton.png");
   background-repeat: no-repeat;
   background-position: center;
   background-color: transparent;
@@ -212,7 +212,7 @@ headerbar button.titlebutton.close:hover {
 }
 
 .Pie-Button:hover{
-  background-image: url("assets/sprites/PieChartButtonHover.png");
+  background-image: url("../assets/sprites/PieChartButtonHover.png");
   background-repeat: no-repeat;
   background-position: center;
   background-color: transparent;
@@ -224,7 +224,7 @@ headerbar button.titlebutton.close:hover {
 }
 
 .Sort-Button{
-  background-image: url("assets/sprites/SortByButton.png");
+  background-image: url("../assets/sprites/SortByButton.png");
   background-repeat: no-repeat;
   background-position: center;
   background-color: transparent;
@@ -235,7 +235,7 @@ headerbar button.titlebutton.close:hover {
 }
 
 .Sort-Button:hover{
-  background-image: url("assets/sprites/SortByButtonHover.png");
+  background-image: url("../assets/sprites/SortByButtonHover.png");
   background-repeat: no-repeat;
   background-position: center;
   background-color: transparent;
@@ -247,7 +247,7 @@ headerbar button.titlebutton.close:hover {
 }
 
 .Test-Button{
-  background-image: url("assets/sprites");
+  background-image: url("../assets/sprites");
   background-color: black;
   border: 2px solid #E58541;
   color: #E58541;
@@ -260,7 +260,7 @@ headerbar button.titlebutton.close:hover {
 /* ============================= */
 
 .Reg-Dialog{
-  background-image: url("assets/sprites/Temmie.png");
+  background-image: url("../assets/sprites/Temmie.png");
   background-color: black;
   background-repeat: no-repeat;
   background-size: contain;
@@ -452,7 +452,7 @@ radio:not(:checked){
   border: 2px solid black;
   background-color: black;
 
-  background-image: url("assets/sprites/radioButton-off.png");
+  background-image: url("../assets/sprites/radioButton-off.png");
   background-size: contain;
   background-repeat: no-repeat;
 }
@@ -462,7 +462,7 @@ radio:checked{
   border: 0px;
   background-color: black;
 
-  background-image: url("assets/sprites/radioButton-on.png");
+  background-image: url("../assets/sprites/radioButton-on.png");
   background-size: contain;
   background-repeat: no-repeat;
 }
@@ -480,4 +480,3 @@ radio:checked label {
   color: yellow;
   font-weight: bold;
 }
-

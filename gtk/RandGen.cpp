@@ -1,3 +1,5 @@
+
+
 #include "randGen.h"
 // Constructor
 RandGen::RandGen(){}
@@ -5,12 +7,12 @@ RandGen::RandGen(){}
 void RandGen::generateReport(std::string fileName){
     int labAmount, quizAmount, midtermAmount; // max assignments per category
     int droppedLabs, droppedQuizzes;
-    //int classSize = 40;
-    //std::string fileLoc = "../data/"; ;
+
     ofstream out;
 
     out.open(fileName);
     srand(time(0)); // Ensures that each randomly generated attempt is different
+
     //add the weights of each category at the top of the file
     out << LAB_WEIGHT << " " << QUIZ_WEIGHT << " " << MIDTERM_WEIGHT << " " << PROJECT_WEIGHT << " " << FINAL_EXAM_WEIGHT << endl;
 
@@ -21,7 +23,7 @@ void RandGen::generateReport(std::string fileName){
     midtermAmount = generateAssignmentAmount(MAX_MIDTERMS);
     out << labAmount << " " << quizAmount << " " << midtermAmount << " " << PROJECT_AMOUNT << " " << FINAL_EXAM_AMOUNT << endl;
 
-    // Generate Dropped assignments for each category (added by the Oracle Justine)
+    // Generate Dropped assignments for each category 
     droppedLabs = generateDroppedAmount(labAmount);
     droppedQuizzes = generateDroppedAmount(quizAmount);  
     // Set up in case we want to add dropped assignments for midterms/projects/finals later
@@ -40,7 +42,7 @@ void RandGen::generateReport(std::string fileName){
     out << endl;
 
     for (int i = 0; i < CLASS_SIZE; i++){
-        generateStudentID(out, i);
+        generateStudentID(out, i);  // student Id
         generateScores(out, labAmount, MAX_LAB_SCORE); // Labs
         generateScores(out, quizAmount, MAX_QUIZ_SCORE); // Quizzes
         generateScores(out, midtermAmount, MAX_MIDTERM_SCORE); // Midterms
