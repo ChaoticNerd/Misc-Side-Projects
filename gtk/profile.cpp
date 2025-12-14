@@ -23,7 +23,7 @@ pfpUpload("Upload Image")
     user.set_halign(Gtk::Align::CENTER);
     pfpUpload.get_style_context()->add_class("profile-Button");
     pfpImg.get_style_context()->add_class("avatar");
-    const Glib::ustring& pfpPath = "../assets/avatars/defaultPFP01.png";
+    const Glib::ustring& pfpPath = "assets/avatars/defaultPFP01.png";
 
     auto imgFile = Gio::File::create_for_path(pfpPath);
     pfpImg.set_file(imgFile);

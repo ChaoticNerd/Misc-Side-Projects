@@ -70,7 +70,7 @@ void calcScore::fileImportFromGTK(const std::string& path) {
     isFileUploaded = false;
     classSize = 0;
 
-    const std::string DATA_DIR = "../data/";
+    const std::string DATA_DIR = "data/";
 
     std::string fileLoc = path;
     bool hasSep = false;

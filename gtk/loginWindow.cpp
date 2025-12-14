@@ -119,7 +119,7 @@ loginWindow::type_signal_login_success& loginWindow::signal_login_success(){
 
 bool loginWindow::loginAuthentication(std::string username, std::string password){
     std::string file_username, file_password, databaseLine;
-    std::ifstream outfile("../data/user.txt");  //opening user database
+    std::ifstream outfile("data/user.txt");  //opening user database
 
     while (getline(outfile, databaseLine)) { // get username and password from file
         size_t delimiter_pos = databaseLine.find(' ');          // assuming username and password are separated by space
@@ -295,7 +295,7 @@ void loginWindow::registrationResponse(int response_id, Gtk::Dialog* dialog,
 }
 
 bool loginWindow::uniqueUsername(std::string newUser){
-    std::ifstream outfile("../data/user.txt");
+    std::ifstream outfile("data/user.txt");
     std::string databaseLine, file_username;
 
     while (std::getline(outfile, databaseLine)) { // get username and password from file
@@ -329,7 +329,7 @@ bool loginWindow::checkPasswordSecurity(std::string newPass){
 }
 
 void loginWindow::registrationSuccess(std::string newUser,std::string newPass){
-    std::ofstream infile("../data/user.txt", std::ios::app);
+    std::ofstream infile("data/user.txt", std::ios::app);
 
     if(infile.is_open()){
         infile << newUser << " " << newPass << std::endl;

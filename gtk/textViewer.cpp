@@ -1,13 +1,13 @@
 #include "textViewer.h"
 
 textViewer::textViewer() {
-    set_title("Raw Text File");
-    set_default_size(800, 600);
+    set_default_size(1250, 600);
 
     // create buffer and attach it to the member TextView
     buffer = Gtk::TextBuffer::create();
     textView.set_buffer(buffer);
     textView.set_editable(false);
+    set_deletable(false);
     textView.set_wrap_mode(Gtk::WrapMode::WORD_CHAR);
 
     // scrolled window setup

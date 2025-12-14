@@ -503,7 +503,7 @@ void mainScreen::drawBarChart(const Cairo::RefPtr<Cairo::Context>& cr, int width
     // Margins around chart area
     const double left   = 60.0;
     const double right  = 20.0;
-    const double top    = 90.0;
+    const double top    = 50.0;
     const double bottom = 50.0;   // a little extra for X label
 
     const double chartWidth  = width  - left - right;
@@ -621,10 +621,6 @@ void mainScreen::drawBarChart(const Cairo::RefPtr<Cairo::Context>& cr, int width
 
             double textX = x + barWidth / 2.0 - (textExt.width / 2.0 + textExt.x_bearing);
             double textY = y - 12.0; // text for each bar (above bar slightly)
-
-            // Clamp so it doesn't go above the top margin
-            // if (textY - textExt.height < top)
-            //     textY = top + textExt.height * 1.5;
 
             cr->move_to(textX, textY);
             cr->show_text(txt);

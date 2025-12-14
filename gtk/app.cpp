@@ -2,8 +2,7 @@
 
 App::App()
 : Gtk::Application("com.mycompany.myapp")   // change ID as needed
-{
-}
+{}
 
 void App::on_activate() {
     // Create and show ONLY the login window
