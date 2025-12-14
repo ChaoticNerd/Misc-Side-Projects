@@ -17,11 +17,11 @@ Minimal GTK4 app wired for VS Code tasks & debugging.
    code .
    ```
 
+
 ## Build & Run
 In VS Code:
 - **run (Windows MSYS2)**.
 - Or press **F5** to debug with **Launch GTK4 App (gdb)**.
-
 ## MSYS2 path cheatsheet (Windows)
 - Windows drives are mounted as `/c`, `/d`, etc.
 - Examples:
@@ -35,3 +35,10 @@ In VS Code:
   - Use quotes for folders with spaces.
   - Tab-completion works (`cd /c/Use<Tab>`).
   - From this folder, run `code .` to open VS Code in the right environment.
+
+
+## Create Release version:
+- Build in VS Code
+- Powershell into the main gtk folder
+- Run: powershell -ExecutionPolicy Bypass -File .\make-portable.ps1
+- Release version now out!
