@@ -1,29 +1,24 @@
+/**
+ * This C++ program implements grade-processing logic for calculating
+ * student percentages, dropping scores, generating reports, and producing
+ * sorted class results from a raw grade data file.
+ *
+ * CECS 275 - Fall 2025
+ * @author Justin Narciso
+ * @author Natasha Kho
+ * @version 1.0.0
+ */
+
 #include "calcScores.h"
+#include <cmath>
 
-// helper functs
-bool calcScore::nonemptyLine(const std::string& line) {
-    for (size_t i = 0; i < line.size(); ++i) {
-        char c = line[i];
-        if (c != ' ' && c != '\t' && c != '\r' && c != '\n')
-            return true;
-    }
-    return false;
-}
 
-double calcScore::sumVector(const std::vector<double>& v) {
-    double s = 0.0;
-    for (size_t i = 0; i < v.size(); ++i) {
-        s += v[i];
-    }
-    return s;
-}
-// constructors 
-calcScore::calcScore() {
-    isFileUploaded = false;
-    classSize = 0;
-    threshold = 0.0;
-    studentID = 0;
-
+// CONSTRUCTORS / DESTRUCTOR  (Correct order to avoid -Wreorder warnings)
+calcScore::calcScore()
+    : threshold(0.0),
+      studentID(0),
+      classSize(0),
+      isFileUploaded(false){
     for (int i = 0; i < 5; ++i) {
         gradeWeights[i] = 0;
         totalAssignments[i] = 0;
@@ -31,13 +26,13 @@ calcScore::calcScore() {
     }
 }
 
-calcScore::calcScore(fstream inFile, string fileName, int studentID, int classSize) : 
-                     inputFile(std::move(inFile)),
-                     fileName(std::move(fileName)),
-                     threshold(0.0),
-                     studentID(studentID),
-                     classSize(classSize),
-                     isFileUploaded(false){
+calcScore::calcScore(fstream inFile, string fileName, int studentID, int classSize)
+    : inputFile(std::move(inFile)),
+      fileName(std::move(fileName)),
+      threshold(0.0),
+      studentID(studentID),
+      classSize(classSize),
+      isFileUploaded(false){
     for (int i = 0; i < 5; ++i) {
         gradeWeights[i] = 0;
         totalAssignments[i] = 0;
@@ -45,13 +40,12 @@ calcScore::calcScore(fstream inFile, string fileName, int studentID, int classSi
     }
 }
 
-calcScore::~calcScore() {
+calcScore::~calcScore(){
     if (inputFile.is_open())
         inputFile.close();
 }
 
-// reset major vectors
-void calcScore::vector_dumptruck(void) {
+void calcScore::vector_dumptruck(){
     calculatedPercentages.clear();
     averageScores.clear();
     calculatedClassPercentages.clear();
@@ -60,9 +54,25 @@ void calcScore::vector_dumptruck(void) {
     letterGrades.clear();
 }
 
-// ------------------------------------------------------------------------------------------------
-// file stuff
-void calcScore::fileImportFromGTK(const std::string& path) {
+
+// HELPER FUNCTIONS
+bool calcScore::nonemptyLine(const std::string& line) {
+    for (char c : line)
+        if (!isspace(c))
+            return true;
+    return false;
+}
+
+double calcScore::sumVector(const std::vector<double>& v) {
+    double sum = 0.0;
+    for (double x : v)
+        sum += x;
+    return sum;
+}
+
+
+// FILE IMPORT / RAW DATA HANDLING
+void calcScore::fileImportFromGTK(const std::string& path){
     if (inputFile.is_open())
         inputFile.close();
 
@@ -71,22 +81,18 @@ void calcScore::fileImportFromGTK(const std::string& path) {
     classSize = 0;
 
     const std::string DATA_DIR = "data/";
-
     std::string fileLoc = path;
+
     bool hasSep = false;
-    for (size_t i = 0; i < fileLoc.size(); ++i) {
-        if (fileLoc[i] == '/' || fileLoc[i] == '\\') {
-            hasSep = true;
-            break;
-        }
-    }
-    if (!hasSep) {
+    for (char c : fileLoc)
+        if (c == '/' || c == '\\') { hasSep = true; break; }
+
+    if (!hasSep)
         fileLoc = DATA_DIR + fileLoc;
-    }
 
     inputFile.open(fileLoc.c_str());
     if (!inputFile.is_open()) {
-        std::cerr << "Error: could not open file: " << fileLoc << std::endl;
+        std::cerr << "ERROR: could not open file: " << fileLoc << "\n";
         return;
     }
 
@@ -99,50 +105,39 @@ void calcScore::fileImportFromGTK(const std::string& path) {
     inputFile.seekg(0);
 }
 
-int calcScore::checkFile(void) const {
+int calcScore::checkFile() const {
     return (isFileUploaded && inputFile.is_open()) ? 1 : 0;
 }
 
-void calcScore::readGradeWeights(std::fstream& file){
-    // File line format: "15 15 10 40 20"
-    //   labs quizzes midterms project final
-    // as 0.15, 0.15, 0.10, 0.40, 0.20
+void calcScore::readGradeWeights(fstream& file){
     double w[5];
-
     for (int i = 0; i < 5; ++i) {
         if (!(file >> w[i])) {
-            std::cerr << "Failed to read grade weights from file.\n";
+            std::cerr << "ERROR: failed to read grade weights\n";
             return;
         }
     }
-
-    // Convert percentages → decimals
     for (int i = 0; i < 5; ++i)
         gradeWeights[i] = w[i] / 100.0;
 }
 
-
-std::string calcScore::readRawData(void) {
-    std::string formatted;
-    std::string line;
-
+std::string calcScore::readRawData(){
     if (!inputFile.is_open())
         return "<No file open>\n";
 
+    std::string formatted, line;
     inputFile.clear();
     inputFile.seekg(0);
 
-    while (std::getline(inputFile, line)) {
-        formatted += line;
-        formatted += '\n';
-    }
+    while (std::getline(inputFile, line))
+        formatted += line + '\n';
 
     inputFile.clear();
     inputFile.seekg(0);
     return formatted;
 }
 
-void calcScore::countStudentsInFile(void) {
+void calcScore::countStudentsInFile(){
     if (!inputFile.is_open()) {
         classSize = 0;
         return;
@@ -152,583 +147,301 @@ void calcScore::countStudentsInFile(void) {
     inputFile.seekg(0);
 
     std::string line;
-    // Skip first 4 lines
-    int headerLines = 4;
-    for (int i = 0; i < headerLines; ++i) {
-        if (!std::getline(inputFile, line)) {
-            classSize = 0;
-            return;
-        }
-    }
+
+    // Skip header lines
+    for (int i = 0; i < 4; ++i)
+        if (!std::getline(inputFile, line)) return;
 
     int count = 0;
-    while (std::getline(inputFile, line)) {
-        if (nonemptyLine(line))
-            ++count;
-    }
+    while (std::getline(inputFile, line))
+        if (nonemptyLine(line)) ++count;
 
     classSize = count;
 
     inputFile.clear();
-    inputFile.seekg(0); //ove cursor back to beginning
+    inputFile.seekg(0);
 }
 
-// ------------------------------------------------------------------------------------------------
 
-void calcScore::getTotalAssignments(fstream& file, int (&totalAssignmentsArray)[5]) {
-    for (int i = 0; i < 5; ++i) {
-        file >> totalAssignmentsArray[i];
-    }
+// DATA VECTORS + POPULATION
+void calcScore::getTotalAssignments(fstream& file, int (&arr)[5]){
+    for (int i = 0; i < 5; ++i)
+        file >> arr[i];
 }
 
-void calcScore::populateGradeVector(int (&totalAssignmentAmount)[5],
+void calcScore::populateGradeVector(int (&amount)[5],
                                     vector<vector<vector<double>>>& grades,
-                                    int amountOfStudents) {
+                                    int nStudents){
     grades.clear();
-    // +1: row 0 is max scores, rows 1..amountOfStudents are students
-    for (int s = 0; s < amountOfStudents + 1; ++s) {
+    for (int s = 0; s < nStudents + 1; ++s) {
         vector<vector<double>> student;
-        for (int cat = 0; cat < 5; ++cat) {
-            vector<double> category(totalAssignmentAmount[cat], 0.0);
-            student.push_back(category);
-        }
+        for (int c = 0; c < 5; ++c)
+            student.emplace_back(amount[c], 0.0);
         grades.push_back(student);
     }
 }
 
-void calcScore::populateStudentVector(int (&totalAssignmentAmount)[5],
+void calcScore::populateStudentVector(int (&)[5],
                                       vector<vector<double>>& grades,
-                                      int amountOfStudents) {
-    (void)totalAssignmentAmount; // not actually needed for shape
+                                      int nStudents){
     grades.clear();
-    for (int s = 0; s < amountOfStudents; ++s) {
-        vector<double> row(5, 0.0);
-        grades.push_back(row);
-    }
+    for (int i = 0; i < nStudents; ++i)
+        grades.emplace_back(5, 0.0);
 }
 
-void calcScore::getPoints(fstream& file, vector<vector<vector<double>>>& grades)
-{
-    // grades[0] is the "max scores" row
-    // grades[1..N] are per-student rows
-    if (grades.empty())
-        return;
+void calcScore::getPoints(fstream& file, vector<vector<vector<double>>>& grades){
+    if (grades.empty()) return;
 
     studentIDs.clear();
+    int nStudents = grades.size() - 1;
 
-    int nStudents = static_cast<int>(grades.size()) - 1;
+    // Read max scores
+    for (int c = 0; c < 5; ++c)
+        for (double& v : grades[0][c])
+            file >> v;
 
-    // 1) Read max scores line into grades[0]
-    for (int cat = 0; cat < 5; ++cat) {
-        for (size_t k = 0; k < grades[0][cat].size(); ++k) {
-            file >> grades[0][cat][k];
-        }
-    }
-
-    // 2) For each student: ID + all category scores
+    // Read student rows
     for (int s = 1; s <= nStudents; ++s) {
-        int id = 0;
+        int id;
         file >> id;
         studentIDs.push_back(id);
 
-        for (int cat = 0; cat < 5; ++cat) {
-            for (size_t k = 0; k < grades[s][cat].size(); ++k) {
-                file >> grades[s][cat][k];
-            }
-        }
+        for (int c = 0; c < 5; ++c)
+            for (double& v : grades[s][c])
+                file >> v;
     }
 }
- 
 
-void calcScore::dropLowestScore(vector<vector<vector<double>>>& grades, int typeOfAssignment) {
-    if (typeOfAssignment < 0 || typeOfAssignment >= 5)
-        return;
 
-    // Row 0 is max scores, skip it
-    int nStudents = (int)grades.size() - 1;
+// DROP LOWEST SCORE
+void calcScore::dropLowestScore(vector<vector<vector<double>>>& grades, int type)
+{
+    if (type < 0 || type >= 5) return;
+
+    int nStudents = grades.size() - 1;
     for (int s = 1; s <= nStudents; ++s) {
-        std::vector<double>& catGrades = grades[s][typeOfAssignment];
-        int n = (int)catGrades.size();
-        if (n <= 0) continue;
+        auto& cat = grades[s][type];
+        if (cat.empty()) continue;
 
-        // find index of minimum
-        int minIdx = 0;
-        for (int i = 1; i < n; ++i) {
-            if (catGrades[i] < catGrades[minIdx])
+        size_t minIdx = 0;
+        for (size_t i = 1; i < cat.size(); ++i)
+            if (cat[i] < cat[minIdx])
                 minIdx = i;
-        }
-        // erase one lowest
-        catGrades.erase(catGrades.begin() + minIdx);
+
+        cat.erase(cat.begin() + minIdx);
     }
 }
 
-void calcScore::getTotalScoresOfOneCategory(vector<vector<vector<double>>>& grades,
-                                            int assignmentType,
-                                            vector<vector<vector<double>>>& totalCategoryPoints) {
-    if (assignmentType < 0 || assignmentType >= 5)
-        return;
 
-    int nStudents = (int)grades.size() - 1;
-    for (int s = 1; s <= nStudents; ++s) {
-        double sum = 0.0;
-        const std::vector<double>& cat = grades[s][assignmentType];
-        for (size_t k = 0; k < cat.size(); ++k) {
-            sum += cat[k];
-        }
-        // students in totalCategoryPoints are 0..nStudents-1
-        totalCategoryPoints[s - 1][assignmentType][0] = sum;
-    }
-}
-
-void calcScore::getIndividualStudentPointsTotal(vector<vector<vector<double>>>& grades,
-                                                int studentNumber, vector<double>& totals) {
-    totals.clear();
-    if (studentNumber < 0 || studentNumber >= (int)grades.size())
-        return;
-
-    for (int cat = 0; cat < 5; ++cat) {
-        double sum = 0.0;
-        const std::vector<double>& catGrades = grades[studentNumber][cat];
-        for (size_t k = 0; k < catGrades.size(); ++k) {
-            sum += catGrades[k];
-        }
-        totals.push_back(sum);
-    }
-}
-
-void calcScore::calculatePercentage(double grade, double total, double gradeWeight, vector<double>& out) {
-    double pct = 0.0;
-    if (total > 0.0) {
-        double raw = grade / total;          // 0..1
-        pct = raw * gradeWeight;            // weighted contribution 0..1
-    }
+// PERCENTAGE + LETTER GRADES
+void calcScore::calculatePercentage(double grade, double total,
+                                    double weight, vector<double>& out){
+    double pct = (total > 0) ? (grade / total) * weight : 0.0;
     out.push_back(pct);
 }
 
-void calcScore::calculateClassPercentage(const vector<vector<vector<double>>>& grade, const vector<double>& total,
-                                         double gradeWeight, vector<vector<double>>& out, int assignmentType) {
-    if (assignmentType < 0 || assignmentType >= 5)
-        return;
-
-    // Use the size of 'out' (students), not 'grade' (which has an extra row)
-    int numStudents = (int)out.size();
-
-    for (int i = 0; i < numStudents; ++i) {
-        double pts = grade[i][assignmentType][0];   // total points this student earned
-        double maxPts = total[assignmentType];         // total possible points for category
-
-        double contrib = 0.0;
-        if (maxPts > 0.0) {
-            double raw = pts / maxPts;   // fraction 0..1
-            contrib    = raw * gradeWeight;
-        }
-        out[i][assignmentType] = contrib; // safe: i < out.size()
-    }
-}
-
-
-void calcScore::getAverageOfCategory(double pointsEarned, int amountOfAssignments, vector<double>& avgOfCategory) {
-    if (amountOfAssignments <= 0)
-        avgOfCategory.push_back(0.0);
-    else
-        avgOfCategory.push_back(pointsEarned / (double)amountOfAssignments);
-}
-
-void calcScore::getAverageOfCategoryOfClass(const vector<vector<double>>& calculated, int assignmentType, vector<double>& averageOfSingleCategory) {
-    double sum = 0.0;
-    int count = 0;
-    for (size_t i = 0; i < calculated.size(); ++i) {
-        if ((int)calculated[i].size() > assignmentType) {
-            sum += calculated[i][assignmentType];
-            count++;
-        }
-    }
-    if (count > 0)
-        averageOfSingleCategory.push_back(sum / (double)count);
-    else
-        averageOfSingleCategory.push_back(0.0);
-}
-
-// Computes TOTAL weighted percentage for each student.
-//
-// Input row (before):
-//   [ lab%, quiz%, exam%, project%, final% ]
-//
-// Output row (after):
-//   [ lab%, quiz%, exam%, project%, final%, TOTAL% ]
-//
-// TOTAL% is simply the sum of the 5 category percentages.
-void calcScore::getTotalPercentage(std::vector<std::vector<double>>& classPercentages) {
-    for (size_t i = 0; i < classPercentages.size(); ++i) {
-        double total = 0.0;
-
-        // only the first 5 entries: lab..final
-        for (int cat = 0; cat < 5 && cat < (int)classPercentages[i].size(); ++cat) {
-            total += classPercentages[i][cat];
-        }
-
-        // store TOTAL at index 5
-        classPercentages[i].push_back(total);
-    }
-}
-
-
-// ------------------------------------------------------------------------
-// letter grade stuff (tons bc simplifying all would take too long)
-char calcScore::letterFromTotal(double total) const {
-    // total is 0..1
-    if (total >= GradeA)      return 'A';
-    else if (total >= GradeB) return 'B';
-    else if (total >= GradeC) return 'C';
-    else if (total >= GradeD) return 'D';
-    else                      return 'F';
-}
-
-void calcScore::computeLetterGrades(void) {
+void calcScore::computeLetterGrades(){
     letterGrades.clear();
-    letterGrades.reserve(calculatedClassPercentages.size());
-
-    for (size_t i = 0; i < calculatedClassPercentages.size(); ++i) {
-        const std::vector<double>& row = calculatedClassPercentages[i];
-        double total = 0.0;
-        if (row.size() >= 6)
-            total = row[5];
-        else
-            total = sumVector(row);
-
+    for (auto& row : calculatedClassPercentages) {
+        double total = row[5];
         letterGrades.push_back(letterFromTotal(total));
     }
 }
 
-std::string calcScore::getLetterGrade(vector<double>& percentages) {
-    double total = sumVector(percentages); // 0..1
-    percentages.push_back(total);
-    char g = letterFromTotal(total);
-    return std::string(1, g);
+char calcScore::letterFromTotal(double t) const{
+    if (t >= GradeA) return 'A';
+    if (t >= GradeB) return 'B';
+    if (t >= GradeC) return 'C';
+    if (t >= GradeD) return 'D';
+    return 'F';
 }
 
-std::string calcScore::getLetterGradeSorted(const vector<double>& percentages) {
+
+// MISSING FUNCTION (ADDED): getLetterGradeSorted()
+string calcScore::getLetterGradeSorted(const vector<double>& percentages){
     double total = 0.0;
+
     if (percentages.size() > 5)
         total = percentages[5];
     else
         total = sumVector(percentages);
-    char g = letterFromTotal(total);
-    return std::string(1, g);
+
+    return string(1, letterFromTotal(total));
 }
 
-// ------------------------------------------------------------------------
-// SORTS
-void calcScore::bubbleSort(std::vector<std::vector<double>>& classPercentages) {
-    int n = (int)classPercentages.size();
-    if (n <= 1) return;
 
-    for (int i = 0; i < n - 1; ++i) {
-        for (int j = 0; j < n - 1 - i; ++j) {
-            double ta = 0.0, tb = 0.0;
-            if (classPercentages[j].size() > 5)
-                ta = classPercentages[j][5];
-            if (classPercentages[j+1].size() > 5)
-                tb = classPercentages[j+1][5];
-            if (tb > ta) {
-                std::vector<double> tmp = classPercentages[j];
-                classPercentages[j] = classPercentages[j+1];
-                classPercentages[j+1] = tmp;
+// SORTING FUNCTIONS  (Correctly qualified to avoid linker errors)
+void calcScore::sortByStudentID(){
+    int n = studentIDs.size();
+    for (int i = 0; i < n - 1; ++i)
+        for (int j = 0; j < n - 1 - i; ++j)
+            if (studentIDs[j] > studentIDs[j+1]) {
+
+                std::swap(studentIDs[j], studentIDs[j+1]);
+                std::swap(letterGrades[j], letterGrades[j+1]);
+                std::swap(calculatedClassPercentages[j], calculatedClassPercentages[j+1]);
             }
-        }
-    }
 }
 
-void calcScore::sortByStudentID() {
-    int n = (int)studentIDs.size();
-    if (n <= 1) return;
-
-    for (int i = 0; i < n - 1; ++i) {
-        for (int j = 0; j < n - 1 - i; ++j) {
-            if (studentIDs[j] > studentIDs[j + 1]) {
-                int tID = studentIDs[j];
-                studentIDs[j] = studentIDs[j + 1];
-                studentIDs[j + 1] = tID;
-
-                if (j < (int)letterGrades.size() && j + 1 < (int)letterGrades.size()) {
-                    char tLG = letterGrades[j];
-                    letterGrades[j] = letterGrades[j + 1];
-                    letterGrades[j + 1] = tLG;
-                }
-
-                if (j < (int)calculatedClassPercentages.size() &&
-                    j + 1 < (int)calculatedClassPercentages.size()) {
-                    std::vector<double> tmp = calculatedClassPercentages[j];
-                    calculatedClassPercentages[j] = calculatedClassPercentages[j+1];
-                    calculatedClassPercentages[j+1] = tmp;
-                }
+void calcScore::sortByLetterGrade(){
+    int n = letterGrades.size();
+    for (int i = 0; i < n - 1; ++i)
+        for (int j = 0; j < n - 1 - i; ++j)
+            if (letterGrades[j] > letterGrades[j+1]) {
+                std::swap(letterGrades[j], letterGrades[j+1]);
+                std::swap(studentIDs[j], studentIDs[j+1]);
+                std::swap(calculatedClassPercentages[j], calculatedClassPercentages[j+1]);
             }
-        }
-    }
 }
 
-void calcScore::sortByLetterGrade() {
-    int n = (int)letterGrades.size();
-    if (n <= 1) return;
+void calcScore::sortByTotalPerc(){
+    int n = calculatedClassPercentages.size();
+    for (int i = 0; i < n - 1; ++i)
+        for (int j = 0; j < n - 1 - i; ++j)
+            if (calculatedClassPercentages[j][5] < calculatedClassPercentages[j+1][5]) {
 
-    for (int i = 0; i < n - 1; ++i) {
-        for (int j = 0; j < n - 1 - i; ++j) {
-            char la = letterGrades[j];
-            char lb = letterGrades[j + 1];
-
-            double ta = 0.0, tb = 0.0;
-            if (j < (int)calculatedClassPercentages.size() &&
-                calculatedClassPercentages[j].size() > 5)
-                ta = calculatedClassPercentages[j][5];
-            if (j+1 < (int)calculatedClassPercentages.size() &&
-                calculatedClassPercentages[j+1].size() > 5)
-                tb = calculatedClassPercentages[j+1][5];
-
-            bool swapNeeded = false;
-            if (la > lb) swapNeeded = true;
-            else if (la == lb && ta < tb) swapNeeded = true;
-
-            if (swapNeeded) {
-                char tLG = letterGrades[j];
-                letterGrades[j] = letterGrades[j + 1];
-                letterGrades[j + 1] = tLG;
-
-                if (j < (int)studentIDs.size() && j+1 < (int)studentIDs.size()) {
-                    int tID = studentIDs[j];
-                    studentIDs[j] = studentIDs[j+1];
-                    studentIDs[j+1] = tID;
-                }
-
-                if (j < (int)calculatedClassPercentages.size() &&
-                    j+1 < (int)calculatedClassPercentages.size()) {
-                    std::vector<double> tmp = calculatedClassPercentages[j];
-                    calculatedClassPercentages[j] = calculatedClassPercentages[j+1];
-                    calculatedClassPercentages[j+1] = tmp;
-                }
+                std::swap(calculatedClassPercentages[j], calculatedClassPercentages[j+1]);
+                std::swap(studentIDs[j], studentIDs[j+1]);
+                std::swap(letterGrades[j], letterGrades[j+1]);
             }
-        }
-    }
 }
 
-void calcScore::sortByTotalPerc(void) {
-    int n = (int)calculatedClassPercentages.size();
-    if (n <= 1) return;
 
-    for (int i = 0; i < n - 1; ++i) {
-        for (int j = 0; j < n - 1 - i; ++j) {
-            double ta = 0.0, tb = 0.0;
-            if (calculatedClassPercentages[j].size() > 5)
-                ta = calculatedClassPercentages[j][5];
-            if (calculatedClassPercentages[j+1].size() > 5)
-                tb = calculatedClassPercentages[j+1][5];
-
-            if (tb > ta) {
-                std::vector<double> tmp = calculatedClassPercentages[j];
-                calculatedClassPercentages[j] = calculatedClassPercentages[j+1];
-                calculatedClassPercentages[j+1] = tmp;
-
-                if (j < (int)studentIDs.size() && j+1 < (int)studentIDs.size()) {
-                    int tID = studentIDs[j];
-                    studentIDs[j] = studentIDs[j+1];
-                    studentIDs[j+1] = tID;
-                }
-                if (j < (int)letterGrades.size() && j+1 < (int)letterGrades.size()) {
-                    char tLG = letterGrades[j];
-                    letterGrades[j] = letterGrades[j+1];
-                    letterGrades[j+1] = tLG;
-                }
-            }
-        }
-    }
-}
-
-// ------------------------------------------------------------------------
 // GENERATE REPORTS
-void calcScore::generateReportClass(int classSizeParam, int sortSelect, int isGradesDropped)
-{
+void calcScore::generateReportClass(int classSizeParam, int sortSelect, int isDropped){
     if (!inputFile.is_open()) {
-        std::cerr << "generateReportClass: inputFile is not open\n";
+        std::cerr << "ERROR: File not open.\n";
         return;
     }
 
-    // Figure out how many students we actually have
     int nStudents = classSize;
     if (nStudents <= 0 && classSizeParam > 0)
         nStudents = classSizeParam;
+
     if (nStudents <= 0) {
-        countStudentsInFile();   // uses the file to set classSize
+        countStudentsInFile();
         nStudents = classSize;
     }
-    if (nStudents <= 0) {
-        std::cerr << "generateReportClass: class size is zero\n";
-        return;
-    }
 
-    // Clear all previous computed data
     vector_dumptruck();
 
-    // Start reading from the top of the file
     inputFile.clear();
     inputFile.seekg(0);
 
-    // 1) Skip the weights line
     readGradeWeights(inputFile);
-
-    // 2) Read counts: labs, quizzes, midterms, project, final
     getTotalAssignments(inputFile, totalAssignments);
-
-    // 3) Read "drops" per category
     getTotalAssignments(inputFile, totalAssignmentsDropped);
 
-    // 4) Now file is at the "max scores" line.
-    //    We build allGrades with row 0 = max scores, rows 1..nStudents = students.
     populateGradeVector(totalAssignments, allGrades, nStudents);
-    getPoints(inputFile, allGrades);    // fills max scores + student scores + studentIDs
+    getPoints(inputFile, allGrades);
 
-    // Optionally drop lowest scores in each category
-    if (isGradesDropped) {
-        for (int cat = 0; cat < 5; ++cat) {
-            int drops = totalAssignmentsDropped[cat];
-            while (drops > 0) {
-                dropLowestScore(allGrades, cat);
-                totalAssignments[cat]--;   // one assignment fewer in that category
-                --drops;
+    if (isDropped) {
+        for (int c = 0; c < 5; ++c) {
+            int drops = totalAssignmentsDropped[c];
+            while (drops-- > 0) {
+                dropLowestScore(allGrades, c);
+                totalAssignments[c]--;
             }
         }
     }
 
-    // Compute total possible points per category (from the max-scores row)
-    std::vector<double> totalPointsPossible(5, 0.0);
-    for (int cat = 0; cat < 5; ++cat) {
-        const std::vector<double>& maxScores = allGrades[0][cat];
+    vector<double> totalPossible(5, 0.0);
+
+    for (int c = 0; c < 5; ++c) {
         double sum = 0.0;
-        int count = totalAssignments[cat];
-        for (int k = 0; k < count && k < (int)maxScores.size(); ++k) {
-            sum += maxScores[k];
-        }
-        totalPointsPossible[cat] = sum;
+        for (int k = 0; k < totalAssignments[c]; ++k)
+            sum += allGrades[0][c][k];
+        totalPossible[c] = sum;
     }
 
-    // Prepare per-student percentages: nStudents rows × 6 columns
-    // [0]=lab, [1]=quiz, [2]=midterms, [3]=project, [4]=final, [5]=TOTAL
-    calculatedClassPercentages.clear();
-    calculatedClassPercentages.resize(nStudents, std::vector<double>(6, 0.0));
+    calculatedClassPercentages.assign(nStudents, std::vector<double>(6, 0.0));
 
-    // For each student, compute category contributions
     for (int s = 0; s < nStudents; ++s) {
-        int rowIndex = s + 1; // because row 0 is max scores
-
-        double totalContrib = 0.0;  // sum of 5 components
-
-        for (int cat = 0; cat < 5; ++cat) {
-            const std::vector<double>& scores = allGrades[rowIndex][cat];
+        double total = 0.0;
+        for (int c = 0; c < 5; ++c) {
             double earned = 0.0;
-            int count = totalAssignments[cat];
+            for (double score : allGrades[s+1][c])
+                earned += score;
 
-            for (int k = 0; k < count && k < (int)scores.size(); ++k) {
-                earned += scores[k];
-            }
+            double contrib = (totalPossible[c] > 0)
+                ? (earned / totalPossible[c]) * gradeWeights[c]
+                : 0.0;
 
-            double maxPts = totalPointsPossible[cat];
-            double contrib = 0.0;
-            if (maxPts > 0.0) {
-                double raw = earned / maxPts;      // fraction (0..1) for this category
-                contrib = raw * gradeWeights[cat]; // weighted contribution to final grade
-            }
-            calculatedClassPercentages[s][cat] = contrib;
-            totalContrib += contrib;
+            calculatedClassPercentages[s][c] = contrib;
+            total += contrib;
         }
-
-        // store TOTAL in column 5
-        calculatedClassPercentages[s][5] = totalContrib;
+        calculatedClassPercentages[s][5] = total;
     }
 
-
-    // Compute letter grades for each student
     computeLetterGrades();
 
-    // Sorting, using your existing helpers
     switch (sortSelect) {
-        case 1: // sort by student ID
-            sortByStudentID();
-            break;
-        case 2: // sort by letter grade
-            sortByLetterGrade();
-            break;
-        case 3: // sort by total percentage
-            sortByTotalPerc();
-            break;
-        default:
-            // no sorting
-            break;
+        case 1: sortByStudentID();   break;
+        case 2: sortByLetterGrade(); break;
+        case 3: sortByTotalPerc();   break;
     }
 }
 
-void calcScore::generateReportOneStudent(int isGradesDropped, int studentIndex) {
-    // Make sure class report is up to date
-    int n = classSize;
-    if (n <= 0) {
+void calcScore::generateReportOneStudent(int isDropped, int studentIndex){
+    if (classSize <= 0)
         countStudentsInFile();
-        n = classSize;
-    }
-    generateReportClass(n, /*sortSelect*/ 0, isGradesDropped);
+
+    generateReportClass(classSize, 0, isDropped);
 
     calculatedPercentages.clear();
-
-    if (studentIndex < 0 || studentIndex >= (int)calculatedClassPercentages.size())
-        return;
-
-    // Copy this student's 5 category contributions + total
-    calculatedPercentages = calculatedClassPercentages[studentIndex];
+    if (studentIndex >= 0 && studentIndex < (int)calculatedClassPercentages.size())
+        calculatedPercentages = calculatedClassPercentages[studentIndex];
 }
 
-// ------------------------------------------------------------------------
-// THRESHOLD (DO WE STILL NEED THIS?)
-void calcScore::threshScore(double thresh, int isHigh) {
+
+// THRESHOLD FILTER PRINTING
+void calcScore::threshScore(double thresh, int isHigh){
     if (calculatedClassPercentages.empty()) {
         cout << "No class data.\n";
         return;
     }
 
-    double t = thresh / TO_PERCENT; // convert % to fraction
-    cout << "Students with total "
-         << (isHigh ? ">=" : "<=") << " " << thresh << "%:\n";
+    double fraction = thresh / 100.0;
+
+    cout << "Students with TOTAL "
+         << (isHigh ? ">=" : "<=") << " " << thresh << "%\n";
 
     for (size_t i = 0; i < calculatedClassPercentages.size(); ++i) {
-        if (calculatedClassPercentages[i].size() <= 5) continue;
         double total = calculatedClassPercentages[i][5];
-        bool ok = isHigh ? (total >= t) : (total <= t);
-        if (ok) {
-            char letter = letterFromTotal(total);
-            cout << "  " << std::fixed << std::setprecision(2)
-                 << total * TO_PERCENT << "%  (" << letter << ")\n";
+
+        if (isHigh ? (total >= fraction) : (total <= fraction)) {
+            cout << "  " << total * 100.0 << "% ("
+                 << letterFromTotal(total) << ")\n";
         }
     }
     cout << "\n";
 }
 
-void calcScore::testPrintVector(vector<vector<double>>& v) {
-    cout << "Vector dump:\n";
-    for (size_t i = 0; i < v.size(); ++i) {
-        for (size_t j = 0; j < v[i].size(); ++j)
-            cout << v[i][j] << " ";
+
+// DEBUG VECTOR PRINT
+void calcScore::testPrintVector(vector<vector<double>>& grid)
+{
+    cout << "Debug print:\n";
+    for (auto& row : grid) {
+        for (double v : row)
+            cout << v << " ";
         cout << "\n";
     }
     cout << "\n";
 }
 
-// ------------------------------------------------------------------------
-// setters / getters
+
+// SETTERS / GETTERS
 void calcScore::setThreshold(int newThreshold) {
-    threshold = (double)newThreshold / TO_PERCENT; // store as 0..1 fraction
+    threshold = newThreshold / 100.0;
 }
 
-void calcScore::setStudentID(int newStudentID) {
-    studentID = newStudentID;
+void calcScore::setStudentID(int id) {
+    studentID = id;
 }
 
-void calcScore::setClassSize(int newClassSize) {
-    classSize = newClassSize;
+void calcScore::setClassSize(int s) {
+    classSize = s;
 }
 
 void calcScore::setTotalAssignmentsDropped(int (&arr)[5]) {
@@ -749,89 +462,69 @@ int calcScore::getClassSize() const {
     return classSize;
 }
 
-const std::vector<std::vector<double>>& calcScore::getClassPercentages() const {
+const vector<vector<double>>& calcScore::getClassPercentages() const {
     return calculatedClassPercentages;
 }
 
-const std::vector<double>& calcScore::getAverageScores() const {
+const vector<double>& calcScore::getAverageScores() const {
     return averageScores;
 }
 
-double calcScore::getGradeWeight(int category) const {
-    if (category < 0 || category >= 5) return 0.0;
-    return gradeWeights[category];
+double calcScore::getGradeWeight(int category) const{
+    return (category >= 0 && category < 5) ? gradeWeights[category] : 0.0;
 }
 
-// Format a 0..1 fraction as a percent with exactly 1 decimal, e.g. 0.875 -> "87.5"
-std::string calcScore::percentToDecimal(double fraction) const {
-    // fraction is 0..1; multiply so we can round to 1 decimal place
-    double scaled = fraction * 1000.0;               // percent * 10
-    int iv = static_cast<int>(std::floor(scaled + 0.5)); // round to nearest int
 
-    int whole = iv / 10;   // whole percent
-    int frac  = iv % 10;   // 1 decimal digit
+// STRING FORMATTING HELPERS
+std::string calcScore::percentToDecimal(double fraction) const{
+    double scaled = fraction * 1000.0;
+    int iv = (int)std::round(scaled);
 
-    std::string s = std::to_string(whole);
-    s.push_back('.');
-    s.push_back(static_cast<char>('0' + frac));
-    return s;
+    int whole = iv / 10;
+    int tenths = iv % 10;
+
+    return std::to_string(whole) + "." + std::to_string(tenths);
 }
 
-// Left-align s in a field of given width (pad with spaces or trim)
-std::string calcScore::padLeft(const std::string& s, int width) const {
-    int len = static_cast<int>(s.size());
-    if (len >= width)
+std::string calcScore::padLeft(const std::string& s, int width) const{
+    if ((int)s.size() >= width)
         return s.substr(0, width);
-    return s + std::string(width - len, ' ');
+    return s + std::string(width - s.size(), ' ');
 }
 
-std::string calcScore::getClassReportString()const{
+std::string calcScore::getClassReportString() const{
+    if (calculatedClassPercentages.empty())
+        return "ERROR\n";
+
     std::string out;
 
-    if (calculatedClassPercentages.empty()) {
-        out += "ERROR\n";
-        return out;
-    }
-
-    // Header row
-    out += padLeft("ID",        10);
-    out += padLeft("Lab",       8);
-    out += padLeft("Quiz",      8);
-    out += padLeft("Exam",      8);
-    out += padLeft("Proj",      8);
-    out += padLeft("Final",     8);
-    out += padLeft("Total %",   6);
-    out += padLeft("LTTR",      4); // lesbians to the rescure
+    out += padLeft("ID", 10);
+    out += padLeft("Lab", 8);
+    out += padLeft("Quiz", 8);
+    out += padLeft("Exam", 8);
+    out += padLeft("Proj", 8);
+    out += padLeft("Final", 8);
+    out += padLeft("Total%", 8);
+    out += padLeft("LTTR", 4);
     out += "\n";
 
     out += "----------------------------------------------------------------\n";
 
-    // Each student row
-    for (std::size_t i = 0; i < calculatedClassPercentages.size(); ++i) {
+    for (size_t i = 0; i < calculatedClassPercentages.size(); ++i) {
+
         int id = (i < studentIDs.size() ? studentIDs[i] : 0);
         char letter = (i < letterGrades.size() ? letterGrades[i] : '?');
-
         const auto& row = calculatedClassPercentages[i];
 
-        double lab   = row.size() > 0 ? row[0] : 0.0;
-        double quiz  = row.size() > 1 ? row[1] : 0.0;
-        double exam  = row.size() > 2 ? row[2] : 0.0;
-        double proj  = row.size() > 3 ? row[3] : 0.0;
-        double fin   = row.size() > 4 ? row[4] : 0.0;
-        double total = row.size() > 5 ? row[5] : 0.0;
-
-        std::string line;
-        line += padLeft(std::to_string(id),    10);
-        line += padLeft(percentToDecimal(lab),  8);
-        line += padLeft(percentToDecimal(quiz), 8);
-        line += padLeft(percentToDecimal(exam), 8);
-        line += padLeft(percentToDecimal(proj), 8);
-        line += padLeft(percentToDecimal(fin),  8);
-        line += padLeft(percentToDecimal(total),8);
-        line += padLeft(std::string(1, letter), 4);
-        line += "\n";
-
-        out += line;
+        out += padLeft(std::to_string(id), 10);
+        out += padLeft(percentToDecimal(row[0]), 8);
+        out += padLeft(percentToDecimal(row[1]), 8);
+        out += padLeft(percentToDecimal(row[2]), 8);
+        out += padLeft(percentToDecimal(row[3]), 8);
+        out += padLeft(percentToDecimal(row[4]), 8);
+        out += padLeft(percentToDecimal(row[5]), 8);
+        out += padLeft(std::string(1, letter), 4);
+        out += "\n";
     }
 
     return out;

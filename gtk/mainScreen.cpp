@@ -1,3 +1,12 @@
+/*
+ * This C++ header declares the mainScreen class, which provides the main
+ * application window for the Grade Calc program. It manages the chart views,
+ * text file menus, sorting options, and profile display.
+ * CECS 275 - Fall 2025
+ * @author Justin Narciso
+ * @author Natasha Kho
+ * @version 3.0.2
+ */
 #include "mainScreen.h"
 #include <iostream>
 
@@ -683,12 +692,6 @@ void mainScreen::computePieFromCalcScore() {
         pieChartData[i] = static_cast<double>(pieCounts[i]) / pieTotalStudents;
     }
 
-    // Debug:
-    std::cout << "Pie fractions A..F: ";
-    for (double f : pieChartData) std::cout << f << " ";
-    std::cout << "\nCounts: ";
-    for (int c : pieCounts) std::cout << c << " ";
-    std::cout << std::endl;
 }
 
 void mainScreen::barMenuResponse(int response_id, Gtk::Dialog* dialog, Gtk::CheckButton* totalBtn, Gtk::CheckButton* labBtn,
@@ -776,12 +779,6 @@ void mainScreen::barMenuResponse(int response_id, Gtk::Dialog* dialog, Gtk::Chec
                     }
                 }
             }
-
-            // DEBUG
-            std::cout << "barChartData size: " << barChartData.size() << "\n";
-            for (double v : barChartData)
-                std::cout << v << " ";
-            std::cout << std::endl;
         }
 
         barChartArea.queue_draw();
@@ -971,6 +968,4 @@ void mainScreen::fileChooserImageResponse(int response_id, Gtk::FileChooserDialo
     this->present();
 
     delete dialog;
-    //profileBox->set_pfpImg()
 }
-

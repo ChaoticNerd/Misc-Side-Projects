@@ -1,38 +1,53 @@
+/**
+ * This C++ program defines a GUI widget for selecting whether a grade is dropped
+ * using a pair of Yes/No toggle buttons.
+ * CECS 275 - Fall 2025
+ * @author Justin Narciso
+ * @author Natasha Kho
+ * @version 1.0.0
+ */
+ 
 #include "DropGradeBtn.h"
-DropGradeBtn::DropGradeBtn() : Gtk::Box(Gtk::Orientation::VERTICAL), 
-                               sepLabel("* Drop lowest scores?"),
-                               dropNoBtn("No (use raw scores)"),
-                               dropYesBtn("Yes (apply drops)") {
-     // set up box to put buttons in
+
+
+// Constructor: Sets up the label and Yes/No buttons.
+DropGradeBtn::DropGradeBtn() :
+  Gtk::Box(Gtk::Orientation::VERTICAL),
+  sepLabel("* Drop lowest scores?"),
+  dropNoBtn("No (use raw scores)"),
+  dropYesBtn("Yes (apply drops)"){
+    // Box layout spacing and behavior
     set_spacing(10);
     set_margin(5);
-
-    // Automatically adjust button box
     set_hexpand(true);
     set_vexpand(false);
-    set_halign(Gtk::Align::FILL); // stretches horizontally
-    set_valign(Gtk::Align::END); // puts at bottom of screen
-    set_homogeneous(true); // all buttons same width
+    set_halign(Gtk::Align::FILL);
+    set_valign(Gtk::Align::END);
+    set_homogeneous(true);  // Make all items the same width
 
-    // Divider
+    // Label formatting
     sepLabel.set_margin_top(10);
     sepLabel.set_halign(Gtk::Align::START);
 
-    // Creates Drop Grade? Buttons
-    dropNoBtn.set_active(true);         // default no
+    // Check button group: No = default, Yes = grouped toggle
+    dropNoBtn.set_active(true);
     dropYesBtn.set_group(dropNoBtn);
 
-    // Add buttons to box
+    // Add all elements to the box
     append(sepLabel);
     append(dropNoBtn);
     append(dropYesBtn);
 }
 
-bool DropGradeBtn::getGradeDropped() const{
+
+// Returns true if the user selected "Yes" (grade is dropped).
+bool DropGradeBtn::getGradeDropped() const {
     return dropYesBtn.get_active();
 }
 
-void DropGradeBtn::setGradeDropped(bool in){
+
+// Sets whether the grade should be dropped (true = yes, false = no).
+void DropGradeBtn::setGradeDropped(bool in) {
     dropYesBtn.set_active(in);
     dropNoBtn.set_active(!in);
 }

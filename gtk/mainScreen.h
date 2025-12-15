@@ -1,5 +1,16 @@
+/*
+ * This C++ header declares the mainScreen class, which provides the main
+ * application window for the Grade Calc program. It manages the chart views,
+ * text file menus, sorting options, and profile display.
+ * CECS 275 - Fall 2025
+ * @author Justin Narciso
+ * @author Natasha Kho
+ * @version 3.0.2
+ */
+
 #ifndef MAINSCREEN_H
 #define MAINSCREEN_H
+
 #include <gtkmm.h>
 #include <cairomm/cairomm.h>
 #include <filesystem>
@@ -11,27 +22,30 @@
 #include "DropGradeBtn.h"
 #include "profile.h"
 
+// Chart type currently being displayed.
 enum class ChartKind {
     None,
     Bar,
     Pie
 };
 
-
-enum class TextFileOption{
+// Options for handling text file operations.
+enum class TextFileOption {
     Upload,
     ViewRaw,
     GenFile
 };
 
-enum class SortByOption{
+// Different sorting categories for class data.
+enum class SortByOption {
     NoSort,
     StudentID,
     LetterGrade,
     TotalPerc
 };
 
-enum class BarChartOption{
+// Options for bar chart categories.
+enum class BarChartOption {
     TotalPercent,
     LabPercent,
     QuizPercent,
@@ -40,89 +54,240 @@ enum class BarChartOption{
     FinalPercent
 };
 
-
-
+/**
+ * @class mainScreen
+ * @brief Main application window for the Grade Calc program.
+ *
+ * This window provides the primary interface for navigating text file
+ * operations, viewing charts, sorting data, and managing the profile box.
+ * It supports dynamic bar and pie chart rendering using Cairo, menus for
+ * selecting chart content, and dialogs for file operations.
+ */
 class mainScreen : public Gtk::Window {
-    public:
-        mainScreen(const Glib::ustring& username);
+public:
+
+    /**
+     * @brief Constructs the mainScreen for the given username.
+     *
+     * Initializes the layout, chart area, action buttons, Undertale-style
+     * message box, and the profile/username panel.
+     *
+     * @param username The username to display in the profile box.
+     */
+    mainScreen(const Glib::ustring& username);
     
-    private:
-        TextFileOption userFileOption = TextFileOption::Upload;
-        SortByOption userSortOption = SortByOption::NoSort;
-        BarChartOption userBarChartOption = BarChartOption::TotalPercent;
-        ChartKind currentChartKind = ChartKind::None;
+private:
+    // State & Options 
 
-        bool is_fullscreen_ = false;
-        bool userDropGrades = false;
-        std::vector<double> pieChartData;  // [A, B, C, D, F] as fractions
-        int pieTotalStudents = 0;       
+    // Tracks which text file action the user selected.
+    TextFileOption userFileOption = TextFileOption::Upload;
 
-        Gtk::Button textFile, barChart, pieChart, sortBy;
-        //Gtk::Image textImg, barImg, pieImg, sortImg, menuSelectImg;
-        Gtk::Label textLabel, barLabel, pieLabel, sortLabel;
-        Gtk::Box buttonBox;
-        Gtk::Box spacer{Gtk::Orientation::VERTICAL};
-        Gtk::Grid screenGrid, battleGrid; 
-        Gtk::Frame battleFrame;
-        Gtk::Label battleText;
+    // Tracks the sorting option chosen in the Sort menu.
+    SortByOption userSortOption = SortByOption::NoSort;
 
-        // Bar chart drawing on main screen
-        Gtk::DrawingArea barChartArea;
-        std::vector<double> barChartData;
+    // Tracks the bar chart category selected by the user.
+    BarChartOption userBarChartOption = BarChartOption::TotalPercent;
 
-        // For pie chart (A, B, C, D, F counts)
-        std::vector<int> pieCounts;  // size 5 when used
+    // Indicates which chart (if any) is currently displayed.
+    ChartKind currentChartKind = ChartKind::None;
 
+    // Tracks fullscreen / windowed mode status.
+    bool is_fullscreen_ = false;
 
-        Glib::RefPtr<Gtk::EventControllerKey> key_controller;
+    // Whether grade dropping (lowest assignment) is enabled.
+    bool userDropGrades = false;
 
-        // custom classes
-        calcScore  score;        // for grade calculations
-        textViewer viewRawText; // to display the raw text
-        textViewer viewSortedResults; // like viewRawText but for the sorted data
-        RandGen    randomScoreFile;
+    // Fractional values for pie chart slices [A,B,C,D,F].
+    std::vector<double> pieChartData;
 
-        bool on_key_pressed(guint keyval, guint /*keycode*/, Gdk::ModifierType /*state*/);
+    // Raw counts for A,B,C,D,F.
+    std::vector<int> pieCounts;
+
+    // Total number of students used to calculate pie chart.
+    int pieTotalStudents = 0;
+
+    // Main UI Widgets
+
+    Gtk::Button textFile, barChart, pieChart, sortBy;
+    Gtk::Label  textLabel, barLabel, pieLabel, sortLabel;
+    Gtk::Box    buttonBox;
+    Gtk::Box    spacer{Gtk::Orientation::VERTICAL};
+    Gtk::Grid   screenGrid, battleGrid; 
+    Gtk::Frame  battleFrame;
+    Gtk::Label  battleText;
+
+    // Drawing area for displaying bar/pie charts.
+    Gtk::DrawingArea barChartArea;
+
+    // Values used to render the bar chart.
+    std::vector<double> barChartData;
+
+    // Keyboard controller for fullscreen toggle and ESC close.
+    Glib::RefPtr<Gtk::EventControllerKey> key_controller;
+
+    // Helper Objects
+
+    calcScore  score;              //< Handles grade calculations and data loading.
+    textViewer viewRawText;        //< Displays raw text file data.
+    textViewer viewSortedResults;  //< Displays sorted class report.
+    RandGen    randomScoreFile;    //< Generates random score files.
+    profileBox menuProfileBox;     //< Displays profile picture + username.
+
+    // Event Handlers & Internal Logic 
+
+    /**
+     * @brief Handles keyboard shortcuts (F11 = fullscreen, ESC = exit).
+     *
+     * @param keyval GTK key value pressed.
+     * @param keycode Unused.
+     * @param state Modifier keys (unused).
+     * @return true if the event was handled.
+     */
+    bool on_key_pressed(guint keyval, guint /*keycode*/, Gdk::ModifierType /*state*/);
+    
+    // Text File Menu 
+
+    /**
+     * @brief Opens a file chooser dialog prompting the user for a .txt file.
+     */
+    void promptFilename(void);
+
+    /**
+     * @brief Handles manual filename entry dialogs.
+     *
+     * @param response_id OK/CANCEL.
+     * @param dialog Pointer to the dialog being handled.
+     * @param entry The text entry containing the filename.
+     */
+    void filenameEntered(int response_id, Gtk::Dialog* dialog, Gtk::Entry* entry);
+
+    /**
+     * @brief Processes the user's selection in the Text File menu.
+     *
+     * @param response_id 1=Generate, 2=View Raw, 3=Upload.
+     * @param dialog Pointer to the menu dialog.
+     */
+    void textFileMenuResponse(int response_id, Gtk::Dialog* dialog);
+
+    /**
+     * @brief Opens an Undertale-style dialog for text file operations.
+     */
+    void openTextMenu(void);
+
+    /**
+     * @brief Handles file chooser results for importing .txt files.
+     *
+     * @param response_id OK/CANCEL.
+     * @param dialog The file chooser dialog.
+     */
+    void fileChooserResponse(int response_id, Gtk::FileChooserDialog* dialog);
+
+    //  Sort Menu 
+
+    /**
+     * @brief Handles user selection in the Sort menu.
+     */
+    void sortMenuResponse(int response_id, Gtk::Dialog* dialog, 
+                          Gtk::CheckButton* studentID,
+                          Gtk::CheckButton* letterGrade,
+                          Gtk::CheckButton* percentages,
+                          DropGradeBtn* gradeDropBtns);
+
+    /**
+     * @brief Opens the sorting options dialog.
+     */
+    void openSortMenu(void);
+
+    //  Button Callbacks 
+
+    /**
+     * @brief Opens text file actions menu.
+     */
+    void on_textFile_clicked(void);
+
+    /**
+     * @brief Opens bar chart options menu.
+     */
+    void on_barChart_clicked(void);
+
+    /**
+     * @brief Opens pie chart options menu.
+     */
+    void on_pieChart_clicked(void);
+
+    /**
+     * @brief Opens sorting options menu.
+     */
+    void on_sortBy_clicked(void);
+
+    //  Bar Chart Logic 
+
+    /**
+     * @brief Opens the bar chart configuration dialog.
+     */
+    void openBarMenu(void);
+
+    /**
+     * @brief Handles bar chart configuration responses.
+     */
+    void barMenuResponse(int response_id, Gtk::Dialog* dialog,
+                         Gtk::CheckButton* totalBtn, Gtk::CheckButton* labBtn,
+                         Gtk::CheckButton* quizBtn, Gtk::CheckButton* examBtn,
+                         Gtk::CheckButton* projectBtn, Gtk::CheckButton* finalBtn,
+                         DropGradeBtn* gradeDropBtns);
+
+    /**
+     * @brief Draws a bar chart into the Cairo rendering context.
+     *
+     * @param cr Cairo drawing context.
+     * @param width  Width of area.
+     * @param height Height of area.
+     */
+    void drawBarChart(const Cairo::RefPtr<Cairo::Context>& cr,
+                      int width, int height);
+
+    //  Pie Chart Logic 
+
+    /**
+     * @brief Opens the pie chart configuration dialog.
+     */
+    void openPieMenu(void);
+
+    /**
+     * @brief Handles pie chart configuration responses.
+     */
+    void pieMenuResponse(int response_id, Gtk::Dialog* dialog,
+                         DropGradeBtn* gradeDropBtns);
+
+    /**
+     * @brief Computes A/B/C/D/F distribution numbers and fractions.
+     */
+    void computePieFromCalcScore(void);
+
+    /**
+     * @brief Draws a pie chart using Cairo.
+     *
+     * @param cr Cairo drawing context.
+     * @param width Chart area width.
+     * @param height Chart area height.
+     */
+    void drawPieChart(const Cairo::RefPtr<Cairo::Context>& cr,
+                      int width, int height);
         
-        /// @brief File menu stuff
-        void promptFilename(void);
-        void filenameEntered(int response_id, Gtk::Dialog* dialog, Gtk::Entry* entry);
-        void textFileMenuResponse(int response_id, Gtk::Dialog* dialog);
-        void openTextMenu(void);
-        void fileChooserResponse(int response_id, Gtk::FileChooserDialog* dialog);
+    //  Profile Picture Dialog 
 
-        // Sort menu stuff
-        void sortMenuResponse(int response_id, Gtk::Dialog* dialog, 
-                              Gtk::CheckButton* studentID, Gtk::CheckButton* letterGrade, Gtk::CheckButton* percentages,
-                              DropGradeBtn* gradeDropBtns);
-        void openSortMenu(void);
+    /**
+     * @brief Opens a file chooser to upload a profile image.
+     */
+    void on_pfpUpload_button_clicked();
 
-        // button callback
-        void on_textFile_clicked(void);
-        void on_barChart_clicked(void);
-        void on_pieChart_clicked(void);
-        void on_sortBy_clicked(void);
-
-        // Chart callbacks (Bar)
-        void openBarMenu(void);
-        void barMenuResponse(int response_id, Gtk::Dialog* dialog, Gtk::CheckButton* totalBtn, Gtk::CheckButton* labBtn,
-                             Gtk::CheckButton* quizBtn, Gtk::CheckButton* examBtn, Gtk::CheckButton* projectBtn, Gtk::CheckButton* finalBtn,
-                             DropGradeBtn* gradeDropBtns);
-
-        // Draw callback for the bar chart
-        void drawBarChart(const Cairo::RefPtr<Cairo::Context>& cr, int width, int height);
-
-        // Chart callbacks (Pie)
-        void openPieMenu(void);
-        void pieMenuResponse(int response_id, Gtk::Dialog* dialog, DropGradeBtn* gradeDropBtns);
-        void computePieFromCalcScore(void);   // helper that uses calcScore
-        void drawPieChart(const Cairo::RefPtr<Cairo::Context>& cr, int width, int height); // draws the piechart
-        
-        //pfp dialogs
-        profileBox menuProfileBox;
-        void on_pfpUpload_button_clicked();
-        void set_profile_image(const Glib::RefPtr<Gio::File>& file);
-        void fileChooserImageResponse(int response_id, Gtk::FileChooserDialog* dialog);
-        
+    /**
+     * @brief Handles the chosen image file from the profile picture dialog.
+     *
+     * @param response_id OK/CANCEL.
+     * @param dialog File chooser dialog instance.
+     */
+    void fileChooserImageResponse(int response_id, Gtk::FileChooserDialog* dialog);
 };
-#endif
+
+#endif // MAINSCREEN_H

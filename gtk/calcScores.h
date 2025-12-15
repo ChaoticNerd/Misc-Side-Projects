@@ -1,3 +1,14 @@
+/**
+ * This C++ program provides functionality to read raw grade data, calculate
+ * percentages, determine letter grades, drop lowest scores, sort results, and
+ * generate class or single-student grade reports.
+ *
+ * CECS 275 - Fall 2025
+ * @author Justin Narciso
+ * @author Natasha Kho
+ * @version 1.0.0
+ */
+
 #ifndef CALCSCORES_H
 #define CALCSCORES_H
 
@@ -5,15 +16,32 @@
 #include <iomanip>
 #include <fstream>
 #include <string>
-#include <cmath>
 #include <vector>
 
 using namespace std;
 
+/**
+ * @class calcScore
+ * @brief Main engine for processing and calculating student grade data.
+ *
+ * Responsibilities:
+ * - Import raw grade files
+ * - Compute category averages and total percentages
+ * - Apply dropped-assignment rules
+ * - Generate class and student reports
+ * - Sort students by various criteria
+ * - Produce formatted output for GUI and charts
+ *
+ * Data structures handled:
+ * - 3D vectors storing raw grades
+ * - Per-student calculated percentages
+ * - Student IDs and final letter grades
+ */
 class calcScore {
    private:
 
-      // Grade weights (A, B, C, D, F)
+
+      // CONSTANTS
       const int TO_PERCENT = 100;
 
       const double GradeA = 0.90;
@@ -21,7 +49,8 @@ class calcScore {
       const double GradeC = 0.70;
       const double GradeD = 0.60;
 
-      // File stream + internal state
+
+      // INTERNAL STATE
       fstream inputFile;
       string fileName;
       string dropped;
@@ -30,147 +59,110 @@ class calcScore {
       vector<double> averageScores;
       vector<vector<double>> calculatedClassPercentages;
       vector<vector<vector<double>>> allGrades;
-      vector<int> studentIDs;     // Stores each student’s ID (1:1 with calculatedClassPercentages rows)
-      vector<char> letterGrades;  // Stores each student’s final letter
+
+      vector<int> studentIDs;
+      vector<char> letterGrades;
 
       double threshold;
       int studentID;
       int classSize;
+
       int totalAssignmentsDropped[5];
       int totalAssignments[5];
-      double gradeWeights[5]; // read from file
+      double gradeWeights[5];
 
       bool isFileUploaded;
 
-      /* 
-         -----------------------------------------------------------
-         PRIVATE UTILITY FUNCTIONS
-         ----------------------------------------------------------- 
-      */
+
+      // PRIVATE UTILITY FUNCTIONS
       bool nonemptyLine(const string& line);
       double sumVector(const vector<double>& v);
-      // static double sumVectorDropped(const vector<double>& v, int dropCount);
 
-      void bubbleSort(vector<vector<double>>& classPercentages);
+      void bubbleSort(vector<vector<double>> &classPercentages);
       void sortByStudentID();
       void sortByLetterGrade();
-      void sortByTotalPerc(void);
+      void sortByTotalPerc();
+
       char letterFromTotal(double total) const;
 
-      void getTotalPercentage(vector<vector<double>>& calculatedClassPercentages);
+      void getPoints(fstream &file, vector<vector<vector<double>>> &allGrades);
+      void getTotalAssignments(fstream &file, int (&arr)[5]);
 
-      void dropLowestScore(vector<vector<vector<double>>>& allGrades, int typeOfAssignment);
+      void populateGradeVector(int (&amount)[5],
+                              vector<vector<vector<double>>> &allGrades,
+                              int nStudents);
 
-      void getPoints(fstream& file, vector<vector<vector<double>>>& allGrades);
-      void getTotalAssignments(fstream& file, int (&totalAssignmentsArray)[5]);
+      void populateStudentVector(int (&amount)[5],
+                              vector<vector<double>> &allGrades,
+                              int nStudents);
 
-      void populateGradeVector(int (&totalAssignmentAmount)[5],
-                              vector<vector<vector<double>>>& allGrades,
-                              int amountOfStudents);
+      void readGradeWeights(fstream &file);
 
-      void populateStudentVector(int (&totalAssignmentAmount)[5],
-                                 vector<vector<double>>& allGrades,
-                                 int amountOfStudents);
+      void dropLowestScore(vector<vector<vector<double>>> &allGrades, int category);
 
-      string getLetterGrade(vector<double>& calculatedPercentages);
+      void calculatePercentage(double earned, double total, double weight,
+                              vector<double> &out);
 
-      void calculatePercentage(double grade, double total, double gradeWeight,
-                              vector<double>& calculatedPercentages);
-      void computeLetterGrades(void);
-      // FIXED: pass large 3D vector by const reference, not by value
-      void calculateClassPercentage(const vector<vector<vector<double>>>& grade,
-                                    const vector<double>& total,
-                                    double gradeWeight,
-                                    vector<vector<double>>& calculatedPercentages,
-                                    int assignmentType);
+      void computeLetterGrades();
 
-      void getAverageOfCategory(double pointsEarned, int amountOfAssignments,
-                                 vector<double>& avgOfCategory);
+      void getAverageOfCategory(double earned, int count, vector<double>& avg);
 
-      void getAverageOfCategoryOfClass(const vector<vector<double>>& calculatedPercentages, int assignmentType, vector<double>& averageOfSingleCategory);
+      void getIndividualStudentPointsTotal(vector<vector<vector<double>>> &allGrades,
+                              int studentNum,
+                              vector<double>& totals);
 
-      void getIndividualStudentPointsTotal(vector<vector<vector<double>>>& allGrades, int studentNumber, vector<double>& totals);
+      // GUI formatting helpers
+      string percentToDecimal(double fraction) const;
+      string padLeft(const string &s, int width) const;
 
-      void getTotalScoresOfOneCategory(vector<vector<vector<double>>>& allGrades,
-                                       int assignmentType,
-                                       vector<vector<vector<double>>>& totalCategoryPoints);
-
-      void readGradeWeights(fstream& file);
-      // -----------------------------------------------------------
-      // GUI/CHARTS HELPERS
-      // -----------------------------------------------------------
-      std::string percentToDecimal(double fraction)const;
-      std::string padLeft(const std::string& s, int width)const;
    public:
 
-      /* 
-         -----------------------------------------------------------
-         CONSTRUCTORS / DESTRUCTOR
-         ----------------------------------------------------------- 
-      */
 
-      calcScore();                 // default constructor
+      // CONSTRUCTORS / DESTRUCTOR
+      calcScore();
       calcScore(fstream inFile, string fileName, int studentID, int classSize);
-      ~calcScore();                // destructor
-      void vector_dumptruck(void); // resets major vectors
+      ~calcScore();
+
+      void vector_dumptruck();
 
 
-      /* 
-         -----------------------------------------------------------
-         MAIN FEATURES
-         ----------------------------------------------------------- 
-      */
+      // MAIN FEATURES
 
-      void generateReportClass(int classSize, int sortSelect, int isGradesDropped);
-      void generateReportOneStudent(int isGradesDropped, int studentNumber);
 
-      int checkFile(void) const;
-      void printMenu(void);
+      void generateReportClass(int classSize, int sortSelect, int isDropped);
+      void generateReportOneStudent(int isDropped, int studentIndex);
+
+      int checkFile() const;
+      void countStudentsInFile();
       void fileImportFromGTK(const string& path);
-
-      void printResults(void);
-      void printClassResults(void);
-      void printClassSortedResults(void);
+      string readRawData();
 
       void threshScore(double threshold, int isHigh);
 
-      string readRawData(void);
-      void countStudentsInFile(void);
 
-      /* 
-         -----------------------------------------------------------
-         DEBUGGING UTILITIES
-         ----------------------------------------------------------- 
-      */
-
+      // DEBUG
       void testPrintVector(vector<vector<double>>& allGrades);
 
 
-      /* 
-         -----------------------------------------------------------
-         SETTERS
-         ----------------------------------------------------------- 
-      */
+      // SETTERS
       void setThreshold(int newThreshold);
-      void setStudentID(int studentID);
-      void setClassSize(int classSize);
-      void setTotalAssignmentsDropped(int (&totalAssignmentsDropped)[5]);
-      void setTotalAssignments(int (&totalAssignments)[5]);
-      void setIsFileUploaded(bool);
+      void setStudentID(int id);
+      void setClassSize(int size);
+      void setTotalAssignmentsDropped(int (&arr)[5]);
+      void setTotalAssignments(int (&arr)[5]);
+      void setIsFileUploaded(bool b);
 
 
-      /* 
-         -----------------------------------------------------------
-         GETTERS (for GUI / charts)
-         ----------------------------------------------------------- 
-      */
-      const vector<vector<double>>& getClassPercentages(void) const;
-      const vector<double>& getAverageScores(void) const;
-      string getLetterGradeSorted(const vector<double>& calculatedPercentages);
+      // GETTERS
+      const vector<vector<double>>& getClassPercentages() const;
+      const vector<double>& getAverageScores() const;
+
+      string getLetterGradeSorted(const vector<double>& percentages);
+
       int getClassSize() const;
       double getGradeWeight(int category) const;
-      string getClassReportString(void)const;
 
+      string getClassReportString() const;
 };
 
-#endif
+#endif // CALCSCORES_H

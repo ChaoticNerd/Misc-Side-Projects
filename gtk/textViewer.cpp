@@ -1,22 +1,31 @@
+/**
+ * This C++ program implements a text viewing window for displaying large
+ * blocks of read-only text in a scrollable Gtk::TextView, with ESC to close.
+ *
+ * CECS 275 - Fall 2025
+ * @author Justin Narciso
+ * @author Natasha Kho
+ */
+
 #include "textViewer.h"
 
-textViewer::textViewer() {
+textViewer::textViewer(){
     set_default_size(1250, 600);
 
-    // create buffer and attach it to the member TextView
+    // Create buffer and attach it to the TextView
     buffer = Gtk::TextBuffer::create();
     textView.set_buffer(buffer);
     textView.set_editable(false);
     set_deletable(false);
     textView.set_wrap_mode(Gtk::WrapMode::WORD_CHAR);
 
-    // scrolled window setup
+    // Scrolled window setup
     scrolledWindow.set_policy(Gtk::PolicyType::AUTOMATIC, Gtk::PolicyType::AUTOMATIC);
     scrolledWindow.set_child(textView);
 
     set_child(scrolledWindow);
 
-    // key controller for ESC to close
+    // Key controller for ESC to close window
     key_controller = Gtk::EventControllerKey::create();
     add_controller(key_controller);
 
@@ -26,15 +35,16 @@ textViewer::textViewer() {
     );
 }
 
-void textViewer::setText(const std::string& text) {
+void textViewer::setText(const std::string& text){
     if (buffer) {
         buffer->set_text(text);
     }
 }
 
-bool textViewer::on_key_pressed(guint keyval, guint /*keycode*/, Gdk::ModifierType /*state*/) {
+bool textViewer::on_key_pressed(guint keyval,
+        guint /*keycode*/, Gdk::ModifierType /*state*/){
     if (keyval == GDK_KEY_Escape) {
-        hide();
+        hide();   // Close the window
         return true;
     }
     return false;
