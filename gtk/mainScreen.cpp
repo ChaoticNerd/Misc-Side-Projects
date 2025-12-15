@@ -1,6 +1,44 @@
 #include "mainScreen.h"
 #include <iostream>
 
+// FONT STUFF
+namespace {
+    void draw_pango_text(const Cairo::RefPtr<Cairo::Context>& cr, const std::string& text,
+                         double x, double y, int font_size, bool center = false){
+        if (text.empty()) return;
+
+        // Create Pango layout tied to Cairo context
+        PangoLayout* layout = pango_cairo_create_layout(cr->cobj());
+        pango_layout_set_text(layout, text.c_str(), -1);
+
+        // Use the Undertale font  loaded in main.cpp
+        PangoFontDescription* desc =
+            pango_font_description_from_string(("Determination Mono " + std::to_string(font_size)).c_str());
+        pango_layout_set_font_description(layout, desc);
+
+        // CENTER FONT
+        int w = 0, h = 0;
+        pango_layout_get_pixel_size(layout, &w, &h);
+
+        double drawX = x;
+        double drawY = y;
+        if (center) {
+            drawX -= w / 2.0;
+            drawY -= h / 2.0;
+        }
+
+        cr->save();
+        cr->set_source_rgb(1.0, 1.0, 1.0); // white text
+        cr->move_to(drawX, drawY);
+        pango_cairo_show_layout(cr->cobj(), layout);
+        cr->restore();
+
+        // Cleanup
+        g_object_unref(layout);
+        pango_font_description_free(desc);
+    }
+}
+
 mainScreen::mainScreen(const Glib::ustring& username):
     menuProfileBox(username){
     set_title("Main Screen");
@@ -480,248 +518,135 @@ void mainScreen::drawBarChart(const Cairo::RefPtr<Cairo::Context>& cr, int width
         drawPieChart(cr, width, height);
         return;
     }
-    // Background (black)
+
     cr->save();
-    cr->set_source_rgb(0.0, 0.0, 0.0);
-    cr->rectangle(0, 0, width, height);
-    cr->fill();
+    cr->set_source_rgb(0, 0, 0);
+    cr->paint();
     cr->restore();
 
-    // THIS IS WHERE U CHANGE WHEN EMPTEE
     if (barChartData.empty()) {
-        // nothing to draw yet
-        cr->save();
-        cr->set_source_rgb(1.0, 1.0, 1.0);
-        cr->select_font_face("Determination Mono", Cairo::ToyFontFace::Slant::NORMAL, Cairo::ToyFontFace::Weight::NORMAL);
-        cr->set_font_size(24.0);
-        cr->move_to(20, height / 2);
-        cr->show_text("No chart data.");
-        cr->restore();
+        draw_pango_text(cr, "No chart data.", 20, height / 2.0, 24, false);
         return;
     }
 
-    // Margins around chart area
-    const double left   = 60.0;
-    const double right  = 20.0;
-    const double top    = 50.0;
-    const double bottom = 50.0;   // a little extra for X label
+    double left = 60.0;
+    double top = 40.0;
+    double right = width - 40.0;
+    double bottom = height - 80.0;
 
-    const double chartWidth  = width  - left - right;
-    const double chartHeight = height - top  - bottom;
+    double chartWidth = right - left;
+    double chartHeight = bottom - top;
 
-    if (chartWidth <= 0 || chartHeight <= 0)
-        return;
-
-    // Find max value for scaling
-    double maxVal = 0.0;
-    for (double v : barChartData)
-        if (v > maxVal) 
-            maxVal = v;
-    if (maxVal <= 0.0) maxVal = 1.0;
-
-    // Axes
-    cr->save();
-    cr->set_source_rgb(1.0, 1.0, 1.0); // COLOR OF AXES (BOTH)
     cr->set_line_width(2.0);
+    cr->set_source_rgb(1, 1, 1);
 
-    // Y axis
     cr->move_to(left, top);
-    cr->line_to(left, top + chartHeight);
-
-    // X axis
-    cr->line_to(left + chartWidth, top + chartHeight);
+    cr->line_to(left, bottom);
+    cr->line_to(right, bottom);
     cr->stroke();
-    cr->restore();
 
-    // Bars
-    const size_t n = barChartData.size();
-    const double barSpace = chartWidth / static_cast<double>(n);
-    const double barWidth = barSpace * 0.6;
+    double maxValue = 0.0;
+    for (double v : barChartData) {
+        if (v > maxValue) maxValue = v;
+    }
+    if (maxValue <= 0.0) 
+        maxValue = 1.0;
 
-    for (size_t i = 0; i < n; ++i) {
+    int n = barChartData.size();
+    double barSpacing = 10.0;
+    double barWidth = (chartWidth - (n + 1) * barSpacing) / n;
 
-        // =========================================== I REFERENCED THE INTERNET FOR THIS
+    for (int i = 0; i < n; ++i) {
         double value = barChartData[i];
-        double normalized = value / maxVal;   // e.g. 0.87
+        double barHeight = (value / maxValue) * chartHeight;
 
-        double barHeight = normalized * chartHeight;
-        double x = left + barSpace * i + (barSpace - barWidth) / 2.0;
-        double y = top + chartHeight - barHeight;
-        // REFERENCED UNTIL HERE ========================================================
+        double x = left + barSpacing + i * (barWidth + barSpacing);
+        double y = bottom - barHeight;
 
-        cr->save();
-        cr->set_source_rgb(1.0, 1.0, 1.0);   // white bars
+        cr->set_source_rgb(1, 1,1);
+
         cr->rectangle(x, y, barWidth, barHeight);
         cr->fill();
-        cr->restore();
+
+        // Number label above bar (centered)
+        std::string txt = std::to_string((int)(value * 100));
+        double centerX = x + barWidth / 2.0;
+        double textY = y - 18.0;
+        draw_pango_text(cr, txt, centerX, textY, 18, true);
     }
 
-    //  Axis labels (Cairo text)
-    cr->save();
-    cr->set_source_rgb(1.0, 1.0, 1.0);
-    cr->select_font_face("Determination Mono", Cairo::ToyFontFace::Slant::NORMAL, Cairo::ToyFontFace::Weight::NORMAL);
-    cr->set_font_size(24.0);
-
-    Cairo::TextExtents ext;
-
-    // Y-axis label ("Percentage")
+    // Y-axis label rotated
     std::string yLabel = "Percentage";
-    cr->get_text_extents(yLabel, ext);
-
     cr->save();
-    // Put origin roughly in the middle of the y-axis
     cr->translate(left - 40.0, top + chartHeight / 2.0);
-    cr->rotate(-G_PI / 2.0);  // vertical text
-    // center text at (0,0) after rotation
-    cr->move_to(-ext.width / 2.0 - ext.x_bearing,
-                -ext.height / 2.0 - ext.y_bearing);
-    cr->show_text(yLabel);
+    cr->rotate(-G_PI / 2.0);
+    draw_pango_text(cr, yLabel, 0.0, 0.0, 24, true);
     cr->restore();
 
-    // X-axis label depends on what user picked
-    std::string xLabel;
-    switch (userBarChartOption) {
-        case BarChartOption::TotalPercent:   xLabel = "Total % per Student"; break;
-        case BarChartOption::LabPercent:     xLabel = "Lab % per Student";   break;
-        case BarChartOption::QuizPercent:    xLabel = "Quiz % per Student";  break;
-        case BarChartOption::ExamPercent:    xLabel = "Exam % per Student";  break;
-        case BarChartOption::ProjectPercent: xLabel = "Project % per Student"; break;
-        case BarChartOption::FinalPercent:   xLabel = "Final % per Student"; break;
-    }
+    // X-axis label centered
+    std::string xLabel = "Data Points";
+    double cx = left + chartWidth / 2.0;
+    double cy = bottom + 25.0;
+    draw_pango_text(cr, xLabel, cx, cy, 24, true);
 
-    cr->get_text_extents(xLabel, ext);
-    cr->move_to(left + chartWidth / 2.0 - (ext.width / 2.0 + ext.x_bearing),
-                top + chartHeight + 35.0);
-    cr->show_text(xLabel);
-
-    cr->restore();
-
-    //  Numeric labels above each bar
-    if (barSpace >= 10.0) {   // avoid ugly overlapping when too cramped
-        cr->save();
-        cr->set_source_rgb(1.0, 1.0, 1.0);
-        cr->select_font_face("Determination Mono", Cairo::ToyFontFace::Slant::NORMAL, Cairo::ToyFontFace::Weight::NORMAL);
-        cr->set_font_size(24.0);
-
-        for (size_t i = 0; i < n; ++i) {
-            double value = barChartData[i];
-            if (value <= 0.0) continue;
-
-            double normalized = value / maxVal;
-            double barHeight  = normalized * chartHeight;
-            double x = left + barSpace * i + (barSpace - barWidth) / 2.0;
-            double y = top + chartHeight - barHeight;
-
-            // Format as integer percentage (e.g. 87)
-            int pctInt = static_cast<int>(value * 100.0 + 0.5);
-            std::string txt = std::to_string(pctInt);
-
-            Cairo::TextExtents textExt;
-            cr->get_text_extents(txt, textExt);
-
-            double textX = x + barWidth / 2.0 - (textExt.width / 2.0 + textExt.x_bearing);
-            double textY = y - 12.0; // text for each bar (above bar slightly)
-
-            cr->move_to(textX, textY);
-            cr->show_text(txt);
-            cr->save();
-            //cr->set_source_rgb(1.0, 0.0, 0.0); // red dot DEBUG
-            //cr->rectangle(textX, textY, 3, 3);
-            cr->fill();
-            cr->restore();
-
-        }
-
-        cr->restore();
-    }
 }
-
 void mainScreen::drawPieChart(const Cairo::RefPtr<Cairo::Context>& cr, int width, int height){
-    // Background
-    cr->set_source_rgb(0.0, 0.0, 0.0);
+    cr->save();
+    cr->set_source_rgb(0, 0, 0);
     cr->paint();
+    cr->restore();
 
     if (pieChartData.size() < 5 || pieTotalStudents <= 0) {
-        cr->set_source_rgb(0.0, 0.0, 0.0); // color of text inside pie slice
-        cr->select_font_face("Determination Mono", Cairo::ToyFontFace::Slant::NORMAL, Cairo::ToyFontFace::Weight::NORMAL);
-        cr->set_font_size(24.0);
-        cr->move_to(20, height / 2);
-        cr->show_text("No grade data.");
+        draw_pango_text(cr, "No grade data.", 20, height / 2.0, 24, false);
         return;
     }
 
-    double cx = width  / 2.0;
+    double cx = width / 2.0;
     double cy = height / 2.0;
     double radius = std::min(width, height) * 0.35;
 
-    // this is what shows up inside each pie slice
-    const char* labels[5] = { "A", "B", "C", "D", "F" };
+    double total = 0;
+    for (double v : pieChartData) total += v;
+    if (total <= 0) total = 1;
 
-    double startAngle = 0.0;
+    double angle_start = 0.0;
 
-    // this creates each slice based on data from calcscore
+    static const double colors[5][3] = {
+        {1.0, 0.2, 0.2},
+        {1.0, 0.6, 0.0},
+        {1.0, 1.0, 0.2},
+        {0.3, 0.8, 0.3},
+        {0.2, 0.4, 1.0}
+    };
+
     for (int i = 0; i < 5; ++i) {
-        double fraction = pieChartData[i];
-        if (fraction <= 0.0) 
-            continue;
+        double value = pieChartData[i];
+        double angle_span = (value / total) * 2 * G_PI;
+        double angle_end = angle_start + angle_span;
 
-        double endAngle = startAngle + fraction * 2.0 * G_PI;
+        cr->set_source_rgb(colors[i][0], colors[i][1], colors[i][2]);
 
-        // Path for the slice
         cr->move_to(cx, cy);
-        cr->arc(cx, cy, radius, startAngle, endAngle);
+        cr->arc(cx, cy, radius, angle_start, angle_end);
         cr->close_path();
+        cr->fill();
 
-        // Fill color per grade
-        switch (i) {
-            case 0: 
-                cr->set_source_rgb(0.2, 0.683, 0.2); 
-                break; // A - green
-            case 1: 
-                cr->set_source_rgb(0.2, 0.4, 0.9); 
-                break; // B - blue
-            case 2: 
-                cr->set_source_rgb(.835, 0.208, 0.851); 
-                break; // C - purple
-            case 3: 
-                cr->set_source_rgb(0.9, 0.6, 0.2); 
-                break; // D - orange
-            case 4: 
-                cr->set_source_rgb(0.9, 0.2, 0.2); 
-                break; // F - red
-        }
+        double mid_angle = angle_start + angle_span / 2.0;
+        double tx = cx + std::cos(mid_angle) * (radius * 0.65);
+        double ty = cy + std::sin(mid_angle) * (radius * 0.65);
 
-        // Fill slice
-        cr->fill_preserve();
+        char grade = 'A' + i;
+        int count = (int)value;
+        std::string label = std::string(1, grade) + " (" + std::to_string(count) + ")";
 
-        // White outline
-        cr->set_source_rgb(1.0, 1.0, 1.0);
-        cr->set_line_width(2.0);
-        cr->stroke();
+        draw_pango_text(cr, label, tx, ty, 18, true);
 
-        // Label text: e.g. "A (4)"
-        double midAngle = (startAngle + endAngle) / 2.0;
-        double tx = cx + std::cos(midAngle) * (radius * 0.65);
-        double ty = cy + std::sin(midAngle) * (radius * 0.65);
-
-        std::string label = std::string(labels[i]) + " (" + std::to_string(pieCounts[i]) + ")";
-
-        cr->set_source_rgb(1.0, 1.0, 1.0);
-        cr->select_font_face("Determination Mono", Cairo::ToyFontFace::Slant::NORMAL, Cairo::ToyFontFace::Weight::NORMAL);
-        cr->set_font_size(18.0);
-        cr->move_to(tx - 10, ty + 6); // slight offset
-        cr->show_text(label);
-
-        startAngle = endAngle;
+        angle_start = angle_end;
     }
 
-    // Optional legend/text at bottom
-    cr->set_source_rgb(1.0, 1.0, 1.0);
-    cr->select_font_face("Determination Mono", Cairo::ToyFontFace::Slant::NORMAL, Cairo::ToyFontFace::Weight::NORMAL);
-    cr->set_font_size(16.0);
-    cr->move_to(20, height - 20);
-    cr->show_text("* Grade distribution (A–F)");
+    draw_pango_text(cr, "* Grade distribution (A-F)", 20, height - 30, 16, false);
 }
+
 
 void mainScreen::computePieFromCalcScore() {
     pieCounts.assign(5, 0);   // A,B,C,D,F

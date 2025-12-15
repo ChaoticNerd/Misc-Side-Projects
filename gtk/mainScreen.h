@@ -4,6 +4,7 @@
 #include <cairomm/cairomm.h>
 #include <filesystem>
 #include <cmath>
+#include <pango/pangocairo.h> // custom fonts
 #include "calcScores.h"
 #include "textViewer.h"
 #include "randGen.h"
