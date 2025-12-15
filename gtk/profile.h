@@ -41,6 +41,7 @@ public:
     void set_pfpImg(const Glib::ustring& pfpPath);
 
 private:
+    const int PFP_SIZE = 100;
     Gtk::Label user;
     Gtk::Button pfpUpload;
     Gtk::Picture pfpImg;

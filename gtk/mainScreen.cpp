@@ -600,61 +600,88 @@ void mainScreen::drawBarChart(const Cairo::RefPtr<Cairo::Context>& cr, int width
 
 }
 void mainScreen::drawPieChart(const Cairo::RefPtr<Cairo::Context>& cr, int width, int height){
+    // Background
     cr->save();
-    cr->set_source_rgb(0, 0, 0);
+    cr->set_source_rgb(0.0, 0.0, 0.0);
     cr->paint();
     cr->restore();
 
-    if (pieChartData.size() < 5 || pieTotalStudents <= 0) {
+    // Basic sanity check
+    if (pieChartData.size() < 5 || pieCounts.size() < 5 || pieTotalStudents <= 0) {
         draw_pango_text(cr, "No grade data.", 20, height / 2.0, 24, false);
         return;
     }
 
-    double cx = width / 2.0;
-    double cy = height / 2.0;
-    double radius = std::min(width, height) * 0.35;
+    // Center and radius
+    const double cx = width  / 2.0;
+    const double cy = height / 2.0;
+    const double radius = std::min(width, height) * 0.35;
 
-    double total = 0;
-    for (double v : pieChartData) total += v;
-    if (total <= 0) total = 1;
+    // Sum of fractions (should be ~1.0, but we normalize anyway)
+    double totalFraction = 0.0;
+    for (double v : pieChartData) {
+        totalFraction += v;
+    }
+    if (totalFraction <= 0.0) {
+        draw_pango_text(cr, "No grade data.", 20, height / 2.0, 24, false);
+        return;
+    }
 
     double angle_start = 0.0;
 
+    // Non-yellow palette (red, dark gold, bronze, green, blue)
     static const double colors[5][3] = {
-        {1.0, 0.2, 0.2},
-        {1.0, 0.6, 0.0},
-        {1.0, 1.0, 0.2},
-        {0.3, 0.8, 0.3},
-        {0.2, 0.4, 1.0}
+        {1.0, 0.20, 0.20},   // A - red
+        {1.0, 0.55, 0.15},   // B - dark gold
+        {0.75, 0.55, 0.15},  // C - bronze
+        {0.30, 0.80, 0.30},  // D - green
+        {0.25, 0.35, 0.90}   // F - blue
     };
 
+    // Grade labels for slices
+    static const char gradeLetters[5] = { 'A', 'B', 'C', 'D', 'F' };
+
     for (int i = 0; i < 5; ++i) {
-        double value = pieChartData[i];
-        double angle_span = (value / total) * 2 * G_PI;
-        double angle_end = angle_start + angle_span;
+        const int count = (i < static_cast<int>(pieCounts.size()))
+                          ? pieCounts[i]
+                          : 0;
+        if (count <= 0) {
+            // No students with this grade; skip drawing a slice
+            continue;
+        }
 
+        const double value = pieChartData[i];
+        const double fraction = value / totalFraction;      // normalized 0–1
+        const double angle_span = fraction * 2.0 * G_PI;
+        const double angle_end = angle_start + angle_span;
+
+        // Slice fill
         cr->set_source_rgb(colors[i][0], colors[i][1], colors[i][2]);
-
         cr->move_to(cx, cy);
         cr->arc(cx, cy, radius, angle_start, angle_end);
         cr->close_path();
         cr->fill();
 
-        double mid_angle = angle_start + angle_span / 2.0;
-        double tx = cx + std::cos(mid_angle) * (radius * 0.65);
-        double ty = cy + std::sin(mid_angle) * (radius * 0.65);
+        // Label position (center of the slice)
+        const double mid_angle = angle_start + angle_span / 2.0;
+        const double tx = cx + std::cos(mid_angle) * (radius * 0.65);
+        const double ty = cy + std::sin(mid_angle) * (radius * 0.65);
 
-        char grade = 'A' + i;
-        int count = (int)value;
-        std::string label = std::string(1, grade) + " (" + std::to_string(count) + ")";
+        // Grade and label text
+        const char grade = gradeLetters[i];
+        const int percent = static_cast<int>(fraction * 100.0 + 0.5); // rounded %
+
+        std::string label = std::string(1, grade) + " (" + std::to_string(count) + ", " + std::to_string(percent) + "%)";
 
         draw_pango_text(cr, label, tx, ty, 18, true);
 
         angle_start = angle_end;
     }
 
+    // Caption text at bottom
     draw_pango_text(cr, "* Grade distribution (A-F)", 20, height - 30, 16, false);
 }
+
 
 
 void mainScreen::computePieFromCalcScore() {
@@ -906,7 +933,6 @@ void mainScreen::filenameEntered(int response_id, Gtk::Dialog* dialog, Gtk::Entr
 
 
 void mainScreen::on_pfpUpload_button_clicked(void){
-    std::cout<<"IM RECEIVING MEPMEPMEP!\n";
     auto dialog = new Gtk::FileChooserDialog(
         *this,
         "Choose a image file",
@@ -952,20 +978,23 @@ void mainScreen::on_pfpUpload_button_clicked(void){
 void mainScreen::fileChooserImageResponse(int response_id, Gtk::FileChooserDialog* dialog){
     if (response_id == Gtk::ResponseType::OK) {
 
-        auto file = dialog->get_file();  // Gio::File
+        auto file = dialog->get_file();
         if (file) {
-            const std::string path = file->get_path();  // local filesystem path
-            // namespace fs = std::filesystem;
-            // fs::path p(path);
-            // std::cout << "User selected file: " << path << "\n";
-            // std::string ext = p.extension().string();
-            // std::cout << "ext " << ext << "\n";
+            const std::string path = file->get_path();
+
+            // === Enforce PNG/JPG/JPEG formats ===
+            std::string ext;
+            {
+                auto p = std::filesystem::path(path);
+                ext = p.extension().string();
+                std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
+            }
+
+            // Pass image to profile box (scaling handled there)
             menuProfileBox.set_pfpImg(path);
         }
-        std::cout<<"where the fuck am i!\n";
-
     }
-    this->present();
 
+    this->present();
     delete dialog;
 }

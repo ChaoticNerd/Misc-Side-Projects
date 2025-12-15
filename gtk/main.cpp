@@ -13,8 +13,7 @@
 // PROGRAM CAN NOW BE RUN BY DOUBLE-CLICKING app.exe
 // We force the CWD to the EXE directory so ./data, ./assets, etc. work.
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char* argv[]){
     (void)argc; // silence unused warning
 
     // 1) Set working directory to the folder where the EXE lives
@@ -69,24 +68,23 @@ int main(int argc, char* argv[])
     }
 
     // 2) Undertale font with Pango
-    {
-        PangoFontMap* font_map = pango_cairo_font_map_get_default();
-        if (font_map) {
-            const std::string fontFile = fontPath.string();
-            if (std::filesystem::exists(fontPath)) {
-                if (pango_font_map_add_font_file(font_map, fontFile.c_str(), nullptr)) {
-                    std::cout << "Font " << fontFile << " loaded successfully." << std::endl;
-                } else {
-                    std::cout << "Error: font not loaded: " << fontFile << std::endl;
-                }
+    PangoFontMap* font_map = pango_cairo_font_map_get_default();
+    if (font_map) {
+        const std::string fontFile = fontPath.string();
+        if (std::filesystem::exists(fontPath)) {
+            if (pango_font_map_add_font_file(font_map, fontFile.c_str(), nullptr)) {
+                std::cout << "Font " << fontFile << " loaded successfully." << std::endl;
             } else {
-                std::cout << "Skipping font load; file does not exist." << std::endl;
+                std::cout << "Error: font not loaded: " << fontFile << std::endl;
             }
         } else {
-            std::cerr << "Warning: pango_cairo_font_map_get_default() returned null."
-                      << std::endl;
+            std::cout << "Skipping font load; file does not exist." << std::endl;
         }
+    } else {
+        std::cerr << "Warning: pango_cairo_font_map_get_default() returned null."
+                    << std::endl;
     }
+    
 
     // 3) Create your application instance
     auto launchApp = Glib::make_refptr_for_instance<App>(new App());

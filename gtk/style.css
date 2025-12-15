@@ -1,7 +1,4 @@
-/* ============================= */
 /*  GLOBAL UNDERTALE THEME       */
-/* ============================= */
-
 /* All windows, dialogs, popovers */
 window,
 window.background,
@@ -19,7 +16,6 @@ popover {
   /* tweak this to taste */
 }
 
-
 /* All children inherit text color + font */
 window * {
   color: inherit;
@@ -29,10 +25,8 @@ window * {
   border-radius: 0px;
   border-image: none;
 }
-/* ============================= */
-/*  ENTRY FIELDS (TEXT INPUTS)   */
-/* ============================= */
 
+/*  ENTRY FIELDS (TEXT INPUTS)   */
 entry {
   background-color: black;
   color: white;
@@ -53,10 +47,8 @@ entry:focus{
   border: 2px solid white;
 }
 
-/* ============================= */
-/*       UNDERTALE DIALOGS       */
-/* ============================= */
 
+/*       UNDERTALE DIALOGS       */
 /* The dialog itself (we let content box show visuals) */
 #ut-box {
   background-color: transparent;
@@ -78,10 +70,8 @@ entry:focus{
   font-size: 24px;
 }
 
-/* ============================= */
-/*  GLOBAL UNDERTALE BUTTONS     */
-/* ============================= */
 
+/*  GLOBAL UNDERTALE BUTTONS     */
 button {
   all: unset;
   /* wipe theme styling */
@@ -115,10 +105,8 @@ button:active label{
   color: yellow;
 }
 
-/* ============================= */
-/*          HEADERBARS           */
-/* ============================= */
 
+/*          HEADERBARS           */
 headerbar {
   color: white;
   background-color: black;
@@ -151,9 +139,8 @@ headerbar button.titlebutton.close:hover {
 }
 
 
-/* ============================= */
+
 /*       MAIN MENU BUTTONS       */
-/* ============================= */
 .Text-Button{
   background-image: url("assets/sprites/TextFileButton.png");
   background-repeat: no-repeat;
@@ -255,10 +242,8 @@ headerbar button.titlebutton.close:hover {
 
 }
 
-/* ============================= */
-/*      REGISTRATION STYLE       */
-/* ============================= */
 
+/*      REGISTRATION STYLE       */
 .Reg-Dialog{
   background-image: url("assets/sprites/Temmie.png");
   background-color: black;
@@ -267,10 +252,8 @@ headerbar button.titlebutton.close:hover {
   background-position: 50% 50%;
 }
 
-/* ============================= */
-/*  ENTRY FIELDS (TEXT INPUTS)   */
-/* ============================= */
 
+/*  ENTRY FIELDS (TEXT INPUTS)   */
 entry {
   background-color: black;
   border: 3px solid white;
@@ -301,10 +284,8 @@ label.ut-message-text {
   border-radius: 0px;
 }
 
-/* ============================= */
-/*  TEXT AREAS (Gtk::TextView)   */
-/* ============================= */
 
+/*  TEXT AREAS (Gtk::TextView)   */
 textview {
   background-color: black;
   color: white;
@@ -325,9 +306,8 @@ scrollbar slider {
   background-color: white;
 }
 
-/* ============================= */
+
 /*         FILE CHOOSER          */
-/* ============================= */
 window.filechooser{
   background-color: Black;
   background-image: none;
@@ -404,19 +384,21 @@ window.filechooser popover separator {
   background-color: black;
 }
 
-/* ============================= */
 /*        PROFILE BUTTON         */
-/* ============================= */
-.profile-Button{
-  border-radius: 99px;
-  padding: 0px;
-  min-height: 16px;
-  min-width: 16px;
-  background-color: black;
-  outline: none;
-  border: 2px solid white;
+.profile-Button {
+    border-radius: 99px;
+    padding: 0px;
 
+    min-width: 100px;
+    min-height: 100px;
+    max-width: 100px;
+    max-height: 100px;
+
+    background-color: black;
+    outline: none;
+    border: 2px solid white;
 }
+
 
 .profile-Button:hover{
   border-radius: 99px;
@@ -426,22 +408,21 @@ window.filechooser popover separator {
 .profile-Button:active{
   border-radius: 99px;
   border: 2px solid yellow;
-
 } 
 
-.avatar{
-  border-radius: 99px;
-  min-height: 16px;
-  min-width: 16px;
-  border: 2px solid black;
-  background-image: none;
-  
+.avatar {
+    border-radius: 99px;
+
+    min-width: 100px;
+    min-height: 100px;
+    max-width: 100px;
+    max-height: 100px;
+
+    border: 2px solid black;
+    background-image: none;
 }
 
-/* ============================= */
 /*         RADIO BUTTON          */
-/* ============================= */
-
 radio {
   color: transparent;
   padding: 6px;
